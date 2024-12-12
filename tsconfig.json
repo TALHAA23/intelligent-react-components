@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "ES5", // Specifies the JavaScript version to target when transpiling code.
+    "useDefineForClassFields": true, // Enables the use of 'define' for class fields.
+    "lib": ["ES2020", "DOM", "DOM.Iterable"], // Specifies the libraries available for the code.
+    "module": "ESNext", // Defines the module system to use for code generation.
+    "skipLibCheck": true, // Skips type checking of declaration files.
+    "allowJs": true,
+    "types": ["vite/client", "vitest/globals"],
+    /* Bundler mode */
+    "moduleResolution": "bundler", // Specifies how modules are resolved when bundling.
+    "allowImportingTsExtensions": true, // Allows importing TypeScript files with extensions.
+    "resolveJsonModule": true, // Enables importing JSON modules.
+    "isolatedModules": true, // Ensures each file is treated as a separate module.
+    "noEmit": true, // Prevents TypeScript from emitting output files.
+    "jsx": "react-jsx", // Configures JSX support for React.
+
+    // resolve
+    "baseUrl": "./",
+    "paths": {
+      "@*": ["./*"],
+      "@components/*": ["src/components/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@lib/*": ["lib/*"],
+      "@utils/*": ["utils/*"],
+      "@types/*": ["types/*"],
+      "@styles/*": ["styles/*"],
+      "@public/*": ["public/*"],
+      "@server/*": ["server/*"],
+      "@server-lib/*": ["server/lib/*"],
+      "@server-types/*": ["server/types/*"],
+      "@server-utils/*": ["server/utils/*"]
+    },
+
+    /* Linting */
+    "strict": true, // Enables strict type checking.
+    "noUnusedLocals": true, // Flags unused local variables.
+    "noUnusedParameters": true, // Flags unused function parameters.
+    "noFallthroughCasesInSwitch": true, // Requires handling all cases in a switch statement.
+    "declaration": true, // Generates declaration files for TypeScript.
+    "noImplicitThis": false
+  },
+  "include": ["src", "lib", "utils", "types", "./tests/setup.ts"],
+  "exclude": ["src/**/__docs__", "src/**/__test__", "server"]
+}

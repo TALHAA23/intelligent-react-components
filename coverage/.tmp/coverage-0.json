@@ -1,0 +1,156 @@
+{
+  "result": [
+    {
+      "scriptId": "991",
+      "url": "file:///D:/intelligent-react-components/setupTests.ts",
+      "functions": [
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 0, "endOffset": 1808, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 13, "endOffset": 1808, "count": 1 }],
+          "isBlockCoverage": true
+        }
+      ]
+    },
+    {
+      "scriptId": "1255",
+      "url": "file:///D:/intelligent-react-components/src/components/button/__test__/Button.test.tsx",
+      "functions": [
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 0, "endOffset": 3128, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 13, "endOffset": 3128, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 1021, "endOffset": 1654, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 1090, "endOffset": 1555, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 1594, "endOffset": 1650, "count": 1 }],
+          "isBlockCoverage": true
+        }
+      ]
+    },
+    {
+      "scriptId": "1368",
+      "url": "file:///D:/intelligent-react-components/src/components/button/Button.tsx",
+      "functions": [
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 0, "endOffset": 5273, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 13, "endOffset": 5273, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "Button",
+          "ranges": [
+            { "startOffset": 646, "endOffset": 2443, "count": 1 },
+            { "startOffset": 2260, "endOffset": 2269, "count": 0 }
+          ],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 806, "endOffset": 2173, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "fn",
+          "ranges": [
+            { "startOffset": 829, "endOffset": 2158, "count": 1 },
+            { "startOffset": 1747, "endOffset": 1780, "count": 0 }
+          ],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "../../../../nextjs-genkit/dynamic/greetUser.js",
+          "ranges": [{ "startOffset": 994, "endOffset": 1073, "count": 0 }],
+          "isBlockCoverage": false
+        },
+        {
+          "functionName": "../../../../nextjs-genkit/dynamic/myFn2.js",
+          "ranges": [{ "startOffset": 1120, "endOffset": 1195, "count": 0 }],
+          "isBlockCoverage": false
+        },
+        {
+          "functionName": "../../../../nextjs-genkit/dynamic/myFn4.js",
+          "ranges": [{ "startOffset": 1242, "endOffset": 1317, "count": 0 }],
+          "isBlockCoverage": false
+        },
+        {
+          "functionName": "../../../../nextjs-genkit/dynamic/myFn5.js",
+          "ranges": [{ "startOffset": 1364, "endOffset": 1439, "count": 0 }],
+          "isBlockCoverage": false
+        },
+        {
+          "functionName": "../../../../nextjs-genkit/dynamic/myFn7.js",
+          "ranges": [{ "startOffset": 1486, "endOffset": 1561, "count": 0 }],
+          "isBlockCoverage": false
+        },
+        {
+          "functionName": "../../../../nextjs-genkit/dynamic/receipt.js",
+          "ranges": [{ "startOffset": 1610, "endOffset": 1687, "count": 0 }],
+          "isBlockCoverage": false
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 2094, "endOffset": 2142, "count": 1 }],
+          "isBlockCoverage": true
+        }
+      ]
+    },
+    {
+      "scriptId": "1369",
+      "url": "file:///D:/intelligent-react-components/%00vite/dynamic-import-helper.js",
+      "functions": [
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 0, "endOffset": 3464, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [{ "startOffset": 13, "endOffset": 3464, "count": 1 }],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "__vite_ssr_exports__.default",
+          "ranges": [
+            { "startOffset": 216, "endOffset": 700, "count": 1 },
+            { "startOffset": 273, "endOffset": 341, "count": 0 }
+          ],
+          "isBlockCoverage": true
+        },
+        {
+          "functionName": "",
+          "ranges": [
+            { "startOffset": 363, "endOffset": 696, "count": 1 },
+            { "startOffset": 439, "endOffset": 451, "count": 0 },
+            { "startOffset": 594, "endOffset": 661, "count": 0 }
+          ],
+          "isBlockCoverage": true
+        }
+      ]
+    }
+  ]
+}

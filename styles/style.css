@@ -1,0 +1,29 @@
+@import url("./aiButton.css");
+@import url("./loader.css");
+@import url("./devTool.css");
+@import url("./objectRepresentation.css");
+@import url("./statuses.css");
+@import url("./animation.css");
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.xs-light-text {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 300;
+}
+
+.no-style-button {
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+
+.no-style-button:disabled {
+  opacity: 0.5;
+}

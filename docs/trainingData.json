@@ -1,0 +1,767 @@
+{
+  "data": [
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that when a button is clicked, updates the component's &LOADING_STATE to indicate loading, makes a GET request to $API_ENDPOINT_1, updates the component's &DATA_STATE state with the retrieved data, renders a list of items based on the retrieved data, and saves the data to a local database using IndexedDB. If an error occurs during any of these steps, the function should update &ERROR_STATE.",
+        "supportingProps": {
+          "utils": {
+            "API_ENDPOINT_1": "http//localhost:3000/"
+          }
+        },
+        "mutation": [
+          {
+            "id": "LOADING_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setLoading",
+            "mutationType": "callback"
+          },
+          {
+            "id": "ERROR_STATE",
+            "returnFormat": { "message": "error message" },
+            "mutate": "setError",
+            "mutationType": "callback"
+          },
+          {
+            "id": "DATA_STATE",
+            "returnFormat": "boolean",
+            "mutate": "setData",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "I will create a function that will request to the provided API point, get data, and retrieve it to the document while also handling loading, error, and data state. I will also define required arguments using the mutation field",
+        "move1": "check supportingProps.utils",
+        "move2": "check mutation",
+        "move3": "collectMutations",
+        "error": "check for data completeness",
+        "response": {
+          "event": "function fn1(setError, setLoading, setData)  {try {setLoading(true); const response = await fetch('http//localhost:3000/'); const jsonData = await response.json(); setData(jsonData); const db = await indexedDB.open('myDatabase', 1); const store = db.transaction('data', 'readwrite').objectStore('data'); await store.put(jsonData, 1); const contentElement = document.getElementById('content'); contentElement.innerHTML = `   <ul>     ${jsonData.map((item) => `<li>${item.name}</li>`).join('')}   </ul> `; setLoading(false)  } catch (error) { setError(error); setLoading(false);}};"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "a function that updates $counter1",
+        "mutation": [
+          {
+            "id": "counter2",
+            "responseFormat": "number",
+            "mutation": "setCounter",
+            "mutationType": "callback"
+          }
+        ]
+      },
+      "modal": {
+        "thoughts": "The user wants a function that updates a counter state on each click.",
+        "move1": "checkMutation",
+        "move2": "collectMutations",
+        "move3": "checkError",
+        "thoughts2": "The data look incorrect so I will respond with an error",
+        "error": {
+          "message": "main prompt refers to &counter1 but there is no mutation with id counter1",
+          "status": 422,
+          "statusText": "Invalid data"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "A function that add paramter 1 and parameter 2",
+        "supportingProps": {
+          "parameters": ["num1", "num2"]
+        }
+      },
+      "modal": {
+        "thoughts": "The user wants a function that will add two numbers as it refers to a parameter so I will define arguments and use them to define a function",
+        "move1": "check SupportingProps.parameters",
+        "move2": "checkError",
+        "response": {
+          "event": "function(num1,num2){return num1+num2}"
+        }
+      }
+    },
+    {
+      "user": {
+        "prompt": "a function that increments the counter by 1, update &counter each time",
+        "mutation": [
+          {
+            "id": "counter",
+            "returnFormat": "number",
+            "mutate": "setCounter",
+            "mutationType": "callback"
+          }
+        ],
+        "callbacks": {
+          "independent": [
+            {
+              "userGuide": "Call every time the counter changes by 10 numbers",
+              "callback": "tenStepCompleted"
+            }
+          ],
+          "dependent": [
+            {
+              "userGuide": "call every time the counter changes",
+              "parametersGuide": ["use the counter value"],
+              "callback": "counterChanged"
+            }
+          ]
+        }
+      },
+      "modal": {
+        "thoughts": "The user wants a function that will update a state called counter by 1",
+        "move1": "checkMutation",
+        "move2": "checkCallbacks",
+        "move3": "collectMutations",
+        "move4": "checkError",
+        "thoughts2": "The user has some callbacks, I will call tenStepCompleted(), it also has dependent callback I will use parametersGuide to pass params to callback. I also need a global so this time i will add that too.",
+        "globals": {
+          "globCounter": 0
+        },
+        "response": {
+          "event": "function incrementCounter(setCounter) { counterChanged() setCounter(prev=>{ const newCount = prev+1; counterChanged(newCount); return newCount }); globals.globCounter++; if(globals.globCounter===10) {   globals.globCounter = 0;   tenStepCompleted(); }}"
+        }
+      }
+    }
+  ]
+}

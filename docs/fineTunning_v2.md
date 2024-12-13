@@ -140,15 +140,19 @@ The response should be a JSON object with the following structure:
 
 ## Preventing Duplicate DOM Elements
 
-The generated code should avoid creating duplicate DOM elements on each button click. If a DOM element with a specific ID or class is already present in the DOM, the generated code should reuse that element instead of creating a new one. Use the following strategies to avoid creating duplicate elements:
+The generated code must avoid creating duplicate DOM elements. Always reuse existing elements whenever possible. Prioritize these strategies:
 
-- **Use Existing Elements:** If the prompt specifies an element with a particular ID or class, use that element directly. Do not create a new element with the same ID or class.
+1.  **Use Existing IDs:** If the prompt specifies an element using an ID, directly access that element using `document.getElementById()`. Do not create a new element with the same ID.
 
-- **Use `globals` for References:** If you need to create and reuse a DOM element, store a reference to that element in the `globals` object. Access and reuse this reference in subsequent calls.
+2.  **Use Existing Classes:** If the prompt specifies an element using a class, select the first matching element using `document.querySelector()`. Do not create a new element with the same class.
 
-- **Check for Existence:** Before creating a new element, check if an element with the same ID or class already exists. Only create a new element if one doesn't already exist. **If you create and append a new element, assign a unique ID or class to it. Before creating a new element, check for the existence of an element with that ID or class. If it exists, reuse the existing element instead of creating a new one.**
+3.  **Use `globals` for Persistent Elements:** For elements that need to be created and reused across multiple button clicks, store a reference to the element in the `globals` object. Access this reference directly; do not create a new element.
 
-The default behavior should be to reuse existing elements. The prompt must explicitly state that new elements should be created on each button click for the model to generate code that creates new elements on each event. For example, a prompt could say, "Create a new paragraph element with the text 'New paragraph' on each click."
+4.  **Explicitly Requested Duplicates:** The prompt must explicitly state "Don't keep reference" or "Create new [element] on each click" for the model to create a new element on each click. Otherwise, the model must reuse existing elements.
+
+5.  **Always Add IDs or Classes:** If you create a new element, assign a unique ID or class to it to facilitate reuse in subsequent calls. or keep a reference in `globals`.
+
+Failure to follow these guidelines will result in a failed test. The model must efficiently manage DOM elements to prevent unnecessary creation.
 
 ## Handling Invalid or Irrelevant Requests
 
@@ -348,7 +352,7 @@ This subsection contains examples of simple event listeners performing basic act
 
 This subsection focuses on examples where event listeners directly modify the Document Object Model (DOM), such as changing text content, adding classes, or modifying attributes.
 
-### Example: Modifying Text Content
+### Example1: Modifying Text Content
 
 **Description:** A click event listener that changes the text content of a paragraph element.
 
@@ -368,7 +372,7 @@ This subsection focuses on examples where event listeners directly modify the Do
   "thoughts": "An event listener will be generated to update the text content of the paragraph element.",
   "error": {},
   "response": {
-    "eventListener": "function main(event, args) { document.getElementById('myParagraph').textContent = 'Text changed!'; }",
+    "eventListener": "function main(event, args) { document.getElementById('myParagraph')?.textContent = 'Text changed!'; }",
     "globals": {},
     "imports": []
   },
@@ -396,11 +400,67 @@ This subsection focuses on examples where event listeners directly modify the Do
   "thoughts": "The event listener will add the class 'highlight' to the button element.  The target element is implied.",
   "error": {},
   "response": {
-    "eventListener": "function main(event, args) { document.getElementById('myButton').classList.add('highlight'); }",
+    "eventListener": "function main(event, args) { const target =  document.getElementById('myButton')
+    if(!taget) {
+    console.warn('Button with id myButton do no exist in DOM')
+    return
+    }
+    target.classList.add('highlight');
+    }",
     "globals": {},
     "imports": []
   },
   "expect": "An element with the ID 'myButton' must exist in the DOM, and a CSS rule for the 'highlight' class should be defined."
+}
+```
+
+**Example 3: Reusing an Element using `globals`**
+**Description:** This example demonstrates reusing a DOM element by storing a reference in the `globals` object.
+
+**Input JSON:**
+
+```json
+{
+  "eventType": "click",
+  "prompt": "Create a new div with the class 'myDiv' and add the text 'Click count: ' followed by the click count to it on each click. ",
+  "supportingProps": {
+    "variables": {}
+  }
+}
+```
+
+**Output JSON:**
+
+```json
+{
+  "thoughts": "The prompt instructs to create a div and update its content on each click. A reference to the div will be stored in globals to prevent duplicate creation.",
+  "error": {},
+  "response": {
+    "eventListener": "function main(event, args) {
+      if (!globals.myDiv) {
+        fnCreateAndAppendElement()
+      }
+      fnShowAndUpateCount()
+    }",
+    "globals": {
+      "clickCount": 0,
+      "myDiv": null
+    },
+    "imports": [],
+    "helperFunctions": [
+      "function fnCreateAndAppendElement() {
+        globals.myDiv = document.createElement('div');
+        globals.myDiv.classList.add('myDiv');
+        document.body.appendChild(globals.myDiv);
+      }",
+      "function fnShowAndUpateCount() {
+        globals.myDiv.textContent = 'Click count: ' + (globals.clickCount || 0);
+        if (!globals.clickCount) globals.clickCount = 0;
+        globals.clickCount++;
+      }"
+    ]
+  },
+  "expect": "No specific elements are required. The code will create a div with the class 'myDiv' and update its content on each click."
 }
 ```
 
@@ -1080,53 +1140,6 @@ This section provides examples illustrating how to use the `globals` field for s
     "imports": []
   },
   "expect": "The generated code will correctly increment and display the click counter. No additional elements are needed in the DOM."
-}
-```
-
-## Examples: Efficient DOM Manipulation
-
-This section provides examples demonstrating techniques for efficient DOM manipulation, avoiding the creation of duplicate elements. The examples illustrate how to reuse existing elements and leverage the globals object for managing element references.
-
-**Example 1: Reusing an Element using `globals`**
-**Description:** This example demonstrates reusing a DOM element by storing a reference in the `globals` object.
-
-**Input JSON:**
-
-```json
-{
-  "eventType": "click",
-  "prompt": "Create a new div with the class 'myDiv' and add the text 'Click count: ' followed by the click count to it on each click. ",
-  "supportingProps": {
-    "variables": {}
-  }
-}
-```
-
-**Output JSON:**
-
-```json
-{
-  "thoughts": "The prompt instructs to create a div and update its content on each click.  A reference to the div will be stored in globals to prevent duplicate creation.",
-  "error": {},
-  "response": {
-    "eventListener": "function main(event, args) {
-      if (!globals.myDiv) {
-        globals.myDiv = document.createElement('div');
-        globals.myDiv.classList.add('myDiv');
-        document.body.appendChild(globals.myDiv);
-      }
-      globals.myDiv.textContent = 'Click count: ' + (globals.clickCount || 0);
-      if (!globals.clickCount) globals.clickCount = 0;
-      globals.clickCount++;
-    }",
-    "globals": {
-      "clickCount": 0,
-      "myDiv": null
-    },
-    "imports": [],
-    "helperFunctions": []
-  },
-  "expect": "No specific elements are required. The code will create a div with the class 'myDiv' and update its content on each click."
 }
 ```
 

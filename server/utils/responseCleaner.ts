@@ -25,17 +25,6 @@ export default function clearResponse(response: string):AIResponse {
 //     .replaceAll(/\\n|\\t|\\r/g, '')                     // Remove newline, tab, and carriage return escapes
 //     .replaceAll(/,\s*([}\]])/g, '$1')                   // Remove trailing commas
 //     .trim();                                         // Remove leading/trailing whitespace
-
-
-    // .replace(/```(json|javascript)?/g, "")
-    // .replace(/[^\x20-\x7E]/g, " ") // Replace all non-printable characters with spaces
-    // .replace(/^\s+|\s+$/g, "")
-    // .replace(/\\"/g, '"')
-    // // .replace(/\\'/g, "'")
-    // .replace(/\\\\/g, '\\')
-    // .replace(/\t/g, '\t')
-    // .replace(/\r/g, '\r')
-    // .replace(/\n/g, '');
     console.log(cleanedResponse);
 
   const parsedResponse = JSON.parse(cleanedResponse);

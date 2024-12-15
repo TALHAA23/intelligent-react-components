@@ -76,7 +76,28 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
 
   return (
     <span className="ai-button-wrapper">
+      {/* <button className="ai-button">
+        {loading ? (
+          <Loader />
+        ) : (
+          <span className="button-content">{props.label || "AIButton"}</span>
+        )}
+      </button> */}
+
       <button
+        className="ai-button"
+        {...eventListner}
+        {...props.htmlAttributes}
+        disabled={loading}
+      >
+        {loading ? (
+          <Loader />
+        ) : (
+          <span className="text">{props.label || "AIButton"}</span>
+        )}
+      </button>
+
+      {/* <button
         className="btn"
         {...eventListner}
         {...props.htmlAttributes}
@@ -99,7 +120,7 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
         ) : (
           <span className="text">{props.label || "AIButton"}</span>
         )}
-      </button>
+      </button> */}
       {!cacheResponse && (
         <button
           className="no-style-button"

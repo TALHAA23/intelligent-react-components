@@ -27,13 +27,15 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
       ? (e: MouseEvent) => event.default(e, args ? args : undefined)
       : undefined,
   };
-
+  error;
+  responseMeta;
   useEffect(() => {
     const getEvent = async () => {
       try {
         setLoading(true);
         const event = await import(
-          `../../../../nextjs-genkit/dynamic/${props.filename}.js`
+          // `../../../../nextjs-genkit/dynamic/${props.filename}.js`
+          `../../../dynamic/${props.filename}.js`
         );
         setEvent(event);
         setResponseMeta(event.meta);

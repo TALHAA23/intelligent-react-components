@@ -7,7 +7,6 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 
 export default defineConfig({
- 
   build: {
     lib: {
       entry: "./src/index.ts", // Specifies the entry point for building the library.

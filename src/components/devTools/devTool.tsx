@@ -1,8 +1,8 @@
+import React from "react";
 import logo from "@public/irc-logo-v2.png";
 import arrowDown from "@public/arrow-down.svg";
 import trashIcon from "@public/trash-bin-minimalistic-svgrepo-com.svg";
 import repeatIcon from "@public/repeat-svgrepo-com.svg";
-import { useState } from "react";
 import { useIrcRegistriesAndRegister } from "@src/hooks/ircRegisteryProvider";
 import ObjectRepresentation from "@src/components/ObjectRepresentation";
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 export default function DevTool({ initialIsOpen = false }: Props) {
   const { registerButtons } = useIrcRegistriesAndRegister();
-  const [isToolOpen, setIsToolOpen] = useState(initialIsOpen);
+  const [isToolOpen, setIsToolOpen] = React.useState(initialIsOpen);
   const toggleDevTool = (open: boolean) => {
     setIsToolOpen((prev) => (open ? open : !prev));
   };

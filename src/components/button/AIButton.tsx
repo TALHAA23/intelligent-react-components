@@ -1,41 +1,52 @@
+import React from "react";
 import { AIButtonProps } from "@/types/index";
 import Loader from "@components/loader/Loader";
 import jsonSanitizer from "@/utils/jsonSanitizer";
 import processAIButtonProps from "@/utils/processAIButtonProps";
-import { DOMAttributes, useEffect, useState } from "react";
 import stars from "@public/re-generate.svg";
 import { postMethod, urls } from "@/utils/utils";
 import createIrcRegisteryUseableUseEffects from "./useEffects.hook";
 import { AIResponse } from "@server/types";
-
+import styled from "styled-components";
 interface MyModule {
   default: (event: MouseEvent, ...args: unknown[]) => unknown;
   meta?: any;
 }
 
+const Button = styled.button`
+  display: inline-block;
+  color: #bf4f74;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid #bf4f74;
+  border-radius: 3px;
+  display: block;
+`;
 export default function AIButton({ cacheResponse = true }: AIButtonProps) {
   const props = arguments[0];
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any>(undefined);
-  const [event, setEvent] = useState<undefined | MyModule>(undefined);
-  const [responseMeta, setResponseMeta] = useState<
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<any>(undefined);
+  const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
+  const [responseMeta, setResponseMeta] = React.useState<
     undefined | MyModule["meta"]
   >(event?.meta);
   const args = processAIButtonProps(props);
-  const eventListner: DOMAttributes<HTMLButtonElement> = {
+  const eventListner: React.DOMAttributes<HTMLButtonElement> = {
     [props?.listner || "onClick"]: event
       ? (e: MouseEvent) => event.default(e, args ? args : undefined)
       : undefined,
   };
   error;
   responseMeta;
-  useEffect(() => {
+  React.useEffect(() => {
     const getEvent = async () => {
       try {
         setLoading(true);
         const event = await import(
           // `../../../../nextjs-genkit/dynamic/${props.filename}.js`
-          `../../../dynamic/${props.filename}.js`
+          // `../../../dynamic/${props.filename}.js`
+          `/dynamic/${props.filename}.js`
         );
         setEvent(event);
         setResponseMeta(event.meta);
@@ -78,45 +89,19 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
 
   return (
     <span className="ai-button-wrapper">
-      {/* <button className="ai-button">
-        {loading ? (
-          <Loader />
-        ) : (
-          <span className="button-content">{props.label || "AIButton"}</span>
-        )}
-      </button> */}
-
-      <button
-        className="ai-button"
-        {...eventListner}
-        {...props.htmlAttributes}
-        disabled={loading}
-      >
+      <Button {...eventListner} {...props.htmlAttributes} disabled={loading}>
         {loading ? (
           <Loader />
         ) : (
           <span className="text">{props.label || "AIButton"}</span>
         )}
-      </button>
-
+      </Button>
       {/* <button
-        className="btn"
+        className="ai-button"
         {...eventListner}
         {...props.htmlAttributes}
         disabled={loading}
       >
-        <svg
-          height="24"
-          width="24"
-          fill="#FFFFFF"
-          viewBox="0 0 24 24"
-          data-name="Layer 1"
-          id="Layer_1"
-          className="sparkle"
-        >
-          <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
-        </svg>
-
         {loading ? (
           <Loader />
         ) : (

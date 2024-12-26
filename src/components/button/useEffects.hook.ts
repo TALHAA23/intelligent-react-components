@@ -1,6 +1,6 @@
+import React from "react";
 import { useIrcRegistriesAndRegister } from "@src/hooks/ircRegisteryProvider";
 import { AIButtonProps } from "@types";
-import { useEffect } from "react";
 
 export default function createIrcRegisteryUseableUseEffects({
   props,
@@ -20,7 +20,7 @@ export default function createIrcRegisteryUseableUseEffects({
   const ircRegisteryAndRegister = useIrcRegistriesAndRegister();
   const filename = props.filename;
   //   initial registry
-  useEffect(() => {
+  React.useEffect(() => {
     ircRegisteryAndRegister.register("new-button", {
       filename,
       buttonProps: props,
@@ -28,7 +28,7 @@ export default function createIrcRegisteryUseableUseEffects({
     });
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     ircRegisteryAndRegister.register("update-button-status", {
       filename: props.filename,
       buttonProps: props,
@@ -37,7 +37,7 @@ export default function createIrcRegisteryUseableUseEffects({
     });
   }, [loading]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     ircRegisteryAndRegister.register("update-button-error-or-response", {
       filename: props.filename,
       buttonProps: props,

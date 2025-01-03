@@ -7,22 +7,17 @@ import stars from "@public/re-generate.svg";
 import { postMethod, urls } from "@/utils/utils";
 import createIrcRegisteryUseableUseEffects from "./useEffects.hook";
 import { AIResponse } from "@server/types";
-import styled from "styled-components";
+import {
+  StyledAIButtonWrapper,
+  StyledAIButton,
+  StyledRegenerateIcon,
+} from "@styles/StylesAIButton";
+import { StyledNoStyleButton } from "@styles/StylesCommon";
 interface MyModule {
   default: (event: MouseEvent, ...args: unknown[]) => unknown;
   meta?: any;
 }
 
-const Button = styled.button`
-  display: inline-block;
-  color: #bf4f74;
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid #bf4f74;
-  border-radius: 3px;
-  display: block;
-`;
 export default function AIButton({ cacheResponse = true }: AIButtonProps) {
   const props = arguments[0];
   const [loading, setLoading] = React.useState(false);
@@ -86,18 +81,10 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
     error,
     responseMeta,
   });
-
+  // ! Attention required: The Button is Styled hardcoded and users might not be able to change its styles
   return (
-    <span className="ai-button-wrapper">
-      <Button {...eventListner} {...props.htmlAttributes} disabled={loading}>
-        {loading ? (
-          <Loader />
-        ) : (
-          <span className="text">{props.label || "AIButton"}</span>
-        )}
-      </Button>
-      {/* <button
-        className="ai-button"
+    <StyledAIButtonWrapper>
+      <StyledAIButton
         {...eventListner}
         {...props.htmlAttributes}
         disabled={loading}
@@ -107,21 +94,45 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
         ) : (
           <span className="text">{props.label || "AIButton"}</span>
         )}
-      </button> */}
+      </StyledAIButton>
       {!cacheResponse && (
-        <button
-          className="no-style-button"
-          disabled={loading}
-          onClick={generateResponse}
-        >
-          <img
-            className="ai-button-regenerate-icon"
+        <StyledNoStyleButton disabled={loading} onClick={generateResponse}>
+          <StyledRegenerateIcon
             src={stars}
             alt="re-generate"
             title="Re-generate"
           />
-        </button>
+        </StyledNoStyleButton>
       )}
-    </span>
+    </StyledAIButtonWrapper>
+    // <span className="ai-button-wrapper">
+
+    //   <button
+    //     className="ai-button"
+    //     {...eventListner}
+    //     {...props.htmlAttributes}
+    //     disabled={loading}
+    //   >
+    //     {loading ? (
+    //       <Loader />
+    //     ) : (
+    //       <span className="text">{props.label || "AIButton"}</span>
+    //     )}
+    //   </button>
+    //   {!cacheResponse && (
+    //     <button
+    //       className="no-style-button"
+    //       disabled={loading}
+    //       onClick={generateResponse}
+    //     >
+    //       <img
+    //         className="ai-button-regenerate-icon"
+    //         src={stars}
+    //         alt="re-generate"
+    //         title="Re-generate"
+    //       />
+    //     </button>
+    //   )}
+    // </span>
   );
 }

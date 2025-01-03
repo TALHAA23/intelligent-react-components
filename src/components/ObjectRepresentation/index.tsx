@@ -1,5 +1,18 @@
 import { useState } from "react";
-
+import {
+  StyledObjectEntryBoolean,
+  StyledObjectEntryKey,
+  StyledObjectEntryEmptyObject,
+  StyledObjectEntryFunction,
+  StyledObjectEntryNull,
+  StyledObjectEntryObjectToggle,
+  StyledObjectEntryString,
+  StyledObjectEntryUndefined,
+  StyledObjectRepresentation,
+  StyledObjectEntryNumber,
+  StyledObjectEntryEmptyArray,
+  StyledObjectEntryArrayToggle,
+} from "@styles/StyledObjectRepresentation";
 interface ObjectEntryProps {
   value: any;
   isLast?: boolean;
@@ -14,30 +27,41 @@ const ObjectEntry = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const indent = "  ".repeat(indentLevel);
 
-  if (value === null) return <span className="object-entry__null">null</span>;
+  if (value === null)
+    return <StyledObjectEntryNull>null</StyledObjectEntryNull>;
+  // <span className="object-entry__null">null</span>;
   if (value === undefined)
-    return <span className="object-entry__undefined">undefined</span>;
+    return <StyledObjectEntryUndefined>undefined</StyledObjectEntryUndefined>;
+  // return <span className="object-entry__undefined">undefined</span>;
   if (typeof value === "string") {
-    return <span className="text-green-500">{`"${value}"`}</span>;
+    return <StyledObjectEntryString>{`"${value}"`}</StyledObjectEntryString>;
+    // return <span className="text-green-500">{`"${value}"`}</span>;
   }
   if (typeof value === "number")
-    return <span className="object-entry__number">{value}</span>;
+    return <StyledObjectEntryNumber>{value}</StyledObjectEntryNumber>;
+  // return <span className="object-entry__number">{value}</span>;
   if (typeof value === "boolean")
-    return <span className="object-entry__boolean">{value.toString()}</span>;
+    return (
+      <StyledObjectEntryBoolean>{value.toString()}</StyledObjectEntryBoolean>
+    );
+  // return <span className="object-entry__boolean">{value.toString()}</span>;
   if (typeof value === "function")
-    return <span className="object-entry__function">ƒ () {"{ ... }"}</span>;
-
+    return (
+      <StyledObjectEntryFunction>ƒ () {"{ ... }"}</StyledObjectEntryFunction>
+    );
+  // return <span className="object-entry__function">ƒ () {"{ ... }"}</span>;
   if (Array.isArray(value)) {
     if (value.length === 0)
-      return <span className="object-entry__empty-array">[]</span>;
+      return <StyledObjectEntryEmptyArray>[]</StyledObjectEntryEmptyArray>;
+    // return <span className="object-entry__empty-array">[]</span>;
     return (
+      // <>
       <span>
-        <span
-          className="object-entry__array-toggle cursor-pointer select-none"
+        <StyledObjectEntryArrayToggle
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? "▼" : "▶"} Array({value.length})
-        </span>
+        </StyledObjectEntryArrayToggle>
         {isExpanded && (
           <span>
             {"["}
@@ -60,21 +84,51 @@ const ObjectEntry = ({
         {!isExpanded && <span> [...]</span>}
         {!isLast && ","}
       </span>
+      // <span>
+      //   <span
+      //     className="object-entry__array-toggle cursor-pointer select-none"
+      //     onClick={() => setIsExpanded(!isExpanded)}
+      //   >
+      //     {isExpanded ? "▼" : "▶"} Array({value.length})
+      //   </span>
+      //   {isExpanded && (
+      //     <span>
+      //       {"["}
+      //       <div style={{ marginLeft: 20 }}>
+      //         {value.map((item, index) => (
+      //           <div key={index}>
+      //             {indent}
+      //             <ObjectEntry
+      //               value={item}
+      //               isLast={index === value.length - 1}
+      //               indentLevel={indentLevel + 1}
+      //             />
+      //             {index < value.length - 1 ? "," : ""}
+      //           </div>
+      //         ))}
+      //       </div>
+      //       {"]"}
+      //     </span>
+      //   )}
+      //   {!isExpanded && <span> [...]</span>}
+      //   {!isLast && ","}
+      // </span>
+      // {/* </> */}
     );
   }
 
   if (typeof value === "object") {
     const entries = Object.entries(value);
     if (entries.length === 0)
-      return <span className="object-entry__empty-object">{}</span>;
+      return <StyledObjectEntryEmptyObject>{}</StyledObjectEntryEmptyObject>;
+    // return <span className="object-entry__empty-object">{}</span>;
     return (
       <span>
-        <span
-          className="object-entry__object-toggle cursor-pointer select-none"
+        <StyledObjectEntryObjectToggle
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? "▼" : "▶"} Object
-        </span>
+        </StyledObjectEntryObjectToggle>
         {isExpanded && (
           <span>
             {"{"}
@@ -98,9 +152,38 @@ const ObjectEntry = ({
         {!isExpanded && <span> </span>}
         {!isLast && ","}
       </span>
+      // <span>
+      //   <span
+      //     className="object-entry__object-toggle cursor-pointer select-none"
+      //     onClick={() => setIsExpanded(!isExpanded)}
+      //   >
+      //     {isExpanded ? "▼" : "▶"} Object
+      //   </span>
+      //   {isExpanded && (
+      //     <span>
+      //       {"{"}
+      //       <div style={{ marginLeft: 20 }}>
+      //         {entries.map(([key, val], index) => (
+      //           <div key={key}>
+      //             {indent}
+      //             <span className="object-entry__key">{key}</span>:{" "}
+      //             <ObjectEntry
+      //               value={val}
+      //               isLast={index === entries.length - 1}
+      //               indentLevel={indentLevel + 1}
+      //             />
+      //             {index < entries.length - 1 ? "," : ""}
+      //           </div>
+      //         ))}
+      //       </div>
+      //       {"}"}
+      //     </span>
+      //   )}
+      //   {!isExpanded && <span> </span>}
+      //   {!isLast && ","}
+      // </span>
     );
   }
-
   return null;
 };
 
@@ -112,8 +195,11 @@ export default function ObjectRepresentation({ props }: { props: Object }) {
     return <p>Props are not defined</p>;
   }
   return (
-    <div className="object-representation font-mono text-sm bg-zinc-900 text-white p-4 rounded-lg overflow-auto max-h-[600px] whitespace-pre">
+    <StyledObjectRepresentation>
       <ObjectEntry value={props} />
-    </div>
+    </StyledObjectRepresentation>
+    // <div className="object-representation">
+    //   <ObjectEntry value={props} />
+    // </div>
   );
 }

@@ -16,14 +16,18 @@ import {
   StyledSmIcon,
   StyledDevtoolContainerMain,
   StyledDevtoolContainerMainInformation,
-  StyledDevtoolContainerMainInformationKey,
+  // StyledDevtoolContainerMainInformationKey,
   StyledDevtoolContainerMainRow,
   StyledDevtoolContainerMainRowIconsWrapper,
-  StyledDevtoolContainerMainRowStatus,
+  // StyledDevtoolContainerMainRowStatus,
   StyledDevtoolContainerMainRowTitle,
   StyledDevtoolContainerMainWrapper,
 } from "@styles/StylesDevtool";
-import { StyledNoStyleButton } from "@styles/StylesCommon";
+import {
+  GlobalStyles,
+  StyledNoStyleButton,
+  StyledXSLightText,
+} from "@styles/StylesCommon";
 interface Props {
   initialIsOpen?: boolean;
 }
@@ -36,6 +40,7 @@ export default function DevTool({ initialIsOpen = false }: Props) {
   };
   return (
     <StyledDevtoolWrapper>
+      <GlobalStyles />
       {isToolOpen ? (
         <div>
           <StyledNoStyleButton onClick={() => toggleDevTool(false)}>
@@ -49,51 +54,57 @@ export default function DevTool({ initialIsOpen = false }: Props) {
               </StyledDevtoolContainerHeaderHeading>
             </StyledDevtoolContainerHeader>
             <StyledDevtoolContainerMainWrapper>
-              {registerButtons.map((button, index) => (
-                <StyledDevtoolContainerMain>
-                  <StyledDevtoolContainerMainRow>
-                    <StyledDevtoolContainerMainRowTitle>
-                      {" "}
-                      {button.buttonProps.filename}
-                    </StyledDevtoolContainerMainRowTitle>
-                    {/* status goes here */}
-                    <StyledDevtoolContainerMainRowIconsWrapper>
-                      <StyledNoStyleButton
-                        onClick={async (e) => {
-                          const target = e.currentTarget;
-                          try {
-                            target.classList.add("spin");
-                            await button.refreshResponse();
-                          } finally {
-                            target.classList.remove("spin");
-                          }
-                        }}
-                      >
-                        <img src={repeatIcon} alt="refresh" />
-                      </StyledNoStyleButton>
-                      <img src={trashIcon} alt="trash" />
-                    </StyledDevtoolContainerMainRowIconsWrapper>
-                  </StyledDevtoolContainerMainRow>
-                  <StyledDevtoolContainerMainInformation>
-                    <p className="xs-light-text key">Input:</p>
-                    <ObjectRepresentation props={button.buttonProps} />
-                    {button.response && (
-                      <>
-                        <p className="xs-light-text key">
-                          Thoughts and expectation:
-                        </p>
-                        <ObjectRepresentation props={button.response} />
-                      </>
-                    )}
-                    {button.error && (
-                      <>
-                        <p className="xs-light-text key">Error:</p>
-                        <ObjectRepresentation props={button.error} />
-                      </>
-                    )}
-                  </StyledDevtoolContainerMainInformation>
-                </StyledDevtoolContainerMain>
-              ))}
+              {registerButtons.map((button, index) => {
+                return (
+                  <StyledDevtoolContainerMain key={index}>
+                    <StyledDevtoolContainerMainRow>
+                      <StyledDevtoolContainerMainRowTitle>
+                        {" "}
+                        {button.buttonProps.filename}
+                      </StyledDevtoolContainerMainRowTitle>
+                      <p className={`status-${button.status}`}>
+                        {button.status}
+                      </p>
+                      {/* status goes here */}
+                      <StyledDevtoolContainerMainRowIconsWrapper>
+                        <StyledNoStyleButton
+                          onClick={async (e) => {
+                            const target = e.currentTarget;
+                            try {
+                              target.classList.add("spin");
+                              await button.refreshResponse();
+                            } finally {
+                              target.classList.remove("spin");
+                            }
+                          }}
+                        >
+                          <StyledSmIcon src={repeatIcon} alt="refresh" />
+                        </StyledNoStyleButton>
+                        <StyledSmIcon src={trashIcon} alt="trash" />
+                      </StyledDevtoolContainerMainRowIconsWrapper>
+                    </StyledDevtoolContainerMainRow>
+                    <StyledDevtoolContainerMainInformation>
+                      <StyledXSLightText>Input:</StyledXSLightText>
+                      <ObjectRepresentation props={button.buttonProps} />
+                      {button.response && (
+                        <>
+                          <StyledXSLightText>
+                            Thoughts and expectation:
+                          </StyledXSLightText>
+
+                          <ObjectRepresentation props={button.response} />
+                        </>
+                      )}
+                      {button.error && (
+                        <>
+                          <StyledXSLightText>Error:</StyledXSLightText>
+                          <ObjectRepresentation props={button.error} />
+                        </>
+                      )}
+                    </StyledDevtoolContainerMainInformation>
+                  </StyledDevtoolContainerMain>
+                );
+              })}
             </StyledDevtoolContainerMainWrapper>
           </StyledDevtoolContainer>
         </div>

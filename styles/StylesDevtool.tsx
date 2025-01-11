@@ -11,12 +11,9 @@ const root = {
   "--position-btm": "26px",
 };
 
-const StyledSmIcon = styled.div`
+const StyledSmIcon = styled.img`
   width: 20px;
-
-  img {
-    width: 100%;
-  }
+  aspect-ratio: 1/1;
 `;
 
 const StyledLogoAsButton = styled.img`
@@ -84,13 +81,12 @@ const StyledDevtoolContainerMainRow = styled.summary`
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 300;
-  padding-left: 0.375rem;
-  padding-right: 0.375rem;
   border-bottom-width: 1px;
   border-color: transparent;
   border-bottom-color: rgb(51, 65, 85);
   border-radius: 5px;
   border-style: solid;
+  cursor: pointer;
 `;
 
 const StyledDevtoolContainerMainRowTitle = styled.p`

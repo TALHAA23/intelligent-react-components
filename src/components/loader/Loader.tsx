@@ -34,7 +34,7 @@ const StyledLoader = styled.svg`
 
 const StyledCircle = styled.circle`
   fill: none;
-  stroke: white;
+  stroke: #429ef5;
   stroke-width: 5;
   stroke-dasharray: 1, 200;
   stroke-dashoffset: 0;

@@ -1,18 +1,18 @@
 import React from "react";
 import { AIButtonProps } from "@/types/index";
 import Loader from "@components/loader/Loader";
-import jsonSanitizer from "@/utils/jsonSanitizer";
+// import jsonSanitizer from "@/utils/jsonSanitizer";
 import processAIButtonProps from "@/utils/processAIButtonProps";
 import stars from "@public/re-generate.svg";
-import { postMethod, urls } from "@/utils/utils";
+// import { postMethod, urls } from "@/utils/utils";
 import createIrcRegisteryUseableUseEffects from "./useEffects.hook";
-import { AIResponse } from "@server/types";
+// import { AIResponse } from "@server/types";
+import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
-  StyledAIButtonWrapper,
-  StyledAIButton,
-  StyledRegenerateIcon,
-} from "@styles/StylesAIButton";
-import { StyledNoStyleButton } from "@styles/StylesCommon";
+  StyledNoStyleButton,
+  StyledComponentsWrapper,
+} from "@styles/StylesCommon";
+import generateResponse from "@utils/generateResponse";
 interface MyModule {
   default: (event: MouseEvent, ...args: unknown[]) => unknown;
   meta?: any;
@@ -32,8 +32,6 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
       ? (e: MouseEvent) => event.default(e, args ? args : undefined)
       : undefined,
   };
-  error;
-  responseMeta;
   React.useEffect(() => {
     const getEvent = async () => {
       try {
@@ -47,7 +45,7 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
         setResponseMeta(event.meta);
       } catch (err) {
         console.log(err);
-        await generateResponse();
+        await generateResponse(setLoading, setError, props);
       } finally {
         setLoading(false);
       }
@@ -55,35 +53,35 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
     getEvent();
   }, []);
 
-  const generateResponse = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(urls.generativeAi, {
-        ...postMethod,
-        body: jsonSanitizer(props),
-      });
-      if (!response.ok) throw new Error(await response.text());
-      const data = (await response.json()) as AIResponse;
-      if (data.error) setError(data.error);
-    } catch (err) {
-      console.log(err);
-      setError({ err: err });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const generateResponse = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch(urls.generativeAi, {
+  //       ...postMethod,
+  //       body: jsonSanitizer(props),
+  //     });
+  //     if (!response.ok) throw new Error(await response.text());
+  //     const data = (await response.json()) as AIResponse;
+  //     if (data.error) setError(data.error);
+  //   } catch (err) {
+  //     console.log(err);
+  //     setError({ err: err });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   createIrcRegisteryUseableUseEffects({
     props,
     loading,
     event,
-    refreshResponse: generateResponse,
+    refreshResponse: () => generateResponse(setLoading, setError, props),
     error,
     responseMeta,
   });
   // ! Attention required: The Button is Styled hardcoded and users might not be able to change its styles
   return (
-    <StyledAIButtonWrapper>
+    <StyledComponentsWrapper>
       <StyledAIButton
         {...eventListner}
         {...props.htmlAttributes}
@@ -96,7 +94,10 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
         )}
       </StyledAIButton>
       {!cacheResponse && (
-        <StyledNoStyleButton disabled={loading} onClick={generateResponse}>
+        <StyledNoStyleButton
+          disabled={loading}
+          onClick={() => generateResponse(setLoading, setError, props)}
+        >
           <StyledRegenerateIcon
             src={stars}
             alt="re-generate"
@@ -104,7 +105,7 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
           />
         </StyledNoStyleButton>
       )}
-    </StyledAIButtonWrapper>
+    </StyledComponentsWrapper>
     // <span className="ai-button-wrapper">
 
     //   <button

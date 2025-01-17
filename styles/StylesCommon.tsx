@@ -49,6 +49,11 @@ export const StyledNoStyleButton = styled.button<NoStyleButtonProps>`
   }
 `;
 
+export const StyledComponentsWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+`;
+
 export const StyledXSLightText = styled.p`
   font-size: 0.75rem;
   line-height: 1rem;

@@ -1,8 +1,4 @@
 import styled from "styled-components";
-export const StyledAIButtonWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-`;
 
 export const StyledAIButton = styled.button`
   background: #fbca1f;

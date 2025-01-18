@@ -1,11 +1,11 @@
 import run from "../lib/generativeAi.js";
-import { AIButtonProps, RouteHandler } from "../types/index.js";
+import { Common, RouteHandler } from "../types/index.js";
 import clearResponse from "../utils/responseCleaner.js";
 import createFile from "../utils/createFile.js";
 import log from "../utils/cliColoredLog.js";
 import { GoogleGenerativeAIError } from "@google/generative-ai";
 const processPromptAndCreateFile: RouteHandler = async (req, res) => {
-  const body = req.body as AIButtonProps;
+  const body = req.body as Common;
 
   try {
     const generatedResponse = await run(body);
@@ -25,7 +25,7 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
       generatedFunction,
       body.filename,
       cleanedResponse
-    ); 
+    );
     res.json({ newFilePath });
   } catch (err) {
     const message = (err as unknown as GoogleGenerativeAIError).message;

@@ -8,18 +8,25 @@ const createFile = async (
   filename: string,
   responseObj?: AIResponse
 ) => {
-  const helperFunctions = createFunctionDefinationFromGlobals(responseObj?.response);
+  const helperFunctions = createFunctionDefinationFromGlobals(
+    responseObj?.response
+  );
   const rootDir = process.cwd();
   await fs.mkdir(`${rootDir}/dynamic`, { recursive: true });
   const formattedCode = await format(`export default ${content.toString()}`, {
     parser: "babel",
   });
-  
+
   await fs.writeFile(
     `${rootDir}/dynamic/${filename}.js`,
-    `${responseObj?.response?.imports?.toString().replace(/,\s*import/g, '; import') + ';'};
-    const globals=${JSON.stringify(responseObj?.response?.globals||{})};
-    ${await format(helperFunctions.toString().replaceAll(/\}\s*,\s*(function)/g, '}; $1'),{parser:"babel"})}
+    `${responseObj?.response?.imports?.toString().replace(/,\s*import/g, "; import") + ";"};
+    const globals=${JSON.stringify(responseObj?.response?.globals || {})};
+    ${await format(
+      helperFunctions
+        .toString()
+        .replaceAll(/\}\s*,\s*(async\s*function|function)/g, "}; $1"),
+      { parser: "babel" }
+    )}
     ${formattedCode}
     export const meta = {
      thoughts: "${responseObj?.thoughts}",

@@ -1,12 +1,13 @@
 import { DOMAttributes, HTMLAttributes } from "react";
 
+type Element = "input" | "button";
+
 interface Common<Others = undefined, T = Function> {
-  cacheResponse?: boolean;
+  cacheResponse?: boolean = false;
   prompt: string;
   filename: string;
-  listner: keyof DOMAttributes<HTMLButtonElement>;
-  //   ? AI Button only
-  //   label?: string;
+  listner: keyof DOMAttributes<HTMLElement>;
+  element?: Element;
   htmlAttributes?: HTMLAttributes<HTMLButtonElement>;
   supportingProps?: {
     utils?: {

@@ -1,10 +1,10 @@
-import { AIButtonProps } from "@/types";
+import { Common } from "@/types";
 
 interface Result {
   [key: string]: any;
 }
 
-function extractInfoFromProps(props: AIButtonProps) {
+function extractInfoFromProps(props: Common): Result {
   const result: Result = {};
 
   if (props.supportingProps) {

@@ -1,12 +1,9 @@
 import React from "react";
 import { AIButtonProps } from "@/types/index";
 import Loader from "@components/loader/Loader";
-// import jsonSanitizer from "@/utils/jsonSanitizer";
 import processAIButtonProps from "@/utils/processAIButtonProps";
 import stars from "@public/re-generate.svg";
-// import { postMethod, urls } from "@/utils/utils";
 import createIrcRegisteryUseableUseEffects from "./useEffects.hook";
-// import { AIResponse } from "@server/types";
 import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
   StyledNoStyleButton,
@@ -18,8 +15,13 @@ interface MyModule {
   meta?: any;
 }
 
-export default function AIButton({ cacheResponse = true }: AIButtonProps) {
+export default function AIButton({
+  cacheResponse = true,
+  element = "button",
+}: AIButtonProps) {
   const props = arguments[0];
+  element = "button";
+  console.log(element);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<any>(undefined);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
@@ -52,24 +54,6 @@ export default function AIButton({ cacheResponse = true }: AIButtonProps) {
     };
     getEvent();
   }, []);
-
-  // const generateResponse = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch(urls.generativeAi, {
-  //       ...postMethod,
-  //       body: jsonSanitizer(props),
-  //     });
-  //     if (!response.ok) throw new Error(await response.text());
-  //     const data = (await response.json()) as AIResponse;
-  //     if (data.error) setError(data.error);
-  //   } catch (err) {
-  //     console.log(err);
-  //     setError({ err: err });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   createIrcRegisteryUseableUseEffects({
     props,

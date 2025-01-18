@@ -8,8 +8,6 @@ import {
 import { AIInputProps } from "@types";
 import extractInfoFromProps from "@utils/extractInfoFromProps";
 import Loader from "../loader/Loader";
-// import { postMethod, urls } from "@utils/utils";
-// import jsonSanitizer from "@utils/jsonSanitizer";
 import generateResponse from "@utils/generateResponse";
 
 interface MyModule {
@@ -17,8 +15,12 @@ interface MyModule {
   meta?: any;
 }
 
-export default function AIInput({ cacheResponse = false }: AIInputProps) {
+export default function AIInput({
+  cacheResponse = false,
+  element = "input",
+}: AIInputProps) {
   const props = arguments[0];
+  element = "input";
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<any>(undefined);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
@@ -49,28 +51,6 @@ export default function AIInput({ cacheResponse = false }: AIInputProps) {
     getEvent();
   }, []);
 
-  // const generateResponse = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch(urls.generativeAi, {
-  //       ...postMethod,
-  //       body: jsonSanitizer(props),
-  //     });
-  //     if (!response.ok) throw new Error(await response.text());
-  //     const data = (await response.json()) as AIResponse;
-  //     if (data.error) setError(data.error);
-  //   } catch (err) {
-  //     console.log(err);
-  //     setError({ err: err });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  setLoading;
-  setError;
-  setEvent;
-  setResponseMeta;
   error;
   responseMeta;
   return (

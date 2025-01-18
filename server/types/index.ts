@@ -1,48 +1,43 @@
+import { DOMAttributes, HTMLAttributes } from "react";
 import { Request, Response } from "express";
 type RouteHandler = (req: Request, res: Response) => void;
-type Listner =
-  | "click"
-  | "mousedown"
-  | "mouseup"
-  | "mouseover"
-  | "mousemove"
-  | "mouseLeave"
-  | "mouseEnter"
-  | "focus"
-  | "blur"
-  | "change"
-  | "submit"
-  | "scroll";
 
-interface AIButtonProps {
+interface Common<Others = undefined, T = Function> {
+  cacheResponse?: boolean;
   prompt: string;
   filename: string;
-  label?: string;
-  listner: Listner;
+  listner: keyof DOMAttributes<HTMLElement>;
+  htmlAttributes?: HTMLAttributes<HTMLButtonElement>;
   supportingProps?: {
     utils?: {
-      [key: string]: string;
+      [key: string]: any;
+    };
+    database?: {
+      name: string;
+      envGuide: string;
     };
     parameters?: any[];
+    variables?: {
+      [key: string]: any;
+    };
   };
   mutation?: {
-    id: any;
+    id: string;
     returnFormat: any;
     mutate: any;
-    mutationType: "callback" | "assignment";
+    mutationType?: "callback" | "assignment";
   }[];
-
   callbacks?: {
-    independent?: { useGuide: string; callback: Function[] }[];
+    independent?: { callGuide: string; callback: T }[];
     dependent?: {
       callGuide: string;
       parametersGuide: string[];
-      callback: Function;
-    };
-  };
-  globals: {
+      callback: T;
+    }[];
     [key: string]: any;
   };
+  others?: Partial<Others>;
+  [key: string]: any;
 }
 
 interface AIResponse {
@@ -53,16 +48,16 @@ interface AIResponse {
       [key: string]: any;
     };
     imports?: string[];
-    helperFunctions?:Function[]
+    helperFunctions?: Function[];
   };
   error: {
     message: string;
     status: number;
     details: string;
-    code:string
+    code: string;
   };
-  
+
   expect?: string;
 }
 
-export type { RouteHandler, AIButtonProps, AIResponse };
+export type { RouteHandler, Common, AIResponse };

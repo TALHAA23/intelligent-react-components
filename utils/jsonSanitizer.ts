@@ -1,8 +1,7 @@
 import { Common } from "@/types";
 
-// function jsonSanitizer(buttonProps: AIButtonProps) {
-function jsonSanitizer(buttonProps: Common) {
-  const sanitizedButtonProps = { ...buttonProps }; // Create a copy
+function jsonSanitizer(props: Common) {
+  const sanitizedButtonProps = { ...props }; // Create a copy
   // Focus on modifying the callbacks field
   if (sanitizedButtonProps.callbacks) {
     sanitizedButtonProps.callbacks = sanitizeCallbacks(
@@ -19,8 +18,6 @@ function jsonSanitizer(buttonProps: Common) {
 }
 
 function sanitizeCallbacks(
-  // callbacks: AIButtonProps["callbacks"]
-  // ): Common["callbacks"] {
   callbacks: Common["callbacks"]
 ): Common["callbacks"] {
   const sanitizedCallbacks = { ...callbacks }; // Create a copy of callbacks
@@ -47,11 +44,7 @@ function sanitizeCallbacks(
 
   return sanitizedCallbacks;
 }
-function sanitizeMutations(
-  //   mutation: AIButtonProps["mutation"]
-  // ): AIButtonProps["mutation"] {
-  mutation: Common["mutation"]
-): Common["mutation"] {
+function sanitizeMutations(mutation: Common["mutation"]): Common["mutation"] {
   if (!mutation) return;
   const sanitizedMutations = [...mutation];
   sanitizedMutations?.map((mutation) => {

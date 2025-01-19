@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import stars from "@public/re-generate.svg";
 import { StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
@@ -11,16 +11,14 @@ import Loader from "../loader/Loader";
 import generateResponse from "@utils/generateResponse";
 
 interface MyModule {
-  default: (event: MouseEvent, ...args: unknown[]) => unknown;
+  default: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    ...args: unknown[]
+  ) => unknown;
   meta?: any;
 }
 
-export default function AIInput({
-  cacheResponse = false,
-  element = "input",
-}: AIInputProps) {
-  const props = arguments[0];
-  element = "input";
+export default function AIInput(props: AIInputProps) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<any>(undefined);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
@@ -28,9 +26,10 @@ export default function AIInput({
     undefined | MyModule["meta"]
   >(event?.meta);
   const args = extractInfoFromProps(props);
-  const eventListner: React.DOMAttributes<HTMLButtonElement> = {
-    [props?.listner || "onClick"]: event
-      ? (e: MouseEvent) => event.default(e, args ? args : undefined)
+  const eventListner: React.DOMAttributes<HTMLInputElement> = {
+    [props?.listner || "onChange"]: event
+      ? (e: React.ChangeEvent<HTMLInputElement>) =>
+          event.default(e, args ? args : undefined)
       : undefined,
   };
 
@@ -43,7 +42,10 @@ export default function AIInput({
         setResponseMeta(event.meta);
       } catch (err) {
         console.log(err);
-        await generateResponse(setLoading, setError, props);
+        await generateResponse(setLoading, setError, {
+          ...props,
+          element: "input",
+        });
       } finally {
         setLoading(false);
       }
@@ -62,7 +64,7 @@ export default function AIInput({
         disabled={loading}
       />
       {loading && <Loader />}
-      {!cacheResponse && (
+      {props.cacheResponse == false && (
         <StyledNoStyleButton disabled={loading}>
           <StyledRegenerateIcon
             src={stars}

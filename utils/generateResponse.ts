@@ -1,4 +1,4 @@
-import { Common } from "@types";
+import { AIButtonProps, AIInputProps } from "@types";
 import jsonSanitizer from "./jsonSanitizer";
 import { postMethod, urls } from "./utils";
 import React from "react";
@@ -8,7 +8,7 @@ export default async function generateResponse(
   setError: React.Dispatch<
     React.SetStateAction<{ err: any } | AIResponse["error"]>
   >,
-  props: Common
+  props: AIButtonProps | AIInputProps
 ) {
   setLoading(true);
   try {

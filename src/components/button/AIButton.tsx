@@ -1,7 +1,6 @@
 import React from "react";
 import { AIButtonProps } from "@/types/index";
 import Loader from "@components/loader/Loader";
-import processAIButtonProps from "@/utils/processAIButtonProps";
 import stars from "@public/re-generate.svg";
 import createIrcRegisteryUseableUseEffects from "./useEffects.hook";
 import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
@@ -10,25 +9,20 @@ import {
   StyledComponentsWrapper,
 } from "@styles/StylesCommon";
 import generateResponse from "@utils/generateResponse";
+import extractInfoFromProps from "@utils/extractInfoFromProps";
 interface MyModule {
   default: (event: MouseEvent, ...args: unknown[]) => unknown;
   meta?: any;
 }
 
-export default function AIButton({
-  cacheResponse = true,
-  element = "button",
-}: AIButtonProps) {
-  const props = arguments[0];
-  element = "button";
-  console.log(element);
+export default function AIButton(props: AIButtonProps) {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<any>(undefined);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
   const [responseMeta, setResponseMeta] = React.useState<
     undefined | MyModule["meta"]
   >(event?.meta);
-  const args = processAIButtonProps(props);
+  const args = extractInfoFromProps({ ...props, element: "button" });
   const eventListner: React.DOMAttributes<HTMLButtonElement> = {
     [props?.listner || "onClick"]: event
       ? (e: MouseEvent) => event.default(e, args ? args : undefined)
@@ -47,7 +41,10 @@ export default function AIButton({
         setResponseMeta(event.meta);
       } catch (err) {
         console.log(err);
-        await generateResponse(setLoading, setError, props);
+        await generateResponse(setLoading, setError, {
+          ...props,
+          element: "button",
+        });
       } finally {
         setLoading(false);
       }
@@ -77,7 +74,7 @@ export default function AIButton({
           <span className="text">{props.label || "AIButton"}</span>
         )}
       </StyledAIButton>
-      {!cacheResponse && (
+      {props.cacheResponse == false && (
         <StyledNoStyleButton
           disabled={loading}
           onClick={() => generateResponse(setLoading, setError, props)}

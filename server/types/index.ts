@@ -1,13 +1,15 @@
 import { DOMAttributes, HTMLAttributes } from "react";
 import { Request, Response } from "express";
 type RouteHandler = (req: Request, res: Response) => void;
+type Element = "input" | "button";
 
 interface Common<Others = undefined, T = Function> {
   cacheResponse?: boolean;
   prompt: string;
   filename: string;
   listner: keyof DOMAttributes<HTMLElement>;
-  htmlAttributes?: HTMLAttributes<HTMLButtonElement>;
+  element?: Element;
+  htmlAttributes?: HTMLAttributes<Others>;
   supportingProps?: {
     utils?: {
       [key: string]: any;

@@ -8,7 +8,7 @@ interface Common<Others = undefined, T = Function> {
   filename: string;
   listner: keyof DOMAttributes<HTMLElement>;
   element?: Element;
-  htmlAttributes?: HTMLAttributes<HTMLButtonElement>;
+  htmlAttributes?: HTMLAttributes<Others>;
   supportingProps?: {
     utils?: {
       [key: string]: any;

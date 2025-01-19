@@ -12,5 +12,11 @@ const log = (...args: string[]) => ({
   info: () => {
     console.log("\n", "\x1b[34m", `${args.join(" ")}`, reset);
   },
+  step: () => {
+    console.log("\x1b[1m\x1b[36m", `${args.join(" ")}`, reset); // Bold Cyan, reset at the end
+  },
+  subStep: () => {
+    console.log("\x1b[36m", `${args.join(" ")}`, reset); // Cyan without bold and added padding, reset at the end
+  },
 });
 export default log;

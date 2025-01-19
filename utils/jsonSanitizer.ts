@@ -1,6 +1,6 @@
-import { Common } from "@/types";
+import { AIButtonProps, AIInputProps, Common } from "@/types";
 
-function jsonSanitizer(props: Common) {
+function jsonSanitizer(props: AIButtonProps | AIInputProps) {
   const sanitizedButtonProps = { ...props }; // Create a copy
   // Focus on modifying the callbacks field
   if (sanitizedButtonProps.callbacks) {

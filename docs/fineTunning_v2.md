@@ -685,9 +685,9 @@ This subsection shows how to call utility functions from `supportingProps.utils`
 }
 ```
 
-### Combined Variable and Utility Use
+### Combined Variable and Utils Use
 
-This subsection combines the use of variables and utility functions within a single event listener function.
+This subsection combines the use of variables and utils within a single event listener function.
 
 **Example 1: Conditional DOM Manipulation with Variable and Utility**
 

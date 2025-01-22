@@ -1579,40 +1579,428 @@ This section demonstrates how to establish a connection to Firebase or Supabase 
   ],
   "expect": "The user must have the Supabase JavaScript client library installed. The environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set correctly. A table named 'products' with columns 'id', 'price', 'item', and 'category' must exist in the Supabase database. The 'id' column should be the primary key. A div with id 'productList' must exist in the DOM."
 }
+}
 ```
+
+### Storage operations
+
+#### Firebase Storage with File Input
+
+**Description:** Demonstrates using a file input (type="file") to upload a selected file to Firebase Storage, retrieve its URL, and display the uploaded image in the DOM.
 
 **Input JSON**
 
 ```json
-
+{
+  "type": "file",
+  "listener": "onChange",
+  "prompt": "When a file is selected in this input, upload it to Firebase Storage under the '/Uploads/' folder. After the upload, retrieve the download URL and display the uploaded image inside a div with id 'imagePreview'. If an error occurs during the upload, display the error message inside the same div.",
+  "supportingProps": {
+    "database": {
+      "name": "firebase storage",
+      "envGuide": "use NEXT_PUBLIC at the beginning and _P2 at the end"
+    }
+  }
+}
 ```
 
 **Output JSON**
 
 ```json
-
+{
+  "thoughts": "This example ties the file input directly to Firebase Storage operations. The selected file is uploaded, its URL is retrieved, and the resulting image is displayed dynamically in the DOM. Robust error handling is included for a seamless user experience.",
+  "error": {},
+  "response": {
+    "eventListener": "async function main(event, args) {\n  try {\n    const file = event.target.files[0];\n    if (!file) {\n      document.getElementById('imagePreview').innerHTML = '<p>No file selected</p>';\n      return;\n    }\n\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n      appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n    });\n\n    const storage = getStorage();\n    const storageRef = ref(storage, `/Uploads/${file.name}`);\n\n    // Upload the file to Firebase Storage\n    await uploadBytes(storageRef, file);\n\n    // Retrieve the download URL\n    const imgSrc = await getDownloadURL(storageRef);\n\n    // Update the DOM to display the image\n    const img = document.createElement('img');\n    img.src = imgSrc;\n    img.alt = 'Uploaded file';\n    img.style.maxWidth = '100%';\n    document.getElementById('imagePreview').innerHTML = '';\n    document.getElementById('imagePreview').appendChild(img);\n  } catch (error) {\n    console.error('An error occurred:', error);\n    document.getElementById('imagePreview').innerHTML = `<p>Error: ${error.message}</p>`;\n  }\n}",
+    "globals": {},
+    "imports": [
+      "import { initializeApp } from 'firebase/app';",
+      "import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';"
+    ]
+  },
+  "expect": "The user must have Firebase installed and the environment variables NEXT_PUBLIC_API_KEY_P2, NEXT_PUBLIC_AUTH_DOMAIN_P2, NEXT_PUBLIC_PROJECT_ID_P2, NEXT_PUBLIC_STORAGE_BUCKET_P2, NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, and NEXT_PUBLIC_APP_ID_P2 configured. A div with id 'imagePreview' must exist in the DOM."
+}
 ```
+
+### Auth operations
+
+#### Auth Operations: Registering a User via Input - Supabase
+
+**Description:** Registers a user with Supabase Authentication. This version uses an input field of type email, and when the user blurs (focus is removed from the input), it checks the validity of the email and password. If the password does not meet the requirements, an error message is displayed.
 
 **Input JSON**
 
 ```json
-
+{
+  "type": "email",
+  "listener": "blur",
+  "prompt": "When the user finishes typing in this email input, validate the email and password entered in the corresponding password input (with id 'password'). If the email is valid and the password contains at least one uppercase letter and is 6 characters long, attempt to register the user with Supabase. If validation fails, display an error message below the input.",
+  "supportingProps": {
+    "database": {
+      "name": "Supabase Auth",
+      "envGuide": "use NEXT_PUBLIC at the beginning and _P2 at the end"
+    }
+  }
+}
 ```
 
 **Output JSON**
 
 ```json
-
+{
+  "thoughts": "This example integrates directly with an email input field and validates email and password upon user interaction. It ensures password requirements are met before attempting registration with Supabase.",
+  "error": {},
+  "response": {
+    "eventListener": "async function main(event, args) {\n  try {\n    const email = event.target.value.trim();\n    const passwordInput = document.getElementById('password');\n    if (!passwordInput) {\n      console.error('Password input element not found.');\n      return;\n    }\n    const password = passwordInput.value.trim();\n\n    // Validate email format\n    const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n    if (!emailPattern.test(email)) {\n      displayError('Invalid email format.');\n      return;\n    }\n\n    // Validate password requirements\n    if (password.length < 6 || !/[A-Z]/.test(password)) {\n      displayError(\n        'Password must be at least 6 characters long and contain at least one uppercase letter.'\n      );\n      return;\n    }\n\n    // Initialize Supabase client\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n    if (!supabaseUrl || !supabaseKey) {\n      throw new Error(\n        'Supabase URL or key not found in environment variables.'\n      );\n    }\n    const supabase = createClient(supabaseUrl, supabaseKey);\n\n    // Register user\n    const { data, error } = await supabase.auth.signUp({ email, password });\n    if (error) {\n      displayError('Error creating user: ' + error.message);\n    } else {\n      console.log('User created successfully:', data);\n      displaySuccess('User registered successfully!');\n    }\n  } catch (error) {\n    console.error('An error occurred:', error);\n  }\n\n  function displayError(message) {\n    const errorDiv = document.getElementById('error-message');\n    if (errorDiv) {\n      errorDiv.textContent = message;\n      errorDiv.style.color = 'red';\n    }\n  }\n\n  function displaySuccess(message) {\n    const successDiv = document.getElementById('error-message');\n    if (successDiv) {\n      successDiv.textContent = message;\n      successDiv.style.color = 'green';\n    }\n  }\n}",
+    "globals": {},
+    "imports": ["import { createClient } from '@supabase/supabase-js';"]
+  },
+  "expect": "The user must have the Supabase JavaScript client library installed. The environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set correctly. An input with id 'password' and a div with id 'error-message' must be present in the DOM."
+}
 ```
+
+#### Sign-In a User and Store Access Token in Cookies - Supabase
+
+**Description:** The example shows how to sign in a user using an input field for email. Upon blur (user leaving the email input), the function validates the email format. If valid, it uses the provided email and password (via a separate password field) to log in the user with Supabase Authentication. On successful login, the token is stored in cookies.
 
 **Input JSON**
 
 ```json
-
+{
+  "type": "email",
+  "listener": "onBlur",
+  "prompt": "When the user finishes typing in this email input, validate the email. If valid, use this email along with the password in the corresponding input (with id 'password') to log in the user using Supabase Authentication. If login is successful, store the access token in cookies with the key 'supabase-auth-token'. Display success or error alerts accordingly.",
+  "supportingProps": {
+    "database": {
+      "name": "supabase Auth",
+      "envGuide": "use NEXT_PUBLIC before each"
+    }
+  }
+}
 ```
 
 **Output JSON**
 
 ```json
+{
+  "thoughts": "This example integrates directly with an email input and triggers authentication logic upon user interaction. It ensures email validity before attempting to log in, handles errors, and stores the token in cookies upon success.",
+  "error": {},
+  "response": {
+    "eventListener": "async function main(event, args) {\n  try {\n    const email = event.target.value.trim();\n    const passwordInput = document.getElementById('password');\n    if (!passwordInput) {\n      console.error('Password input element not found.');\n      return;\n    }\n    const password = passwordInput.value.trim();\n\n    // Validate email format\n    const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n    if (!emailPattern.test(email)) {\n      alert('Invalid email format.');\n      return;\n    }\n\n    // Initialize Supabase client\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n    if (!supabaseUrl || !supabaseKey) {\n      throw new Error('Supabase URL or key not found in environment variables.');\n    }\n    const supabase = createClient(supabaseUrl, supabaseKey);\n\n    // Sign-in user\n    const { data, error } = await supabase.auth.signInWithPassword({\n      email,\n      password,\n    });\n    if (error) {\n      alert(`Error logging in: ${error.message}`);\n      throw error;\n    }\n    if (data) {\n      const { user } = data;\n      const accessToken = data.session.access_token;\n      document.cookie = `supabase-auth-token=${accessToken}; path=/`;\n      alert('Login successful!');\n      console.log('User logged in:', user);\n    }\n  } catch (error) {\n    console.error('An error occurred:', error);\n    alert(`Error: ${error.message}`);\n  }\n}",
+    "globals": {},
+    "imports": ["import { createClient } from '@supabase/supabase-js';"]
+  },
+  "expect": "The user must have the Supabase JavaScript client library installed. The environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set correctly. Elements with IDs 'password' must exist in the DOM."
+}
+```
 
+### Real-time database
+
+#### Add Element and Create Listener (Firebase Real-time Database)
+
+**Description:** This example handles changes in a text input (e.g., with class .message) by adding its value to the todos branch in Firebase Realtime Database. It also sets up a real-time listener for the todos branch (executed once only) and logs updates to the console. The database reference is stored in globals to avoid reinitializing on subsequent events.
+
+**Input JSON**
+
+```json
+{
+  "type": "text",
+  "listener": "change",
+  "prompt": "When the user updates this input, add its value to the 'todos' branch in Firebase Realtime Database. Use the global database reference to avoid reinitialization. Before adding, create a real-time listener for the branch (executed once only) and log updates to the console.",
+  "supportingProps": {
+    "database": {
+      "name": "firebase real-time",
+      "envGuide": "use NEXT_PUBLIC at the beginning and _P2 at the end"
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "This example integrates with a text input field and triggers Firebase Realtime Database operations on user interaction. It stores the database reference in globals to ensure efficient handling of database operations across multiple events.",
+  "error": {},
+  "response": {
+    "eventListener": "async function main(event, args) {\n  try {\n    const message = event.target.value.trim();\n    if (!message) {\n      console.error('Message is empty');\n      return;\n    }\n\n    if (!globals.firebaseDb) {\n      initializeApp({\n        apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n        authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n        projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n        storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n        messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n        appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n      });\n      globals.firebaseDb = getDatabase();\n    }\n\n    const db = globals.firebaseDb;\n    const newMessageRef = push(\n      child(ref(db, 'todos'), Date.now().toString())\n    );\n    await set(newMessageRef, { message });\n    event.target.value = '';\n\n    if (!globals.todosRealTimeListenerSetted) {\n      globals.todosRealTimeListenerSetted = true;\n      onValue(ref(db, 'todos'), (snapshot) => {\n        const data = snapshot.val();\n        console.log('Realtime data update:', data);\n      });\n    }\n  } catch (error) {\n    console.error('Error:', error);\n  }\n}",
+    "globals": {
+      "firebaseDb": null,
+      "todosRealTimeListenerSetted": false
+    },
+    "imports": [
+      "import { initializeApp } from 'firebase/app';",
+      "import { getDatabase, ref, push, child, set, onValue } from 'firebase/database';"
+    ]
+  },
+  "expect": "The user must have the Firebase package installed and have the necessary environment variables set (NEXT_PUBLIC_API_KEY_P2, NEXT_PUBLIC_AUTH_DOMAIN_P2, NEXT_PUBLIC_PROJECT_ID_P2, NEXT_PUBLIC_STORAGE_BUCKET_P2, NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, NEXT_PUBLIC_APP_ID_P2). A text input field with this handler attached must exist in the DOM."
+}
+```
+
+## Handling Very Complex Prompts
+
+### Advanced Input Management
+
+**Description:**
+This example demonstrates a highly dynamic search bar integrated with Firebase Firestore and local state management. The search bar performs:
+
+- Real-time search suggestions.
+- Advanced caching for optimized performance.
+- Fallback for offline mode with a preloaded dataset.
+- Toaster feedback for search success/errors.
+
+**Input JSON**
+
+```json
+{
+  "type": "text",
+  "listener": "onInput",
+  "prompt": "Create a dynamic search bar that shows live suggestions based on user input. The suggestions are fetched from a 'products' Firestore collection. If the user is offline, fallback to a cached dataset and show a toaster indicating offline mode. Ensure efficient performance by implementing a caching layer for fetched results. Also, implement debouncing (500ms) to limit API calls. The search bar should validate input to avoid empty or invalid queries. Display suggestions in a styled dropdown below the search bar. Each suggestion should be clickable, and clicking on a suggestion should log the product details to the console.",
+  "supportingProps": {
+    "database": {
+      "name": "firebase firestore",
+      "envGuide": "use NEXT_PUBLIC at the beginning and _P2 at the end of each"
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "This example combines Firestore integration, caching, input validation, debouncing, and offline fallback. The code promotes modularity with helper functions and efficient resource handling through `globals`.",
+  "error": {},
+  "response": {
+    "eventListener": "async function main(event, args) {\n  const query = event.target.value.trim();\n  if (!query) return;\n  clearTimeout(globals.searchDebounceTimer);\n  globals.searchDebounceTimer = setTimeout(() => fnHandleSearch(query), 500);\n}",
+    "globals": {
+      "firestoreDb": null,
+      "searchDebounceTimer": null,
+      "cachedProducts": null,
+      "isOfflineMode": false
+    },
+    "helperFunctions": [
+      "function fnInitializeApp() {\n  if (!globals.firestoreDb) {\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n      appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n    });\n    globals.firestoreDb = getFirestore();\n  }\n}",
+      "async function fnHandleSearch(query) {\n  try {\n    fnShowToaster('Searching...', 'info');\n\n    if (!globals.cachedProducts) {\n      await fnLoadOfflineData();\n    }\n\n    const results = globals.isOfflineMode\n      ? fnFilterLocalCache(query)\n      : await fnFetchSuggestions(query);\n\n    fnDisplaySuggestions(results);\n    fnShowToaster('Search complete.', 'success');\n  } catch (error) {\n    fnShowToaster('Search failed. ' + error.message, 'error');\n  }\n}",
+      "async function fnFetchSuggestions(query) {\n  fnInitializeApp();\n  const db = globals.firestoreDb;\n  const productsRef = collection(db, 'products');\n  const q = query(collection(productsRef), where('name', '>=', query), where('name', '<=', query + '\\\\uf8ff'));\n  const querySnapshot = await getDocs(q);\n\n  const results = [];\n  querySnapshot.forEach((doc) => results.push({ id: doc.id, ...doc.data() }));\n\n  return results;\n}",
+      "function fnFilterLocalCache(query) {\n  if (!globals.cachedProducts) return [];\n  const lowerCaseQuery = query.toLowerCase();\n  return globals.cachedProducts.filter((product) =>\n    product.name.toLowerCase().includes(lowerCaseQuery)\n  );\n}",
+      "async function fnLoadOfflineData() {\n  try {\n    const response = await fetch('/path/to/preloaded/products.json');\n    globals.cachedProducts = await response.json();\n    globals.isOfflineMode = !navigator.onLine;\n    if (globals.isOfflineMode) fnShowToaster('Offline mode activated.', 'warning');\n  } catch (error) {\n    fnShowToaster('Failed to load offline data.', 'error');\n  }\n}",
+      "function fnDisplaySuggestions(results) {\n  const suggestionBox = document.getElementById('suggestion-box');\n  suggestionBox.innerHTML = '';\n  results.forEach((result) => {\n    const item = document.createElement('div');\n    item.textContent = result.name;\n    item.classList.add('suggestion-item');\n    item.onclick = () => console.log('Selected product:', result);\n    suggestionBox.appendChild(item);\n  });\n}",
+      "function fnShowToaster(message, type = 'info') {\n  const toaster = document.createElement('div');\n  toaster.style.cssText = `\n    position: fixed;\n    bottom: 20px;\n    right: 20px;\n    background-color: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};\n    color: white;\n    padding: 10px;\n    border-radius: 5px;\n    z-index: 1000;\n  `;\n  toaster.textContent = message;\n  document.body.appendChild(toaster);\n  setTimeout(() => toaster.remove(), 3000);\n}"
+    ],
+    "imports": [
+      "import { initializeApp } from 'firebase/app';",
+      "import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';"
+    ]
+  },
+  "expect": "The user must have Firebase and Firestore configured with the appropriate environment variables. A 'products' collection must exist in Firestore. Additionally, a local dataset must be available for offline fallback at the specified path."
+}
+```
+
+## Edge Cases
+
+This section tests the model's robustness by including examples of edge cases and potential error conditions.
+
+### Example 1: Input Type Mismatch
+
+**Description:** This tests the scenario where the type of a provided variable does not match the expected type.
+
+**Input JSON**
+
+```json
+{
+  "listner": "input",
+  "prompt": "Validate that the age entered is a number and greater than 18.",
+  "supportingProps": {
+    "variables": {
+      "_age": "twenty"
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The '_age' variable is provided as a string ('twenty'), but the prompt expects a numeric value for validation. An error will be returned.",
+  "error": {
+    "message": "Type mismatch",
+    "status": 400,
+    "details": "The variable '_age' should be a number but is provided as a string.",
+    "code": "TYPE_MISMATCH"
+  },
+  "response": {},
+  "expect": ""
+}
+```
+
+### Example 2: Missing Input Validation Rule
+
+**Description:** This tests the scenario where a validation rule referenced in the prompt is missing
+
+**Input JSON**
+
+```json
+{
+  "listner": "input",
+  "prompt": "Validate that the email entered is valid using the rule 'isValidEmail'.",
+  "supportingProps": {
+    "utils": {}
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The prompt references a validation rule 'isValidEmail', but it is missing from supportingProps.utils. An error will be returned.",
+  "error": {
+    "message": "Missing validation rule",
+    "status": 400,
+    "details": "The validation rule 'isValidEmail' is referenced in the prompt but not defined in supportingProps.utils.",
+    "code": "MISSING_VALIDATION_RULE"
+  },
+  "response": {},
+  "expect": ""
+}
+```
+
+### Example 3: Empty Input Field
+
+**Description:** This tests the scenario where the input field is left empty.
+
+Input JSON:
+**Input JSON**
+
+```json
+{
+  "listner": "blur",
+  "prompt": "Show an error message if the 'username' field is left empty.",
+  "supportingProps": {
+    "variables": {
+      "_username": ""
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The '_username' variable is an empty string. The prompt expects the field to be non-empty. An error will be returned to prompt the user to correct the issue.",
+  "error": {
+    "message": "Empty input field",
+    "status": 400,
+    "details": "The 'username' field is required but was provided as an empty string.",
+    "code": "EMPTY_INPUT_FIELD"
+  },
+  "response": {},
+  "expect": ""
+}
+```
+
+### Example 4: Invalid Input Format
+
+**Description:** This tests the scenario where the input format does not meet the expected pattern.
+
+**Input JSON**
+
+```json
+{
+  "listner": "input",
+  "prompt": "Validate that the phone number entered is in the format '+1234567890'.",
+  "supportingProps": {
+    "variables": {
+      "_phoneNumber": "123-456-7890"
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The '_phoneNumber' variable does not match the required format '+1234567890'. An error will be returned to indicate the invalid input format.",
+  "error": {
+    "message": "Invalid input format",
+    "status": 400,
+    "details": "The 'phone number' input does not match the required format '+1234567890'.",
+    "code": "INVALID_INPUT_FORMAT"
+  },
+  "response": {},
+  "expect": ""
+}
+```
+
+### Example 5: Non-Optional Input Missing
+
+**Description:** This tests the scenario where a required input is missing entirely.
+
+**Input JSON**
+
+```json
+{
+  "listner": "submit",
+  "prompt": "Submit the form only if all required fields ('username', 'email', 'password') are filled.",
+  "supportingProps": {
+    "variables": {
+      "_username": "JohnDoe",
+      "_email": "john.doe@example.com"
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The '_password' field is missing from the input JSON. A validation error will be returned.",
+  "error": {
+    "message": "Missing required input",
+    "status": 400,
+    "details": "The '_password' field is required but not provided in supportingProps.variables.",
+    "code": "MISSING_REQUIRED_INPUT"
+  },
+  "response": {},
+  "expect": ""
+}
+```
+
+### Example 6: Unsupported Input Type
+
+**Description:** This tests the scenario where the input type is not supported.
+
+**Input JSON**
+
+```json
+{
+  "listner": "input",
+  "prompt": "Validate the input for the 'file' field.",
+  "supportingProps": {
+    "variables": {
+      "_file": {}
+    }
+  }
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The '_file' input type is not supported for validation. An error will be returned.",
+  "error": {
+    "message": "Unsupported input type",
+    "status": 400,
+    "details": "The '_file' input type is not supported for validation in this prompt.",
+    "code": "UNSUPPORTED_INPUT_TYPE"
+  },
+  "response": {},
+  "expect": ""
+}
 ```

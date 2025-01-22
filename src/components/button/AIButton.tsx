@@ -66,6 +66,7 @@ export default function AIButton(props: AIButtonProps) {
       <StyledAIButton
         {...eventListner}
         {...props.htmlAttributes}
+        {...props.attributes}
         disabled={loading}
       >
         {loading ? (

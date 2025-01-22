@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 import stars from "@public/re-generate.svg";
 import { StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
@@ -58,9 +58,10 @@ export default function AIInput(props: AIInputProps) {
   return (
     <StyledComponentsWrapper>
       <input
-        type="text"
+        type={props.type || "text"}
         {...eventListner}
         {...props.htmlAttributes}
+        {...props.attributes}
         disabled={loading}
       />
       {loading && <Loader />}
@@ -70,6 +71,12 @@ export default function AIInput(props: AIInputProps) {
             src={stars}
             alt="re-generate"
             title="Re-generate"
+            onClick={() =>
+              generateResponse(setLoading, setError, {
+                ...props,
+                element: "input",
+              })
+            }
           />
         </StyledNoStyleButton>
       )}

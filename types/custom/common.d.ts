@@ -1,14 +1,14 @@
-import { DOMAttributes, HTMLAttributes } from "react";
+import React from "react";
 
 type Element = "input" | "button";
 
-interface Common<Others = undefined, T = Function> {
+interface Common<T = Function> {
   cacheResponse?: boolean = false;
   prompt: string;
   filename: string;
-  listner: keyof DOMAttributes<HTMLElement>;
+  listner: keyof React.DOMAttributes<React.ReactHTMLElement>;
   element?: Element;
-  htmlAttributes?: HTMLAttributes<Others>;
+  htmlAttributes?: React.HTMLAttributes<React.ReactHTMLElement>
   supportingProps?: {
     utils?: {
       [key: string]: any;
@@ -37,7 +37,6 @@ interface Common<Others = undefined, T = Function> {
     }[];
     [key: string]: any;
   };
-  others?: Partial<Others>;
   [key: string]: any;
 }
 

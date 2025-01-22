@@ -3,13 +3,13 @@ import { Request, Response } from "express";
 type RouteHandler = (req: Request, res: Response) => void;
 type Element = "input" | "button";
 
-interface Common<Others = undefined, T = Function> {
+interface Common<T = Function> {
   cacheResponse?: boolean;
   prompt: string;
   filename: string;
   listner: keyof DOMAttributes<HTMLElement>;
   element?: Element;
-  htmlAttributes?: HTMLAttributes<Others>;
+  htmlAttributes?: HTMLAttributes<HTMLElement>;
   supportingProps?: {
     utils?: {
       [key: string]: any;
@@ -38,7 +38,6 @@ interface Common<Others = undefined, T = Function> {
     }[];
     [key: string]: any;
   };
-  others?: Partial<Others>;
   [key: string]: any;
 }
 

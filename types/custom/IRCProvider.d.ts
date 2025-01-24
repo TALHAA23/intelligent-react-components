@@ -3,9 +3,9 @@ import { AIResponse } from "@server-types/index";
 
 // action interface
 type ACTIONS =
-  | "new-button"
-  | "update-button-status"
-  | "update-button-error-or-response";
+  | "new"
+  | "update-status"
+  | "update-error-or-response";
 type STATUS = "unknown" | "pending" | "successful" | "refreshing" | "error";
 
 export type Action = {

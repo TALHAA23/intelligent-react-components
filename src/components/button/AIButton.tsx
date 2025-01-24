@@ -2,7 +2,6 @@ import React from "react";
 import { AIButtonProps } from "@/types/index";
 import Loader from "@components/loader/Loader";
 import stars from "@public/re-generate.svg";
-import createIrcRegisteryUseableUseEffects from "./useEffects.hook";
 import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
   StyledNoStyleButton,
@@ -10,6 +9,7 @@ import {
 } from "@styles/StylesCommon";
 import generateResponse from "@utils/generateResponse";
 import extractInfoFromProps from "@utils/extractInfoFromProps";
+import componentRegistrar from "@src/hooks/ircRegistrar";
 interface MyModule {
   default: (event: MouseEvent, ...args: unknown[]) => unknown;
   meta?: any;
@@ -52,14 +52,14 @@ export default function AIButton(props: AIButtonProps) {
     getEvent();
   }, []);
 
-  createIrcRegisteryUseableUseEffects({
-    props,
+  componentRegistrar(
+   { props,
     loading,
     event,
-    refreshResponse: () => generateResponse(setLoading, setError, props),
-    error,
-    responseMeta,
-  });
+       error,
+       responseMeta,
+       refreshResponse:()=>generateResponse(setLoading, setError, props),}
+  )
   // ! Attention required: The Button is Styled hardcoded and users might not be able to change its styles
   return (
     <StyledComponentsWrapper>

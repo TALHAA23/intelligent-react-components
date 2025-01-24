@@ -3,7 +3,7 @@ import React from "react";
 type Element = "input" | "button";
 
 interface Common<T = Function> {
-  cacheResponse?: boolean = false;
+  cacheResponse?: boolean;
   prompt: string;
   filename: string;
   listner: keyof React.DOMAttributes<React.ReactHTMLElement>;
@@ -38,6 +38,9 @@ interface Common<T = Function> {
     [key: string]: any;
   };
   [key: string]: any;
+  // onInit?:Function|string
+  // onInit?: ((...args: any[]) => void) | string;
+
 }
 
 export type { Common };

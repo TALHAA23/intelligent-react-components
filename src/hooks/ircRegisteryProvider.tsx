@@ -1,4 +1,5 @@
 import { Action, IRCRegisteryProviderState } from "@/types/custom/IRCProvider";
+import { IRC_ACTIONS } from "@utils/utils";
 import { createContext, ReactNode, useContext, useReducer } from "react";
 const initialValue: IRCRegisteryProviderState = {
   registerButtons: [],
@@ -15,7 +16,7 @@ const reducer = (prevState: IRCRegisteryProviderState, action: Action) => {
     (button) => button.filename == payload.filename
   )[0];
   switch (type) {
-    case "new-button":
+    case IRC_ACTIONS.new:
       if (findExisting) {
         return prevState;
       }
@@ -23,7 +24,7 @@ const reducer = (prevState: IRCRegisteryProviderState, action: Action) => {
         ...prevState,
         registerButtons: [...prevState.registerButtons, action.payload],
       };
-    case "update-button-status": {
+    case IRC_ACTIONS.updateStatus: {
       const updatedButtons = prevState.registerButtons.map((button) =>
         button.filename == payload.filename
           ? { ...button, status: payload.status }
@@ -34,7 +35,7 @@ const reducer = (prevState: IRCRegisteryProviderState, action: Action) => {
         registerButtons: updatedButtons,
       };
     }
-    case "update-button-error-or-response": {
+    case IRC_ACTIONS.updateErrorAndResponse: {
       const updatedButtons = prevState.registerButtons.map((button) =>
         button.filename == payload.filename
           ? {

@@ -167,9 +167,9 @@ const models: Models = {
   },
 };
 
-const model = genAI.getGenerativeModel({
-  model: geminiModels["GEMINIFLASH2.0"],
-});
+// const model = genAI.getGenerativeModel({
+//   model: geminiModels["GEMINIFLASH2.0"],
+// });
 const generationConfig = {
   temperature: 1,
   topP: 0.95,

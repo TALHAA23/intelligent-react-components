@@ -9,6 +9,7 @@ import { AIInputProps } from "@types";
 import extractInfoFromProps from "@utils/extractInfoFromProps";
 import Loader from "../loader/Loader";
 import generateResponse from "@utils/generateResponse";
+import componentRegistrar from "@src/hooks/ircRegistrar";
 
 interface MyModule {
   default: (
@@ -53,17 +54,28 @@ export default function AIInput(props: AIInputProps) {
     getEvent();
   }, []);
 
+  componentRegistrar({
+    props,
+    loading,
+    event,
+    error,
+    responseMeta,
+    refreshResponse:()=>generateResponse(setLoading, setError, props),
+  })
+
   error;
   responseMeta;
   return (
     <StyledComponentsWrapper>
-      <input
-        type={props.type || "text"}
-        {...eventListner}
-        {...props.htmlAttributes}
-        {...props.attributes}
-        disabled={loading}
-      />
+      <span>
+        <input
+          type={props.type || "text"}
+          {...eventListner}
+          {...props.htmlAttributes}
+          {...props.attributes}
+          disabled={loading}
+        />
+      </span>
       {loading && <Loader />}
       {props.cacheResponse == false && (
         <StyledNoStyleButton disabled={loading}>

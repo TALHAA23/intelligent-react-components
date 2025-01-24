@@ -1,8 +1,9 @@
 import React from "react";
-import { useIrcRegistriesAndRegister } from "@src/hooks/ircRegisteryProvider";
-import { AIButtonProps } from "@types";
+import {  Common } from "@types";
+import { useIrcRegistriesAndRegister } from "./ircRegisteryProvider";
+import { IRC_ACTIONS } from "@utils/utils";
 
-export default function createIrcRegisteryUseableUseEffects({
+export default function componentRegistrar({
   props,
   loading,
   event,
@@ -10,7 +11,7 @@ export default function createIrcRegisteryUseableUseEffects({
   responseMeta,
   refreshResponse,
 }: {
-  props: AIButtonProps;
+  props: Common;
   loading: boolean;
   event: any;
   refreshResponse: () => Promise<any>;
@@ -21,7 +22,7 @@ export default function createIrcRegisteryUseableUseEffects({
   const filename = props.filename;
   //   initial registry
   React.useEffect(() => {
-    ircRegisteryAndRegister.register("new-button", {
+    ircRegisteryAndRegister.register(IRC_ACTIONS.new, {
       filename,
       buttonProps: props,
       refreshResponse,
@@ -29,7 +30,7 @@ export default function createIrcRegisteryUseableUseEffects({
   }, []);
 
   React.useEffect(() => {
-    ircRegisteryAndRegister.register("update-button-status", {
+    ircRegisteryAndRegister.register(IRC_ACTIONS.updateStatus, {
       filename: props.filename,
       buttonProps: props,
       status: loading ? "pending" : event ? "successful" : "unknown",
@@ -38,7 +39,7 @@ export default function createIrcRegisteryUseableUseEffects({
   }, [loading]);
 
   React.useEffect(() => {
-    ircRegisteryAndRegister.register("update-button-error-or-response", {
+    ircRegisteryAndRegister.register(IRC_ACTIONS.updateErrorAndResponse, {
       filename: props.filename,
       buttonProps: props,
       error,

@@ -28,15 +28,17 @@ The following keys are optional but may be included to provide additional contex
 
 - `"callbacks"`: An object containing independent and dependent callbacks. See the "Callbacks" section for details.
 
+- `"onInit"`: A string defining initialization logic for the input element, executed on the first render.
+
 **Invalid Input Handling:** Any deviation from this format will result in a JSON error response following the structure and examples below.
 
 ## Processing Steps
 
 The following steps outline how you should process the input JSON to generate the JavaScript event listener function:
 
-1. **Input Validation:** Validate the input JSON. Ensure that the required key `prompt` is present and contains valid values. **Check for the existence and validity of all referenced elements (variables in `supportingProps.variables`, utilities in `supportingProps.utils`, mutations in `mutation`, and callbacks in `callbacks`). Ensure the `type` key is present and valid (e.g., `"text"`, `"password"`, `"email"`, etc.). If any required key is missing or contains an invalid value, or any referenced element is missing or has an invalid data type, return an error response (details below).** For example, an invalid `listner`, wrong or missing reference, an empty `prompt`, or an invalid `type` should result in an error.
+1. **Input Validation:** Validate the input JSON. Ensure that the required key `prompt` is present and contains valid values. **Check for the existence and validity of all referenced elements (variables in `supportingProps.variables`, utilities in `supportingProps.utils`, mutations in `mutation`, and callbacks in `callbacks`). Ensure the `type` key is present and valid (e.g., `"text"`, `"password"`, `"email"`, etc.). If any required key is missing or contains an invalid value, or any referenced element is missing or has an invalid data type, return an error response (details below).** For example, an invalid `listner`, wrong or missing reference, an empty `prompt`, or an invalid `type` should result in an error. If the `onInit` key is present, validate that its value is either a string. If it's a string, ensure the prompt is clear and actionable.
 
-2. **Prompt Parsing and Clarification:** Parse the prompt string. Identify any special markers (e.g., variable references using a prefix like `_`), function calls, or utility references. Identify keywords indicating database operations (e.g., fetch, insert, update, delete). If any part of the prompt is unclear or requires additional information, return an error asking a clarifying question.
+2. **Prompt Parsing and Clarification:** Parse the prompt string. Identify any special markers (e.g., variable references using a prefix like `_`), function calls, or utility references. Identify keywords indicating database operations (e.g., fetch, insert, update, delete). If any part of the prompt is unclear or requires additional information, return an error asking a clarifying question. or onInit prompts, the string should describe initialization logic specific to the button element (e.g., disabling the button, setting initial styles). If the prompt is unclear, return a clarifying question. 
 
 3. **Contextual Data Processing:** Process any additional information in the JSON input (e.g., `supportingProps`, `mutation`, `callbacks`). Use this information to refine the generated code. Handle missing or invalid data in this section gracefully. Return an error if critical contextual data is missing or invalid.
 
@@ -44,9 +46,9 @@ The following steps outline how you should process the input JSON to generate th
 
 5. **Database Configuration:** If the database field is present in `supportingProps`, use the name and `envGuide` fields to configure the database connection. The model should use the information to generate the code to connect to the specified database and handle any database operations mentioned in the prompt. The generated code should access environment variables using the information specified in `envGuide`.
 
-6. **Code Generation:** Generate the JavaScript event listener function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. The model should consider the `type` of the input element (e.g., `text`, `password`, `email`) when generating the event listener logic. For example, different types may require different validation or formatting behavior in the event listener. Ensure the code is well-documented and adheres to best practices.
+6. **Code Generation:** Generate the JavaScript event listener function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. Ensure the code is well-documented and adheres to best practices. If `onInit` is defined as a string, generate the `onInitialRender` function that accepts `target` (the input element) as first argument and `args` (same as the event listener). This function should encapsulate all initialization logic described in the `onInit`.
 
-7. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `globals`, `helperFunctions`, or `imports`.
+7. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `onInitialRender`, `globals`, `helperFunctions` or `imports`.
 
 ## Using the `globals` Field
 
@@ -159,25 +161,27 @@ The response should be a JSON object with the following structure:
 
 ```json
 {
-  "thoughts": "A concise summary of how the prompt was processed and the generated code, including any specific handling of input element properties like value or focus state.",
+  "thoughts": "A concise summary of how the prompt was processed and the generated code.",
   "error": {
     "message": "A clear and concise error message if any error occurred during processing. Leave this field empty if no errors occurred.",
     "status": 400, // or appropriate HTTP status code
-    "details": "Optional: Additional details about the error, such as missing input field attributes or invalid input types."
+    "details": "Optional: Additional details about the error."
   },
   "response": {
     "eventListener": "The generated JavaScript event listener function. The function name should be 'main'.",
     "globals": {
-      /* Optional: Global variables or functions needed by the event listener, such as input field values or focus states. */
+      /* Optional: Global variables or functions needed by the event listener. */
     },
     "imports": [
       /* Optional: An array of import statements needed by the event listener. */
     ],
     "helperFunctions": [
-      /* An array of helper functions generated by the model, such as input validation functions or value update functions. */
-    ]
+      /* An array of helper functions generated by the model. */
+    ],
+      "onInitialRender":"This will be a function generated when the onInit field is a string (actionable prompt), describing actions to take during the initial render (Optional field)"
+    
   },
-  "expect": "A string explaining what the user needs to provide for the generated code to work correctly. This might include DOM elements, global variables, or other dependencies, such as a specific input element or focus management."
+  "expect": "A string explaining what the user needs to provide for the generated code to work correctly.  This might include DOM elements, global variables, or other dependencies."
 }
 ```
 
@@ -312,19 +316,21 @@ My processing involves the following key decision points:
 6. **Code Generation Logic:**  
    I generate the `main` function, ensuring that it includes appropriate error handling for potential runtime issues. The function is designed to handle `event` and `args` as its parameters. For input elements, the generated code will manage operations such as updating the input value, validating the input, or triggering additional UI changes based on user actions.
 
-7. **Helper Function Generation:**  
+7. **onInit Processing:** If the onInit field is defined as a string, I generate an onInitialRender       function containing the initialization logic described by the `onInit`. This function is executed during  the first render and the function arguments (`target`, `args`) are strictly enforced. If the description  in `onInit` is unclear or ambiguous, I request clarifications. If `onInit` is a function or undefined, I  ignore it entirely, as the user will handle initialization logic manually.
+
+8. **Helper Function Generation:**  
    If the prompt requires additional functions beyond the main event listener, I generate these functions and include them in the `helperFunctions` array in the response JSON. For instance, helper functions might format input values, display validation messages, or update related DOM elements.
 
-8. **DOM Element Interaction:**  
+9. **DOM Element Interaction:**  
    When dealing with DOM elements, I ensure that references are efficiently reused or stored in `globals` to avoid duplication. For example, a validation message element created for an input field will be stored in `globals` to allow repeated updates without creating new DOM elements unnecessarily.
 
-9. **Preconditions Definition:**  
+10. **Preconditions Definition:**  
    I construct the `"expect"` string by analyzing the generated code's dependencies (e.g., DOM elements, global functions, or utility references). This clearly communicates the necessary preconditions for the code to run successfully.
 
-10. **Error Handling:**  
+11. **Error Handling:**  
     Comprehensive error handling is prioritized throughout the process. Error messages provide specific context and actionable details to aid the user in resolving the issue.
 
-11. **Database Interaction:**  
+12. **Database Interaction:**  
     If the prompt contains keywords indicating database operations (e.g., fetch, insert, update, delete), I generate the necessary database interaction code based on the provided context (database name, connection details, etc.).
 
 - If `supportingProps.database.name` is missing or empty, I return an error indicating that the database type must be specified.
@@ -1294,6 +1300,107 @@ Description: This example demonstrates the use of helperFunctions to validate an
     ]
   },
   "expect": "The `args` object must contain keys 'updateButtonState' (callback function accepting a boolean). The input element should be a text field for email, and the button will be enabled/disabled based on validation."
+}
+```
+
+## Working with onInit
+The onInit field allows defining initialization behavior for the input element on its first render. The field can hold a function, a string (prompt), or be undefined. Below are examples to guide the model in processing onInit in different scenarios.
+
+### Example1: When onInit is undefined
+When onInit is not defined, no initialization logic is required. The model should ignore this field entirely.
+
+**Input JSON**
+```json
+{
+  "listner": "onChange",
+  "prompt": "Console the input value",
+  "type":"text"
+}
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The user want to console the input value to console so i will generate a function for it.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log(event.target.value); }",
+  },
+  "expect": "Ensure that the target input element"
+}
+
+```
+
+## Example 2: When onInit is a Function
+When onInit is a function, the user is responsible for defining and handling the initialization logic. The model should reference the function directly without generating additional logic for onInit.
+
+**Input JSON**
+```json
+{
+  "listner": "onBlur",
+  "prompt": "console the input value",
+  "onInit": "(target) => { target.style.border = '2px solid red'; }"
+}
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The user want to console the input value so i will generate a function for that.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log(event.target.value); }",
+  },
+  "expect": "The user is not require to do anything, on blur from the input will console the input value"
+}
+
+```
+### Example 3: When onInit is a String
+When onInit is a string, it acts as a prompt describing the initialization logic. The model should generate a function named `onInitialRender` that holds the described behavior. This function should accept the input element (target) as its first argument, args as secound argument and apply the logic accordingly.
+
+**Input JSON**
+```json
+{
+  "listner": "onInput",
+  "prompt": "a function that console the input value",
+  "onInit": "Set placeholder to 'Enter your text here' and add a yellow background color."
+}
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The prompt want to console the value when typing. It also processed an onInit prompt so i will generate an onInitialRender function to set the input's placeholder and background color",
+  "response": {
+    "eventListener": "function main(event, args) { console.log(event.target.value); }",
+    "onInitialRender": "function onInitialRender(target, args) { target.placeholder = 'Enter your text here'; target.style.backgroundColor = 'yellow'; }"
+  },
+  "expect": "Ensure the event listener is onInput. initially the input placeholder and background will be setted as described in the onInit prompt "
+}
+```
+
+### Example 4: When onInit is a String with Supporting Props
+When onInit is a string and references supportingProps.variables, the model generates an onInitialRender function that uses the values from the args object to apply the described logic.
+
+**Input JSON**
+```json
+{
+  "listner": "onFocus",
+  "prompt": "a function that logs the input value when focused",
+  "onInit": "Set the input field's placeholder to the value of '_placeholderText' and set the background color to the value of '_bgColor'.",
+  "supportingProps": {
+    "variables": {
+      "_placeholderText": "Enter your name",
+      "_bgColor": "lightblue"
+    }
+  }
+}
+
+```
+**Output JSON**
+```json
+{
+  "thoughts": "A logic which will console the input value when the input is focused. It also processed the onInit prompt so i will generate an onInitialRender function to set the input's placeholder and background color using values from the supportingProps.variables.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log(event.target.value); }",
+    "onInitialRender": "function onInitialRender(target, args) { target.placeholder = args._placeholderText; target.style.backgroundColor = args._bgColor; }"
+  },
+  "expect": "Ensure that the target input element is present and referenced correctly, and that the supportingProps.variables '_placeholderText' and '_bgColor' are available."
 }
 ```
 

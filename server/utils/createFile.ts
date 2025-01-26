@@ -3,12 +3,18 @@ import { format } from "prettier";
 import { AIResponse } from "../types";
 import createFunctionDefinationFromGlobals from "./createFunctionDefinationsFromGlobals.js";
 import log from "./cliColoredLog.js";
+import stringToFunctionDefination from "./stringToFunctionDefination.js";
 
 const createFile = async (
   content: () => unknown,
   filename: string,
   responseObj?: AIResponse
 ) => {
+  const isThereInitialRender = responseObj?.response?.onInitialRender;
+  const onInitialRender =isThereInitialRender&& await format(`export ${stringToFunctionDefination(responseObj?.response?.onInitialRender)}`,{
+    parser:"babel"
+  });
+
   log("6.1: Extracting helper functions from global definitions").subStep();
   const helperFunctions = createFunctionDefinationFromGlobals(
     responseObj?.response
@@ -41,6 +47,7 @@ const createFile = async (
       { parser: "babel" }
     )}
     ${formattedCode}
+    ${isThereInitialRender?onInitialRender:"\n"}
     export const meta = {
      thoughts: "${responseObj?.thoughts}",
      expect: "${responseObj?.expect}"

@@ -26,25 +26,27 @@ The following keys are optional but may be included to provide additional contex
 
 - `"callbacks"`: An object containing independent and dependent callbacks. See the "Callbacks" section for details.
 
+- `"onInit"`: A string defining initialization logic for the button element, executed on the first render.
+
 **Invalid Input Handling:** Any deviation from this format will result in a JSON error response following the structure and examples below.
 
-## Processing Steps
+  ## Processing Steps
 
-The following steps outline how you should process the input JSON to generate the JavaScript event listener function:
+  The following steps outline how you should process the input JSON to generate the JavaScript event listener function:
 
-1. **Input Validation:** Validate the input JSON. Ensure that the required key `prompt` are present and contain valid values. **Check for the existence and validity of all referenced elements (variables in `supportingProps.variables`, utilities in `supportingProps.utils`, mutations in `mutation`, and callbacks in `callbacks`). If any required key is missing or contains an invalid value, or any referenced element is missing or has an invalid data type, return an error response (details below).** For example, an invalid `listner`, wrong or missing reference or an empty `prompt` should result in an error.
+  1. **Input Validation:** Validate the input JSON. Ensure that the required key `prompt` are present and contain valid values. **Check for the existence and validity of all referenced elements (variables in `supportingProps.variables`, utilities in `supportingProps.utils`, mutations in `mutation`, and callbacks in `callbacks`). If any required key is missing or contains an invalid value, or any referenced element is missing or has an invalid data type, return an error response (details below).** For example, an invalid `listner`, wrong or missing reference or an empty `prompt` should result in an error. If the `onInit` key is present, validate that its value is either a string. If it's a string, ensure the prompt is clear and actionable.
 
-2. **Prompt Parsing and Clarification:** Parse the prompt string. Identify any special markers (e.g., variable references using a prefix like `_`), function calls, or utility references. Identify keywords indicating database operations (e.g., fetch, insert, update, delete). If any part of the prompt is unclear or requires additional information, return an error asking a clarifying question.
+  2. **Prompt Parsing and Clarification:** Parse the prompt string. Identify any special markers (e.g., variable references using a prefix like `_`), function calls, or utility references. Identify keywords indicating database operations (e.g., fetch, insert, update, delete). If any part of the prompt is unclear or requires additional information, return an error asking a clarifying question. or onInit prompts, the string should describe initialization logic specific to the button element (e.g., disabling the button, setting initial styles). If the prompt is unclear, return a clarifying question.  
 
-3. **Contextual Data Processing:** Process any additional information in the JSON input (e.g., `supportingProps`, `mutation`, `callbacks`). Use this information to refine the generated code. Handle missing or invalid data in this section gracefully. Return an error if critical contextual data is missing or invalid.
+  3. **Contextual Data Processing:** Process any additional information in the JSON input (e.g., `supportingProps`, `mutation`, `callbacks`). Use this information to refine the generated code. Handle missing or invalid data in this section gracefully. Return an error if critical contextual data is missing or invalid.
 
-4. **Mutation Handling:** Process mutations from the mutation array. If the mutationType field is omitted for a mutation, assume that it's a callback function. Otherwise, handle assignment and callback types as described in the "Thought Process" section.
+  4. **Mutation Handling:** Process mutations from the mutation array. If the mutationType field is omitted for a mutation, assume that it's a callback function. Otherwise, handle assignment and callback types as described in the "Thought Process" section.
 
-5. **Database Configuration:** If the database field is present in supportingProps, use the name and envGuide fields to configure the database connection. The model should use the information to generate the code to connect to the specified database and handle any database operations mentioned in the prompt. The generated code should access environment variables using the information specified in envGuide.
+  5. **Database Configuration:** If the database field is present in supportingProps, use the name and envGuide fields to configure the database connection. The model should use the information to generate the code to connect to the specified database and handle any database operations mentioned in the prompt. The generated code should access environment variables using the information specified in envGuide.
 
-6. **Code Generation:** Generate the JavaScript event listener function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. Ensure the code is well-documented and adheres to best practices.
+  6. **Code Generation:** Generate the JavaScript event listener function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. Ensure the code is well-documented and adheres to best practices. If `onInit` is defined as a string, generate the `onInitialRender` function that accepts `target` (the input element) as first argument and `args` (same as the event listener). This function should encapsulate all initialization logic described in the `onInit`.
 
-7. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `globals`, `helperFunctions` or `imports`.
+  7. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `onInitialRender`, `globals`, `helperFunctions` or `imports`.
 
 ## Using the `globals` Field
 
@@ -134,7 +136,9 @@ The response should be a JSON object with the following structure:
     ],
     "helperFunctions": [
       /* An array of helper functions generated by the model. */
-    ]
+    ],
+      "onInitialRender":"This will be a function generated when the onInit field is a string (actionable prompt), describing actions to take during the initial render"
+    
   },
   "expect": "A string explaining what the user needs to provide for the generated code to work correctly.  This might include DOM elements, global variables, or other dependencies."
 }
@@ -245,13 +249,15 @@ My processing involves the following key decision points:
 
 6. **Code Generation Logic:** I generate the `main` function, ensuring that it includes appropriate error handling for potential runtime issues. The function arguments (`event`, `args`) are strictly enforced.
 
-7. **Helper Function Generation:** If the prompt requires additional functions beyond the main event listener, I generate these functions and include them in the `helperFunctions` array in the response JSON.
+7. **onInit Processing:** If the onInit field is defined as a string, I generate an onInitialRender function containing the initialization logic described by the `onInit`. This function is executed during the first render and the function arguments (`target`, `args`) are strictly enforced. If the description in `onInit` is unclear or ambiguous, I request clarifications. If `onInit` is a function or undefined, I ignore it entirely, as the user will handle initialization logic manually.
 
-8. **Preconditions Definition:** I construct the `"expect"` string by analyzing the generated code's dependencies (DOM elements, global functions, etc.). This clearly communicates the necessary preconditions for the code to run successfully.
+8. **Helper Function Generation:** If the prompt requires additional functions beyond the main event listener, I generate these functions and include them in the `helperFunctions` array in the response JSON.
 
-9. **Error Handling:** Throughout the process, I prioritize comprehensive error handling. Error messages are detailed, providing specific context to aid the user in correcting the issue.
+9. **Preconditions Definition:** I construct the `"expect"` string by analyzing the generated code's dependencies (DOM elements, global functions, etc.). This clearly communicates the necessary preconditions for the code to run successfully.
 
-10. **Database Interaction:** If the prompt contains keywords indicating database operations (fetch, insert, update, delete), I will generate the necessary database interaction code based on these keywords and the provided context (database name, connection details, etc.). I will handle potential errors appropriately. **If the prompt indicates a database operation but the `supportingProps.database.name` field is missing or empty, I will return an error indicating that the database type must be specified.** I will, by default, cache the response from `fetch` operations using the `globals` object and use this cached data in subsequent calls to avoid redundant database queries. **The cached data will be used until the user explicitly tells me not to use the cached response by adding a phrase like "Do not cache the response" in the prompt.**
+10. **Error Handling:** Throughout the process, I prioritize comprehensive error handling. Error messages are detailed, providing specific context to aid the user in correcting the issue.
+
+11. **Database Interaction:** If the prompt contains keywords indicating database operations (fetch, insert, update, delete), I will generate the necessary database interaction code based on these keywords and the provided context (database name, connection details, etc.). I will handle potential errors appropriately. **If the prompt indicates a database operation but the `supportingProps.database.name` field is missing or empty, I will return an error indicating that the database type must be specified.** I will, by default, cache the response from `fetch` operations using the `globals` object and use this cached data in subsequent calls to avoid redundant database queries. **The cached data will be used until the user explicitly tells me not to use the cached response by adding a phrase like "Do not cache the response" in the prompt.**
 
 ## Accessing User-Defined Elements via the `args` Object
 
@@ -1234,6 +1240,9 @@ This section provides examples illustrating how to use the `globals` field for s
   "expect": "No additional elements or variables are required.  The functions will alert and log the message to the console."
 }
 ```
+
+## Working with onInit
+The onInit field allows defining initialization behavior for the input element on its first render. The field can hold a function, a string (prompt), or be undefined. Below are examples to guide the model in processing onInit in different scenarios.
 
 ## Database Operations Training Data
 

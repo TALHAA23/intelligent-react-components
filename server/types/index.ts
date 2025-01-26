@@ -50,6 +50,7 @@ interface AIResponse {
     };
     imports?: string[];
     helperFunctions?: Function[];
+    onInitialRender?: string
   };
   error: {
     message: string;

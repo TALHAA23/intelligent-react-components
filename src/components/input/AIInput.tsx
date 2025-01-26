@@ -17,22 +17,24 @@ interface MyModule {
     ...args: unknown[]
   ) => unknown;
   meta?: any;
+  onInitialRender:(event:HTMLInputElement, ...args:unknown[])=>void;
 }
 
 export default function AIInput(props: AIInputProps) {
-  const [loading, setLoading] = React.useState(true);
+  const isOnInitCallback = React.useMemo(() => typeof props.onInit === "function", [props.onInit]);
+  const targetRef = React.useRef<HTMLInputElement>(null);
+  const [onInitialRender, setOnInitialRender] = React.useState<undefined | string | ((event:HTMLInputElement, ...args:unknown[])=>void)>(isOnInitCallback ?()=> props.onInit : undefined);
   const [error, setError] = React.useState<any>(undefined);
+  const [loading, setLoading] = React.useState(true);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
-  const [responseMeta, setResponseMeta] = React.useState<
-    undefined | MyModule["meta"]
-  >(event?.meta);
-  const args = extractInfoFromProps(props);
-  const eventListner: React.DOMAttributes<HTMLInputElement> = {
-    [props?.listner || "onChange"]: event
-      ? (e: React.ChangeEvent<HTMLInputElement>) =>
-          event.default(e, args ? args : undefined)
+  const [responseMeta, setResponseMeta] = React.useState<undefined | MyModule["meta"]>(undefined);
+  const args = React.useMemo(() => extractInfoFromProps(props), [props]);
+
+  const eventListener: React.DOMAttributes<HTMLInputElement> = React.useMemo(() => ({
+    [props?.listener || "onChange"]: event
+      ? (e: React.ChangeEvent<HTMLInputElement>) => event.default(e, args)
       : undefined,
-  };
+  }), [event, args, props?.listener]);
 
   React.useEffect(() => {
     const getEvent = async () => {
@@ -41,8 +43,11 @@ export default function AIInput(props: AIInputProps) {
         const event = await import(`/dynamic/${props.filename}.js`);
         setEvent(event);
         setResponseMeta(event.meta);
+        if (props.onInit && !isOnInitCallback && event.onInitialRender) {
+          setOnInitialRender(() => event.onInitialRender);
+        }
       } catch (err) {
-        console.log(err);
+        console.error(err);
         await generateResponse(setLoading, setError, {
           ...props,
           element: "input",
@@ -52,7 +57,14 @@ export default function AIInput(props: AIInputProps) {
       }
     };
     getEvent();
-  }, []);
+  }, [props.filename]);
+
+  React.useEffect(() => {
+    if (typeof onInitialRender === "function" && targetRef.current) {
+      onInitialRender(targetRef.current,args);
+    }
+  }, [onInitialRender, event]);
+
 
   componentRegistrar({
     props,
@@ -69,8 +81,9 @@ export default function AIInput(props: AIInputProps) {
     <StyledComponentsWrapper>
       <span>
         <input
+        ref={targetRef}
           type={props.type || "text"}
-          {...eventListner}
+          {...eventListener}
           {...props.htmlAttributes}
           {...props.attributes}
           disabled={loading}

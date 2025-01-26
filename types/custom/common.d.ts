@@ -39,7 +39,7 @@ interface Common<T = Function> {
   };
   [key: string]: any;
   // onInit?:Function|string
-  // onInit?: ((...args: any[]) => void) | string;
+  onInit?: ((...args: any[]) => void) | string;
 
 }
 

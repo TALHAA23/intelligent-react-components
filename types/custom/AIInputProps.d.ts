@@ -1,8 +1,8 @@
-import React, { HTMLInputTypeAttribute } from "react";
+import React from "react";
 import { Common } from "./common";
 
-interface AIInputProps extends Common {
-  type: HTMLInputTypeAttribute;
+interface AIInputProps extends Common<HTMLInputElement> {
+  type: React.HTMLInputTypeAttribute;
   attributes?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 

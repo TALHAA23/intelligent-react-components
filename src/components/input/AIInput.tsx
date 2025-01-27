@@ -74,9 +74,6 @@ export default function AIInput(props: AIInputProps) {
     responseMeta,
     refreshResponse:()=>generateResponse(setLoading, setError, props),
   })
-
-  error;
-  responseMeta;
   return (
     <StyledComponentsWrapper>
       <span>

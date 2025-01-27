@@ -2,7 +2,7 @@ import React from "react";
 
 type Element = "input" | "button";
 
-interface Common<T = Function> {
+interface Common<Target=React.ReactHTMLElement, T = Function> {
   cacheResponse?: boolean;
   prompt: string;
   filename: string;
@@ -39,7 +39,8 @@ interface Common<T = Function> {
   };
   [key: string]: any;
   // onInit?:Function|string
-  onInit?: ((...args: any[]) => void) | string;
+  onInit?: ((target: Target, ...args: any[]) => void) 
+  | string;
 
 }
 

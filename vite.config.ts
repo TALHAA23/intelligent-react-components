@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { peerDependencies } from "./package.json";
 import tsconfigPaths from "vite-tsconfig-paths"
-import { libInjectCss } from "vite-plugin-lib-inject-css"
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 

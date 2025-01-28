@@ -1,8 +1,8 @@
 import React from "react"
 import stars from "@public/re-generate.svg";
-import withAIEvents from '@src/hooks/withAIEvents';
-import { AIInputProps } from '@types';
-import { StyledRegenerateIcon } from "@styles/StylesAIButton";
+import enhanceWithAI from '@src/components/enhanceWithAI';
+import { AIButtonProps, AIInputProps } from '@types';
+import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
   StyledComponentsWrapper,
   StyledNoStyleButton,
@@ -11,7 +11,7 @@ import Loader from './loader/Loader';
 import generateResponse from '@utils/generateResponse';
 
 
-const Input: React.FC<AIInputProps> = withAIEvents((props: AIInputProps) => {
+const Input: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
   const { 
     handleEvent, 
     loading, 
@@ -59,7 +59,54 @@ const Input: React.FC<AIInputProps> = withAIEvents((props: AIInputProps) => {
       )}
     </StyledComponentsWrapper>
   );
-}) as React.FC<AIInputProps>;
+},"input") as React.FC<AIInputProps>;
+
+
+export const Button: React.FC<AIButtonProps> = enhanceWithAI((props: AIButtonProps) => {
+  const {
+    handleEvent,
+    loading,
+    // error,
+    event,
+    // responseMeta,
+    refreshResponse,
+    ...rest
+  } = props;
+
+  const eventListener: React.DOMAttributes<HTMLButtonElement> = {
+      [props?.listner || "onClick"]: event
+        ? handleEvent
+        : undefined,
+    };
+
+  return (
+    <StyledComponentsWrapper>
+      <StyledAIButton
+        {...eventListener}
+        {...rest.htmlAttributes}
+        {...rest.attributes}
+        disabled={loading}
+      >
+        {loading ? (
+          <Loader />
+        ) : (
+          <span className="text">{props.label || "AIButton"}</span>
+        )}
+      </StyledAIButton>
+      {props.cacheResponse == false && (
+         <StyledNoStyleButton disabled={loading}>
+         <StyledRegenerateIcon
+           src={stars}
+           alt="re-generate"
+           title="Re-generate"
+           onClick={refreshResponse}
+         />
+       </StyledNoStyleButton>
+      )}
+    </StyledComponentsWrapper>
+  );
+},"button");
+
 
 
 export default Input;

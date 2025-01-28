@@ -37,7 +37,7 @@ const StyledArrowDownMark = styled.img`
 `;
 
 const StyledDevtoolWrapper = styled.section`
-  position: absolute;
+  position: fixed;
   bottom: ${root["--position-btm"]};
   width: ${root["--width"]};
   height: ${root["--height"]};

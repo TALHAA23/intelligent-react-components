@@ -1,7 +1,8 @@
 import { AIResponse, Common } from '@types';
 import extractInfoFromProps from '@utils/extractInfoFromProps';
-import { postMethod, urls } from '@utils/utils';
+import { IRC_ACTIONS, postMethod, urls } from '@utils/utils';
 import React, { useEffect, useState, useRef } from 'react';
+import { useIrcRegistriesAndRegister } from '../hooks/ircRegisteryProvider';
 
 
 
@@ -94,30 +95,33 @@ async function generateResponse(
     return sanitizedMutations;
   }
 
-  const withAIEvents = <T extends Common>(
-    WrappedComponent: React.FC<T> 
+  const enhanceWithAI = <T extends Common>(
+    WrappedComponent: React.FC<T>,
+    element:Common["element"]
   ): React.FC<T> => {
-  const WithAIEventsComponent = (props: T) => {
+  const EnhancedComponent = (props: T) => {
+    const enhancedProps = { ...props, element };
     const isOnInitCallback = React.useMemo(() => typeof props.onInit === "function", [props.onInit]);
     const targetRef = useRef<HTMLElement>(null);
     const [onInitialRender, setOnInitialRender] = useState<undefined | string | ((event: HTMLElement, ...args: unknown[]) => void)>(isOnInitCallback ? () => props.onInit : undefined);
-    const args = React.useMemo(() => extractInfoFromProps(props), [props]);
     const [state, setState] = useState<BaseComponentState>({
       loading: true,
       error: undefined,
       event: undefined,
       responseMeta: undefined,
     });
+    const args = React.useMemo(() => extractInfoFromProps(props), [props,state]);
 
-    const handleEvent = (e: any, args: any) => {
+    const handleEvent = (e: any) => {
       if (state.event && state.event.default) {
-        state.event.default(e, args);
+        state.event.default(e, args); // Use memoized args
       }
     };
 
     useEffect(() => {
       const getEvent = async () => {
         try {
+          setState(prev=>({...prev,loading:true}))
           const event = await import(`/dynamic/${props.filename}.js`);
           setState((prev) => ({ ...prev, event, responseMeta: event.meta }));
           if (props.onInit && !isOnInitCallback && event.onInitialRender) {
@@ -125,7 +129,7 @@ async function generateResponse(
           }
         } catch (err) {
           console.error(err);
-          await generateResponse(setState, { ...props, element: "component" }); // Handle error generically
+          await generateResponse(setState, enhancedProps); // Handle error generically
           
         } finally {
           setState((prev) => ({ ...prev, loading: false }));
@@ -133,29 +137,58 @@ async function generateResponse(
       };
       getEvent();
     }, [props.filename]);
-
     useEffect(() => {
       if (typeof onInitialRender === "function" && targetRef.current) {
         onInitialRender(targetRef.current, args); // Pass args to onInitialRender
       }
     }, [onInitialRender]);
 
-    // ! You can add componentRegistrar logic here if needed
+    // * Component registration for Devtools
+
+    const ircRegisteryAndRegister = useIrcRegistriesAndRegister(); // Assuming this hook is available
+
+    useEffect(() => {
+      ircRegisteryAndRegister.register(IRC_ACTIONS.new, {
+        filename: props.filename,
+        buttonProps: props, // Now includes the element prop
+        refreshResponse: () => generateResponse(setState, enhancedProps),
+      });
+    }, []);
+
+    useEffect(() => {
+      ircRegisteryAndRegister.register(IRC_ACTIONS.updateStatus, {
+        filename: props.filename,
+        buttonProps: props,
+        status: state.loading ? "pending" : state.event ? "successful" : "unknown",
+        refreshResponse: () => generateResponse(setState, enhancedProps),
+      });
+    }, [state.loading, state.event]); // Use state.loading and state.event
+
+    useEffect(() => {
+      ircRegisteryAndRegister.register(IRC_ACTIONS.updateErrorAndResponse, {
+        filename: props.filename,
+        buttonProps: props,
+        error: state.error, // Use state.error
+        response: state.responseMeta, // Use state.responseMeta
+        status: state.error ? "error" : state.responseMeta ? "successful" : "unknown",
+        refreshResponse: () => generateResponse(setState, enhancedProps),
+      });
+    }, [state.error, state.responseMeta]); // Use state.error and state.responseMeta
 
     return (
       <WrappedComponent
-        {...props}
+        {...enhancedProps}
         {...state}
         handleEvent={handleEvent}
         targetRef={targetRef}
-        refreshResponse={() => generateResponse(setState, props)} 
+        refreshResponse={() => generateResponse(setState, enhancedProps)} 
       />
     );
   };
 
-  WithAIEventsComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
-  return WithAIEventsComponent;
+  return EnhancedComponent;
 };
 
-export default withAIEvents;
+export default enhanceWithAI;

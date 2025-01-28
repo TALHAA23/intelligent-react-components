@@ -1241,8 +1241,112 @@ This section provides examples illustrating how to use the `globals` field for s
 }
 ```
 
-## Working with onInit
-The onInit field allows defining initialization behavior for the input element on its first render. The field can hold a function, a string (prompt), or be undefined. Below are examples to guide the model in processing onInit in different scenarios.
+## Working with `onInit`
+The onInit field allows defining initialization behavior for the button element on its first render. The field can hold a function, a string (prompt), or be undefined. Below are examples to guide the model in processing onInit in different scenarios.
+
+### Example 1: When onInit is undefined
+When onInit is not defined, no initialization logic is required. The model should ignore this field entirely.
+
+**Input JSON**
+```json
+{
+  "listner": "onClick",
+  "prompt": "Log 'Button clicked!' to the console.",
+}
+
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The user wants to log 'Button clicked!' to the console when the button is clicked. Since onInit is undefined, no additional initialization logic is required.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log('Button clicked!'); }"
+  },
+  "expect": "Ensure that the button element has the onClick listener attached."
+  // No onInitialRender is created as the input has no onInit field
+}
+
+```
+
+### Example 2: When onInit is a Function
+When onInit is a function, the user is responsible for defining and handling the initialization logic.
+**Input JSON**
+```json
+{
+  "listner": "onClick",
+  "prompt": "Log 'Button clicked!' to the console.",
+  "onInit": "(target) => { target.disabled = false; }"
+}
+
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The user wants to log 'Button clicked!' to the console when the button is clicked. Since onInit is provided as a function, it is directly referenced and will handle enabling the button during initialization.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log('Button clicked!'); }",
+  },
+  "expect": "Ensure that the button is correctly referenced and that the onInit function initializes the button state as expected."
+  // No onInitialRender is created as the input has onInit of type function meaning user want to handle the situation themself
+}
+
+```
+
+### Example 3: When onInit is a String
+When onInit is a string, it acts as a prompt describing the initialization logic. The model should generate a function named `onInitialRender` that holds the described behavior. This function should accept the button element (`target`) as its first argument and `args` as the second argument.
+**Input JSON**
+```json
+{
+  "listner": "onClick",
+  "prompt": "a function that logs 'Button clicked!'",
+  "onInit": "Disable the button and set its text to 'Loading...'."
+}
+
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The user wants to log 'Button clicked!' and initialize the button by disabling it and setting its text to 'Loading...'. An onInitialRender function is generated for the initialization logic.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log('Button clicked!'); }",
+    "onInitialRender": "function onInitialRender(target, args) { target.disabled = true; target.innerText = 'Loading...'; }"
+  },
+  "expect": "Ensure that the button has the onClick listener attached. On initialization, the button will be disabled, and its text will be set as described."
+  // onInitialRender is created as the input has onInit with valid and actionable string prompt
+
+}
+```
+
+### Example 4: When onInit is a String with Supporting Props
+When onInit is a string and references supportingProps.variables, the model generates an onInitialRender function that uses the values from the args object to apply the described logic.
+
+**Input JSON**
+```json
+{
+  "listner": "onMouseEnter",
+  "prompt": "Log 'Mouse entered the button!' to the console.",
+  "onInit": "Set the button text to '_defaultText' and disable it if '_isDisabled' is true.",
+  "supportingProps": {
+    "variables": {
+      "_defaultText": "Click Me",
+      "_isDisabled": true
+    }
+  }
+}
+
+```
+**Output JSON**
+```json
+{
+  "thoughts": "The user wants to log 'Mouse entered the button!' and initialize the button by setting its text and disabling it conditionally using the provided supportingProps.variables.",
+  "response": {
+    "eventListener": "function main(event, args) { console.log('Mouse entered the button!'); }",
+    "onInitialRender": "function onInitialRender(target, args) { target.innerText = args._defaultText; target.disabled = args._isDisabled; }"
+  },
+  "expect": "Ensure that the button is correctly referenced, and the supportingProps.variables '_defaultText' and '_isDisabled' are available for initialization."
+  // onInitialRender is created as the input has onInit field
+}
+```
 
 ## Database Operations Training Data
 

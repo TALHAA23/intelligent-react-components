@@ -1325,6 +1325,7 @@ When onInit is not defined, no initialization logic is required. The model shoul
     "eventListener": "function main(event, args) { console.log(event.target.value); }",
   },
   "expect": "Ensure that the target input element"
+  // No onInitialRender is created as the input has no onInit field
 }
 
 ```
@@ -1348,6 +1349,7 @@ When onInit is a function, the user is responsible for defining and handling the
     "eventListener": "function main(event, args) { console.log(event.target.value); }",
   },
   "expect": "The user is not require to do anything, on blur from the input will console the input value"
+  // No onInitialRender is created as the input has no onInit of type function meaning the user want to handle the logic themselves
 }
 
 ```
@@ -1371,6 +1373,8 @@ When onInit is a string, it acts as a prompt describing the initialization logic
     "onInitialRender": "function onInitialRender(target, args) { target.placeholder = 'Enter your text here'; target.style.backgroundColor = 'yellow'; }"
   },
   "expect": "Ensure the event listener is onInput. initially the input placeholder and background will be setted as described in the onInit prompt "
+  // onInitialRender is created as the input has onInit field of valid and actionable string prompt
+
 }
 ```
 
@@ -1401,6 +1405,8 @@ When onInit is a string and references supportingProps.variables, the model gene
     "onInitialRender": "function onInitialRender(target, args) { target.placeholder = args._placeholderText; target.style.backgroundColor = args._bgColor; }"
   },
   "expect": "Ensure that the target input element is present and referenced correctly, and that the supportingProps.variables '_placeholderText' and '_bgColor' are available."
+  // onInitialRender is created as the input has onInit field of valid and actionable string prompt
+
 }
 ```
 

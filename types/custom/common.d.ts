@@ -6,7 +6,7 @@ interface Common<Target=React.ReactHTMLElement, T = Function> {
   cacheResponse?: boolean;
   prompt: string;
   filename: string;
-  listner: keyof React.DOMAttributes<React.ReactHTMLElement>;
+  listener: keyof React.DOMAttributes<React.ReactHTMLElement>;
   element?: Element;
   htmlAttributes?: React.HTMLAttributes<React.ReactHTMLElement>
   supportingProps?: {

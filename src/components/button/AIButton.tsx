@@ -20,7 +20,7 @@ export const AIButton: React.FC<AIButtonProps> = enhanceWithAI((props: AIButtonP
   } = props;
 
   const eventListener: React.DOMAttributes<HTMLButtonElement> = {
-      [props?.listner || "onClick"]: event
+      [props?.listener || "onClick"]: event
         ? handleEvent
         : undefined,
     };

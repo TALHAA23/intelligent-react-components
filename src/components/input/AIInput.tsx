@@ -12,78 +12,200 @@ import enhanceWithAI from "../enhanceWithAI";
 
 
 /**
+* @description
  * AIInput is a React functional component that renders an input field with AI-enhanced capabilities.
  * It supports various props to handle events, loading states, and custom attributes.
- * @component
- * @param {boolean} [cacheResponse=true] - Indicates whether to cache the response from the AI. If set to false, it creates a button beside the element which, when clicked, sends another request to generate code (a refresh button). The default value true hides the button.
+* @component
+ * @param {boolean} [cacheResponse=true] - Indicates whether to cache the response from the AI. If set to false, it creates a button beside the element which, when clicked, sends another request to generate code (a refresh button). The default value `true` hides the button.
  * @param {string} prompt - The prompt to be sent to the AI.
- * @param {string} filename - Name for the file to be created.
+ * @param {string} filename - Name for the file to be created (without extension).
  * @param {string} listener - The name of the event listener to attach (e.g., "onChange", "onBlur").
  * @param {React.HTMLInputTypeAttribute} type - The type of the input element (e.g., "text", "password").
  * @param {React.HTMLAttributes<HTMLInputElement>} [htmlAttributes] - Additional HTML attributes for the input element.
- * @param {React.InputHTMLAttributes<HTMLInputElement>} [attributes] - Additional custom attributes for the input element.
+ * @param {React.InputHTMLAttributes<HTMLInputElement>} [attributes] - Specific HTML input attributes.
  * @param {object} [supportingProps] - Additional information like aliases or context from the user codebase that should be used in the AI-generated code.
- * @param {object} [supportingProps.utils] - If the prompt says 'request to $API', the address should be written here to keep the prompt clean, e.g., utils: { API: "https://localhost:3000" }. Utils should be prefixed with '$'.
- * @param {object} [supportingProps.database] - Used where the prompt describes some database-related information. It's an object with two keys: name (required) - the name of the operation like firebase or firebase authentication, and envGuide (optional) - to describe how the generated code will access the secrets like connection details.
- * @param {object} [supportingProps.variables] - Used to store context from the user codebase. For example, if the user has a variable list = [] and the generated code needs it to work, then it should be declared here like variables: { list: [] }. Variables in the prompt should be prefixed with "_".
- * @param {Array<object>} [mutation] - Array of mutation objects for data transformation.
- * @param {string} [mutation[].id] - ID of the mutation.
- * @param {any} [mutation[].returnFormat] - Format of the returned data.
- * @param {any} [mutation[].mutate] - Mutation function or logic.
- * @param {string} [mutation[].mutationType] - Type of mutation ("callback" or "assignment").
- * @param {object} [callbacks] - Object containing callback functions.
- * @param {Array<object>} [callbacks.independent] - Array of independent callback objects.
- * @param {string} [callbacks.independent[].callGuide] - Guide for calling the callback.
- * @param {Function} [callbacks.independent[].callback] - Independent callback function.
- * @param {Array<object>} [callbacks.dependent] - Array of dependent callback objects.
- * @param {string} [callbacks.dependent[].callGuide] - Guide for calling the callback.
- * @param {Array<string>} [callbacks.dependent[].parametersGuide] - Guides for parameters.
- * @param {Function} [callbacks.dependent[].callback] - Dependent callback function.
- * @param {(target: HTMLInputElement, ...args: any[]) => void | string} [onInit] - Function to be called after the input is initialized.
+ * @param {object} [supportingProps.utils] - Key-value pairs where the key is a placeholder in the prompt prefixed with '$', and the value is its actual meaning.  Example: `{ API: "https://localhost:3000" }` if the prompt uses `$API`.
+ * @param {object} [supportingProps.database] - Used when the prompt describes some database-related information. It's an object with two keys: `name` (required) - the name of the operation (e.g., "firebase", "firebase authentication"), and `envGuide` (optional) - to describe how the generated code will access secrets (e.g., connection details).
+ * @param {object} [supportingProps.variables] - Used to store context from the user codebase.  Variables in the prompt should be prefixed with "_". Example: `{ list: [] }` if the generated code needs a `list` variable.
+ * @param {Array<object>} [mutation] - An array of mutation objects that the generated code should perform, like updating a state value or reassigning a variable.
+ * @param {string} [mutation[].id] - A unique ID for the mutation.
+ * @param {any} [mutation[].returnFormat] - The format in which the mutation should be done. For example, if updating a state, the desired structure of the new state value.
+ * @param {any} [mutation[].mutate] - The mutation function or value.  For state updates, pass the `setState` function. For variable assignment, pass the variable reference.
+ * @param {string} [mutation[].mutationType] - The type of mutation: `"callback"` or `"assignment"`. If `"callback"`, `mutation[].mutate` is called. If `"assignment"`, `mutation[].mutate` is assigned using `=`.
+ * @param {object} [callbacks] - An object containing callback functions that the generated code should call when certain conditions are met.
+ * @param {Array<object>} [callbacks.independent] - An array of independent callback objects (functions that take no arguments).
+ * @param {string} [callbacks.independent[].callGuide] - A guide for when to call the callback.
+ * @param {Array<object>} [callbacks.dependent] - An array of dependent callback objects (functions that require data from the generated code).
+ * @param {string} [callbacks.dependent[].callGuide] - A guide for when to call the callback.
+ * @param {Array<string>} [callbacks.dependent[].parametersGuide] - An array of guides for the parameters to pass to the callback. Each index corresponds to a parameter.
+ * @param {Function} [callbacks.dependent[].callback] - The dependent callback function.
+ * @param {(target: HTMLInputElement) => void | string} [props.onInit] - A function or a prompt string to be executed after the input is initialized. If it's a function, it will be called with the input element as the first argument. If it's a string, it will be treated as a prompt for the AI to generate a function that will be executed on the first render.  If it's a function, it must accept one argument, the HTMLInputElement.
  * @example
  * <AIInput
  *   cacheResponse={false}
- *   prompt="A function that validates the password..."
- *   filename="passwordInput"
+ *   prompt={`
+ *     Generate a JavaScript function that validates an email address.
+ *     Use the provided regular expression '$REGEX_EMAIL' to perform the validation.
+ *     update the '_isValid' variable to true if the email is valid, and false otherwise.
+ *     set the '_email' to the validated email address.
+ *     Use the database configuration (name and envGuide) from the 'database' object in the supportingProps to log the database being used.
+ *     '&updateIsValid' to update the _isValid variable.
+ *     '&setEmail' should be used to set the _email variable.
+ *   `}
+ *   filename="emailValidator"
  *   listener="onBlur"
- *   type="password"
- *   htmlAttributes={{ className: 'my-input' }}
- *   attributes={{ 'data-testid': 'password-input' }}
+ *   type="email"
+ *   htmlAttributes={{ className: 'email-input', placeholder: 'Enter your email' }}
+ *   attributes={{ 'data-testid': 'email-input' }}
  *   supportingProps={{
- *     utils: { helperFunction: () => {} },
- *     database: { name: 'users', envGuide: 'production' },
- *     variables: { setting: true },
+ *     utils: { $REGEX_EMAIL: "/^[^\s@]+@[^\s@]+\.[^\s@]+$/" },
+ *     database: { name: 'Firebase', envGuide: 'process.env.DB_CONNECTION' },
+ *     variables: { _isValid: false, _email: "" },
  *   }}
- *   mutation={[{ id: 'updatePassword', returnFormat: 'json' }]}
+ *   mutation={[
+ *     { id: 'updateIsValid', returnFormat: 'boolean', mutate: (value) =>, mutationType: 'callback' },
+ *     { id: 'setEmail', returnFormat: 'string', mutate: '_email', mutationType: 'assignment' },
+ *   ]}
  *   callbacks={{
- *     independent: [{ callGuide: 'onSuccess', callback: () => {} }],
- *     dependent: [{ callGuide: 'onError', parametersGuide: ['error'], callback: () => {} }],
+ *     independent: [{ callGuide: 'onSuccess', callback: () => { console.log('Email validation successful'); } }],
+ *     dependent: [
+ *       {
+ *         callGuide: 'onFailure',
+ *         parametersGuide: ['errorMessage'],
+ *         callback: (errorMessage) => { console.error('Email validation failed:', errorMessage); },
+ *       },
+ *     ],
  *   }}
- *   onInit={(target) => { console.log('Input initialized:', target); }}
- * /> 
+ *   onInit={(target) => {
+ *     target.focus(); // Focus the input on initialization
+ *     console.log("Input initialized", target);
+ *   }}
+ * />
  * @returns {JSX.Element} The rendered AIInput component.
  */
 const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
-  const { 
-    handleEvent, 
-    loading, 
-    event, 
-    targetRef, 
+  const {
+    handleEvent,
+    loading,
+    event,
+    targetRef,
     refreshResponse,
   } = props;
 
+  // const eventListener: React.DOMAttributes<HTMLInputElement> = React.useMemo(() => {
+  //   return ({
+  //     [props?.listener || "onChange"]: event
+  //       ? props.listener == "onBlur" || props.listener == "onChange" ? (e: any) => { storeInputValue(); handleEvent(e) } : handleEvent
+  //       : undefined,
+  //   })
+  // }, [event, props?.listener]);
 
-  const eventListener: React.DOMAttributes<HTMLInputElement> = React.useMemo(() => ({
+  // * caching input value
+  const storeInputValue = () => {
+
+    if (!targetRef.current || !props.filename) return;
+
+    const prevInputValues = JSON.parse(localStorage.getItem("AIInputValuesRecord") || "{}");
+
+    // Handle radio inputs
+    if (props.type === "radio") {
+
+      const name = targetRef.current.name;
+      if (!name) return; // If name is missing, skip storing
+
+      const radioInputs = document.querySelectorAll(`input[name="${name}"]`);
+      const radioValues: { [key: string]: boolean } = {};
+
+      radioInputs.forEach((radio, index) => {
+        radioValues[`${props.filename}_radioNo_${index}`] = (radio as HTMLInputElement).checked;
+      });
+
+      localStorage.setItem("AIInputValuesRecord", JSON.stringify({ ...prevInputValues, ...radioValues }));
+      return;
+    }
+
+    // Avoid storing sensitive input types
+    if (props.type === "password" || props.type === "file") return;
+
+    // Placeholder for checkbox logic (not implemented yet)
+    if (props.type === "checkbox") {
+      console.log("Checkbox logic will be implemented later.");
+      return;
+    }
+
+    // Store other input types normally
+    const newInputValues = JSON.stringify({
+      ...prevInputValues,
+      [`${props.filename}_${props.type}`]: targetRef.current.value
+    });
+
+    localStorage.setItem("AIInputValuesRecord", newInputValues);
+  };
+
+  // * Create key to access value in localstorage
+  const getStoredInputValue = (): string | boolean | undefined => {
+    if (!targetRef.current || !props.filename) return undefined;
+
+    const prevInputValues = JSON.parse(localStorage.getItem("AIInputValuesRecord") || "{}");
+
+    // Avoid retrieving values for sensitive input types
+    if (props.type === "password" || props.type === "file") return undefined;
+
+    // Handle radio input
+    if (props.type === "radio") {
+      const name = targetRef.current.name;
+      if (!name) return undefined; // If name is missing, skip retrieval
+
+      const radioInputs = Array.from(document.querySelectorAll(`input[name="${name}"]`));
+      const index = radioInputs.indexOf(targetRef.current as HTMLInputElement);
+
+      if (index === -1) return undefined; // In case the current input is not found in the group
+
+      const key = `${props.filename}_radioNo_${index}`;
+      return prevInputValues[key] ?? undefined;
+    }
+    // Handle checkbox (Placeholder for future implementation)
+    if (props.type === "checkbox") {
+      console.log("Checkbox retrieval logic will be implemented later.");
+      return undefined;
+    }
+
+    // Retrieve value for normal input types
+    const key = `${props.filename}_${props.type}`;
+    return prevInputValues[key] ?? undefined;
+  };
+
+  const storedValue = React.useMemo(() => getStoredInputValue(), [props.filename, props.type, targetRef.current]);
+  console.log("=>", storedValue)
+  const eventListener: Partial<Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onBlur'>> & {
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  } = React.useMemo(() => {
+    const storedValue = getStoredInputValue();
+    return {
+      ...((props.type == "checkbox")
+        ? { defaultChecked: !!storedValue } // Ensure it's a boolean value
+        : { defaultValue: typeof storedValue === "boolean" ? undefined : storedValue }), // Ensure `defaultValue` is valid
+
       [props?.listener || "onChange"]: event
-        ? handleEvent
+        ? props.listener === "onBlur" || (props.listener === "onChange" && props.type == "radio")
+          ? (e: any) => { storeInputValue(); handleEvent(e); }
+          : handleEvent
         : undefined,
-    }), [event, props?.listener]);
+    };
+  }, [props.listener, targetRef.current]);
 
   return (
     <StyledComponentsWrapper>
       <span>
         <input
-        ref={targetRef}
+          {
+          ...((props.type == "radio")
+            ? { defaultChecked: !!storedValue } // Ensure it's a boolean value
+            : { defaultValue: typeof storedValue === "boolean" ? undefined : storedValue }) // Ensure `defaultValue` is valid
+          }
+          onBlur={storeInputValue}
+          ref={targetRef}
           type={props.type || "text"}
           {...eventListener}
           {...props.htmlAttributes}
@@ -105,6 +227,6 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
       )}
     </StyledComponentsWrapper>
   );
-},"input") as React.FC<AIInputProps>;
+}, "input") as React.FC<AIInputProps>;
 
 export default AIInput

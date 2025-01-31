@@ -102,35 +102,38 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
 
   // * caching input value
   const storeInputValue = () => {
-
     if (!targetRef.current || !props.filename) return;
 
     const prevInputValues = JSON.parse(localStorage.getItem("AIInputValuesRecord") || "{}");
 
     // Handle radio inputs
     if (props.type === "radio") {
-
-      const name = targetRef.current.name;
-      if (!name) return; // If name is missing, skip storing
-
-      const radioInputs = document.querySelectorAll(`input[name="${name}"]`);
-      const radioValues: { [key: string]: boolean } = {};
-
-      radioInputs.forEach((radio, index) => {
-        radioValues[`${props.filename}_radioNo_${index}`] = (radio as HTMLInputElement).checked;
-      });
-
-      localStorage.setItem("AIInputValuesRecord", JSON.stringify({ ...prevInputValues, ...radioValues }));
+      const [value, name, required] = [props.attributes?.value, props.attributes?.name, props.attributes?.required];
+      if (!value && !name && !required) return;
+      localStorage.setItem("AIInputValuesRecord", JSON.stringify({ ...prevInputValues, [`radio_${name}`]: value }));
       return;
     }
 
     // Avoid storing sensitive input types
     if (props.type === "password" || props.type === "file") return;
 
-    // Placeholder for checkbox logic (not implemented yet)
     if (props.type === "checkbox") {
-      console.log("Checkbox logic will be implemented later.");
-      return;
+      const [name, value, checked] = [props.attributes?.name, props.attributes?.value, targetRef.current.checked];
+      if (value === undefined || name === undefined) return;
+      let checkedValues = prevInputValues[name] || [];
+      console.log("existing", checkedValues)
+      if (checked && !checkedValues.includes(value)) {
+        checkedValues.push(value);
+      } else {
+        checkedValues = checkedValues.filter((v: string) => v !== value);
+      }
+
+      localStorage.setItem("AIInputValuesRecord",
+        JSON.stringify({
+          ...prevInputValues,
+          [name]: checkedValues
+        }));
+      return
     }
 
     // Store other input types normally
@@ -143,7 +146,7 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
   };
 
   // * Create key to access value in localstorage
-  const getStoredInputValue = (): string | boolean | undefined => {
+  const getStoredInputValue = (): string | undefined => {
     if (!targetRef.current || !props.filename) return undefined;
 
     const prevInputValues = JSON.parse(localStorage.getItem("AIInputValuesRecord") || "{}");
@@ -153,15 +156,9 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
 
     // Handle radio input
     if (props.type === "radio") {
-      const name = targetRef.current.name;
+      const name = props.attributes?.name;
       if (!name) return undefined; // If name is missing, skip retrieval
-
-      const radioInputs = Array.from(document.querySelectorAll(`input[name="${name}"]`));
-      const index = radioInputs.indexOf(targetRef.current as HTMLInputElement);
-
-      if (index === -1) return undefined; // In case the current input is not found in the group
-
-      const key = `${props.filename}_radioNo_${index}`;
+      const key = `radio_${name}`;
       return prevInputValues[key] ?? undefined;
     }
     // Handle checkbox (Placeholder for future implementation)
@@ -175,35 +172,53 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
     return prevInputValues[key] ?? undefined;
   };
 
-  const storedValue = React.useMemo(() => getStoredInputValue(), [props.filename, props.type, targetRef.current]);
-  console.log("=>", storedValue)
+  const [checked, setChecked] = React.useState<string | undefined>("");
+  React.useEffect(() => {
+    if (!(targetRef.current || props.type == "radio"))
+      return;
+    setChecked(getStoredInputValue())
+  }, [targetRef.current])
+
+  React.useEffect(() => {
+    if (!targetRef.current || !props.attributes?.name || props.type !== "radio") return;
+    const radiosSet = Array.from(document.querySelectorAll(`input[name='${props.attributes?.name}']`)) as HTMLInputElement[];
+    radiosSet.forEach((radio) => {
+      radio.checked = (radio.value == checked)
+    })
+  }, [checked])
+
   const eventListener: Partial<Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onBlur'>> & {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   } = React.useMemo(() => {
-    const storedValue = getStoredInputValue();
+    // const storedValue = getStoredInputValue();
     return {
-      ...((props.type == "checkbox")
-        ? { defaultChecked: !!storedValue } // Ensure it's a boolean value
-        : { defaultValue: typeof storedValue === "boolean" ? undefined : storedValue }), // Ensure `defaultValue` is valid
+      // ...((props.type == "radio")
+      //   // ? { defaultChecked: false }
+      //   ? { defaultChecked: checked == props.attributes?.value } // Ensure it's a boolean value
+      //   : { defaultValue: getStoredInputValue() }), // Ensure `defaultValue` is valid
 
-      [props?.listener || "onChange"]: event
-        ? props.listener === "onBlur" || (props.listener === "onChange" && props.type == "radio")
-          ? (e: any) => { storeInputValue(); handleEvent(e); }
-          : handleEvent
-        : undefined,
+      // [props?.listener || "onChange"]: event
+      //   ? props.listener === "onBlur"
+      //     ? (e: any) => { console.log("Hello"); storeInputValue(); handleEvent(e); }
+      //     : props.listener == "onChange" && props.type == "radio" ? (e: any) => { storeInputValue(); handleEvent(e); setChecked(targetRef.current.checked) }
+      //     : handleEvent
+      //   : undefined,
+      defaultValue: !/radio|checkbox/.test(props.type) ? getStoredInputValue() : undefined,
+      [props.listener || "onChange"]:
+        event
+          ? (props.listener == "onChange" && /radio|checkbox/.test(props.type))
+            ? (e: any) => { storeInputValue(); handleEvent(e); setChecked(props.attributes?.value?.toString()) }
+            : props.listener == "onBlur" ? (e: any) => { storeInputValue(); handleEvent(e); } : handleEvent
+          : undefined
     };
-  }, [props.listener, targetRef.current]);
+  }, [props.listener, event]);
+
 
   return (
     <StyledComponentsWrapper>
       <span>
         <input
-          {
-          ...((props.type == "radio")
-            ? { defaultChecked: !!storedValue } // Ensure it's a boolean value
-            : { defaultValue: typeof storedValue === "boolean" ? undefined : storedValue }) // Ensure `defaultValue` is valid
-          }
           onBlur={storeInputValue}
           ref={targetRef}
           type={props.type || "text"}

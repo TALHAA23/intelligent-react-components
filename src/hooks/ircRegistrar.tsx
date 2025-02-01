@@ -1,5 +1,5 @@
 import React from "react";
-import {  Common } from "@types";
+import { Common } from "@types";
 import { useIrcRegistriesAndRegister } from "./ircRegisteryProvider";
 import { IRC_ACTIONS } from "@utils/utils";
 
@@ -24,7 +24,7 @@ export default function componentRegistrar({
   React.useEffect(() => {
     ircRegisteryAndRegister.register(IRC_ACTIONS.new, {
       filename,
-      buttonProps: props,
+      props,
       refreshResponse,
     });
   }, []);
@@ -32,7 +32,7 @@ export default function componentRegistrar({
   React.useEffect(() => {
     ircRegisteryAndRegister.register(IRC_ACTIONS.updateStatus, {
       filename: props.filename,
-      buttonProps: props,
+      props,
       status: loading ? "pending" : event ? "successful" : "unknown",
       refreshResponse,
     });
@@ -41,7 +41,7 @@ export default function componentRegistrar({
   React.useEffect(() => {
     ircRegisteryAndRegister.register(IRC_ACTIONS.updateErrorAndResponse, {
       filename: props.filename,
-      buttonProps: props,
+      props,
       error,
       response: responseMeta,
       status: error ? "error" : responseMeta ? "successful" : "unknown",

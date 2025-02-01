@@ -60,7 +60,7 @@ export default function DevTool({ initialIsOpen = false }: Props) {
                     <StyledDevtoolContainerMainRow>
                       <StyledDevtoolContainerMainRowTitle>
                         {" "}
-                        {button.buttonProps.filename}
+                        {button.props.filename}
                       </StyledDevtoolContainerMainRowTitle>
                       <p className={`status-${button.status}`}>
                         {button.status}
@@ -85,7 +85,7 @@ export default function DevTool({ initialIsOpen = false }: Props) {
                     </StyledDevtoolContainerMainRow>
                     <StyledDevtoolContainerMainInformation>
                       <StyledXSLightText>Input:</StyledXSLightText>
-                      <ObjectRepresentation props={button.buttonProps} />
+                      <ObjectRepresentation props={button.props} />
                       {button.response && (
                         <>
                           <StyledXSLightText>

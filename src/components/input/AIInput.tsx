@@ -5,7 +5,7 @@ import {
   StyledComponentsWrapper,
   StyledNoStyleButton,
 } from "@styles/StylesCommon";
-import { AIInputProps } from "@types";
+import { AIInputProps, EnhancedComponentProps } from "@types";
 import Loader from "../loader/Loader";
 import enhanceWithAI from "../enhanceWithAI";
 
@@ -83,6 +83,8 @@ import enhanceWithAI from "../enhanceWithAI";
  * />
  * @returns {JSX.Element} The rendered AIInput component.
  */
+
+// type AIInputPropsWithHOC = AIInputProps & HOCProps;
 const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
   const {
     handleEvent,
@@ -90,15 +92,10 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
     event,
     targetRef,
     refreshResponse,
-  } = props;
+    attributes
+  } = props as EnhancedComponentProps<AIInputProps>;
 
-  // const eventListener: React.DOMAttributes<HTMLInputElement> = React.useMemo(() => {
-  //   return ({
-  //     [props?.listener || "onChange"]: event
-  //       ? props.listener == "onBlur" || props.listener == "onChange" ? (e: any) => { storeInputValue(); handleEvent(e) } : handleEvent
-  //       : undefined,
-  //   })
-  // }, [event, props?.listener]);
+
 
   // * caching input value
   const storeInputValue = () => {
@@ -108,7 +105,7 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
 
     // Handle radio inputs
     if (props.type === "radio") {
-      const [value, name, required] = [props.attributes?.value, props.attributes?.name, props.attributes?.required];
+      const [value, name, required] = [attributes?.value, attributes?.name, attributes?.required];
       if (!value && !name && !required) return;
       localStorage.setItem("AIInputValuesRecord", JSON.stringify({ ...prevInputValues, [`radio_${name}`]: value }));
       return;
@@ -118,21 +115,19 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
     if (props.type === "password" || props.type === "file") return;
 
     if (props.type === "checkbox") {
-      const [name, value, checked] = [props.attributes?.name, props.attributes?.value, targetRef.current.checked];
+      const [name, value, checked] = [attributes?.name, attributes?.value, targetRef.current.checked];
       if (value === undefined || name === undefined) return;
       let checkedValues = prevInputValues[name] || [];
-      console.log("existing", checkedValues)
-      if (checked && !checkedValues.includes(value)) {
-        checkedValues.push(value);
-      } else {
-        checkedValues = checkedValues.filter((v: string) => v !== value);
-      }
+      checked ?
+        !checkedValues.includes(value) && checkedValues.push(value)
+        : checkedValues = checkedValues.filter((v: string) => v !== value);
 
       localStorage.setItem("AIInputValuesRecord",
         JSON.stringify({
           ...prevInputValues,
           [name]: checkedValues
-        }));
+        }))
+
       return
     }
 
@@ -156,15 +151,17 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
 
     // Handle radio input
     if (props.type === "radio") {
-      const name = props.attributes?.name;
+      const name = attributes?.name;
       if (!name) return undefined; // If name is missing, skip retrieval
       const key = `radio_${name}`;
       return prevInputValues[key] ?? undefined;
     }
     // Handle checkbox (Placeholder for future implementation)
     if (props.type === "checkbox") {
-      console.log("Checkbox retrieval logic will be implemented later.");
-      return undefined;
+      const name = attributes?.name;
+      if (!name) return undefined;
+
+      return prevInputValues[name] || [];
     }
 
     // Retrieve value for normal input types
@@ -180,10 +177,10 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
   }, [targetRef.current])
 
   React.useEffect(() => {
-    if (!targetRef.current || !props.attributes?.name || props.type !== "radio") return;
-    const radiosSet = Array.from(document.querySelectorAll(`input[name='${props.attributes?.name}']`)) as HTMLInputElement[];
+    if (!targetRef.current || !attributes?.name || !/radio|checkbox/.test(props.type)) return;
+    const radiosSet = Array.from(document.querySelectorAll(`input[name='${attributes?.name}']`)) as HTMLInputElement[];
     radiosSet.forEach((radio) => {
-      radio.checked = (radio.value == checked)
+      radio.checked = (Array.isArray(checked) ? checked.includes(radio.value) : radio.value == checked)
     })
   }, [checked])
 
@@ -191,24 +188,12 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   } = React.useMemo(() => {
-    // const storedValue = getStoredInputValue();
     return {
-      // ...((props.type == "radio")
-      //   // ? { defaultChecked: false }
-      //   ? { defaultChecked: checked == props.attributes?.value } // Ensure it's a boolean value
-      //   : { defaultValue: getStoredInputValue() }), // Ensure `defaultValue` is valid
-
-      // [props?.listener || "onChange"]: event
-      //   ? props.listener === "onBlur"
-      //     ? (e: any) => { console.log("Hello"); storeInputValue(); handleEvent(e); }
-      //     : props.listener == "onChange" && props.type == "radio" ? (e: any) => { storeInputValue(); handleEvent(e); setChecked(targetRef.current.checked) }
-      //     : handleEvent
-      //   : undefined,
       defaultValue: !/radio|checkbox/.test(props.type) ? getStoredInputValue() : undefined,
       [props.listener || "onChange"]:
         event
           ? (props.listener == "onChange" && /radio|checkbox/.test(props.type))
-            ? (e: any) => { storeInputValue(); handleEvent(e); setChecked(props.attributes?.value?.toString()) }
+            ? (e: any) => { storeInputValue(); handleEvent(e); setChecked(props.type == "checkbox" ? getStoredInputValue() : attributes?.value?.toString()) }
             : props.listener == "onBlur" ? (e: any) => { storeInputValue(); handleEvent(e); } : handleEvent
           : undefined
     };
@@ -224,7 +209,7 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
           type={props.type || "text"}
           {...eventListener}
           {...props.htmlAttributes}
-          {...props.attributes}
+          {...attributes}
           disabled={loading}
         />
       </span>

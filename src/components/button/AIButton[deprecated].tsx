@@ -24,7 +24,7 @@ export default function AIButton(props: AIButtonProps) {
   >(event?.meta);
   const args = extractInfoFromProps({ ...props, element: "button" });
   const eventListner: React.DOMAttributes<HTMLButtonElement> = {
-    [props?.listner || "onClick"]: event
+    [props?.listener || "onClick"]: event
       ? (e: MouseEvent) => event.default(e, args ? args : undefined)
       : undefined,
   };
@@ -53,12 +53,14 @@ export default function AIButton(props: AIButtonProps) {
   }, []);
 
   componentRegistrar(
-   { props,
-    loading,
-    event,
-       error,
-       responseMeta,
-       refreshResponse:()=>generateResponse(setLoading, setError, props),}
+    {
+      props,
+      loading,
+      event,
+      error,
+      responseMeta,
+      refreshResponse: () => generateResponse(setLoading, setError, props),
+    }
   )
   // ! Attention required: The Button is Styled hardcoded and users might not be able to change its styles
   return (

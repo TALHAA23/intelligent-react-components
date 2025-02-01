@@ -1,5 +1,5 @@
-import { AIButtonProps } from "./AIButtonProps";
 import { AIResponse } from "@server-types/index";
+import { Common } from "./common";
 
 // action interface
 type ACTIONS =
@@ -15,7 +15,7 @@ export type Action = {
 
 export interface IRCButtonRegistery {
   filename: string;
-  buttonProps: Partial<AIButtonProps>;
+  props: Partial<Common>;
   error?: Error;
   response?: AIResponse;
   status?: STATUS;

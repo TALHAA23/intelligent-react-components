@@ -1,5 +1,5 @@
 import React from "react";
-import { AIButtonProps } from "@/types/index";
+import { AIButtonProps, EnhancedComponentProps } from "@/types/index";
 import Loader from "@components/loader/Loader";
 import stars from "@public/re-generate.svg";
 import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
@@ -15,15 +15,15 @@ export const AIButton: React.FC<AIButtonProps> = enhanceWithAI((props: AIButtonP
     loading,
     event,
     refreshResponse,
-    targetRef, 
+    targetRef,
     ...rest
-  } = props;
+  } = props as EnhancedComponentProps<AIButtonProps>
 
   const eventListener: React.DOMAttributes<HTMLButtonElement> = {
-      [props?.listener || "onClick"]: event
-        ? handleEvent
-        : undefined,
-    };
+    [props?.listener || "onClick"]: event
+      ? handleEvent
+      : undefined,
+  };
 
   return (
     <StyledComponentsWrapper>
@@ -41,17 +41,17 @@ export const AIButton: React.FC<AIButtonProps> = enhanceWithAI((props: AIButtonP
         )}
       </StyledAIButton>
       {props.cacheResponse == false && (
-         <StyledNoStyleButton disabled={loading}>
-         <StyledRegenerateIcon
-           src={stars}
-           alt="re-generate"
-           title="Re-generate"
-           onClick={refreshResponse}
-         />
-       </StyledNoStyleButton>
+        <StyledNoStyleButton disabled={loading}>
+          <StyledRegenerateIcon
+            src={stars}
+            alt="re-generate"
+            title="Re-generate"
+            onClick={refreshResponse}
+          />
+        </StyledNoStyleButton>
       )}
     </StyledComponentsWrapper>
   );
-},"button");
+}, "button");
 
 export default AIButton

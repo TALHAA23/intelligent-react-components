@@ -1,8 +1,10 @@
 import React from "react";
 import { Common } from "./common";
-interface AIButtonProps extends Common<HTMLButtonElement> {
+interface AIButtonProps extends Common<React.ButtonHTMLAttributes<HTMLButtonElement>> {
+  /**
+   * The inner text inside a button
+   */
   label?: string;
-  attributes?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
 export type { AIButtonProps };

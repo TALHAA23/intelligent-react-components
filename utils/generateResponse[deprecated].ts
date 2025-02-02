@@ -1,5 +1,5 @@
 import { AIButtonProps, AIInputProps } from "@types";
-import jsonSanitizer from "./jsonSanitizer";
+import jsonSanitizer from "./jsonSanitizer[deprecated]";
 import { postMethod, urls } from "./utils";
 import React from "react";
 import { AIResponse } from "@server/types";

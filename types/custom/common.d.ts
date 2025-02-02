@@ -1,6 +1,6 @@
 import React from "react";
 
-type Element = "input" | "button";
+// type Element = "input" | "button" | "form";
 
 interface Common<Target = React.ReactHTMLElement, T = Function> {
   /**
@@ -28,24 +28,17 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
    */
   listener: keyof React.DOMAttributes<React.ReactHTMLElement>;
 
-  /**
-   * The type of the element. 
-   * Valid values are "input" or "button".
-   * It is automatically added so you can omit this.
-   */
-  element?: Element;
+  // /**
+  //  * The type of the element. 
+  //  * Valid values are "input" or "button".
+  //  * It is automatically added so you can omit this.
+  //  */
+  // element?: Element;
 
   /**
-   * Additional HTML attributes for the input element.
-   * For example: `{ className: 'my-input', placeholder: 'Enter your text' }`
+   * Specific HTML attributes for the element .i.e className, id etc
    */
-  htmlAttributes?: React.HTMLAttributes<React.ReactHTMLElement>;
-
-  /**
-   * Specific HTML attributes for the element.
-   * htmlAttributes might not cover all attributes like checked, required etc
-   */
-  attributes?: React.InputHTMLAttributes<Target>;
+  attributes?: Target;
 
   /**
    * Supporting properties for the AI module. 

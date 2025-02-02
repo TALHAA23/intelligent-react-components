@@ -7,8 +7,8 @@ import {
   StyledNoStyleButton,
   StyledComponentsWrapper,
 } from "@styles/StylesCommon";
-import generateResponse from "@utils/generateResponse";
-import extractInfoFromProps from "@utils/extractInfoFromProps";
+import generateResponse from "@utils/generateResponse[deprecated]";
+import extractInfoFromProps from "@utils/extractInfoFromProps[deprecated]";
 import componentRegistrar from "@src/hooks/ircRegistrar";
 interface MyModule {
   default: (event: MouseEvent, ...args: unknown[]) => unknown;
@@ -67,7 +67,6 @@ export default function AIButton(props: AIButtonProps) {
     <StyledComponentsWrapper>
       <StyledAIButton
         {...eventListner}
-        {...props.htmlAttributes}
         {...props.attributes}
         disabled={loading}
       >

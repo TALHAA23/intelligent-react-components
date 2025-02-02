@@ -1,12 +1,12 @@
 import { Common } from "./common";
 
-interface HOCProps {
+interface HOCProps<T> {
     handleEvent: (e: any) => void;
     loading: boolean;
     error?: any;
     event?: any;
     responseMeta?: any;
-    targetRef: React.RefObject<HTMLElement>;
+    targetRef: React.RefObject<T>;
     refreshResponse: () => Promise<void>;
 }
-export type EnhancedComponentProps<T extends Common, U = HTMLElement> = Omit<T, U, keyof HOCProps> & HOCProps;
+export type EnhancedComponentProps<T extends Common, U> = Omit<T, keyof HOCProps<U>> & HOCProps<U>;

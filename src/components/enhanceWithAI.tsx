@@ -124,12 +124,9 @@ function extractInfoFromProps(props: Common): Result {
   return result;
 }
 
-
-
-
 const enhanceWithAI = <T extends Common>(
   WrappedComponent: React.FC<T>,
-  element: Common["element"]
+  element: "button" | "input" | "form"
 ): React.FC<T> => {
   const EnhancedComponent = (props: T) => {
     const enhancedProps = { ...props, element };
@@ -220,7 +217,7 @@ const enhanceWithAI = <T extends Common>(
 
   EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
-  return EnhancedComponent;
+  return EnhancedComponent
 };
 
 export default enhanceWithAI;

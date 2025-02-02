@@ -6,9 +6,9 @@ import {
   StyledNoStyleButton,
 } from "@styles/StylesCommon";
 import { AIInputProps } from "@types";
-import extractInfoFromProps from "@utils/extractInfoFromProps";
+import extractInfoFromProps from "@utils/extractInfoFromProps[deprecated]";
 import Loader from "../loader/Loader";
-import generateResponse from "@utils/generateResponse";
+import generateResponse from "@utils/generateResponse[deprecated]";
 import componentRegistrar from "@src/hooks/ircRegistrar";
 
 interface MyModule {
@@ -17,13 +17,13 @@ interface MyModule {
     ...args: unknown[]
   ) => unknown;
   meta?: any;
-  onInitialRender:(event:HTMLInputElement, ...args:unknown[])=>void;
+  onInitialRender: (event: HTMLInputElement, ...args: unknown[]) => void;
 }
 
 export default function AIInput(props: AIInputProps) {
   const isOnInitCallback = React.useMemo(() => typeof props.onInit === "function", [props.onInit]);
   const targetRef = React.useRef<HTMLInputElement>(null);
-  const [onInitialRender, setOnInitialRender] = React.useState<undefined | string | ((event:HTMLInputElement, ...args:unknown[])=>void)>(isOnInitCallback ?()=> props.onInit : undefined);
+  const [onInitialRender, setOnInitialRender] = React.useState<undefined | string | ((event: HTMLInputElement, ...args: unknown[]) => void)>(isOnInitCallback ? () => props.onInit : undefined);
   const [error, setError] = React.useState<any>(undefined);
   const [loading, setLoading] = React.useState(true);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
@@ -61,7 +61,7 @@ export default function AIInput(props: AIInputProps) {
 
   React.useEffect(() => {
     if (typeof onInitialRender === "function" && targetRef.current) {
-      onInitialRender(targetRef.current,args);
+      onInitialRender(targetRef.current, args);
     }
   }, [onInitialRender, event]);
 
@@ -72,16 +72,15 @@ export default function AIInput(props: AIInputProps) {
     event,
     error,
     responseMeta,
-    refreshResponse:()=>generateResponse(setLoading, setError, props),
+    refreshResponse: () => generateResponse(setLoading, setError, props),
   })
   return (
     <StyledComponentsWrapper>
       <span>
         <input
-        ref={targetRef}
+          ref={targetRef}
           type={props.type || "text"}
           {...eventListener}
-          {...props.htmlAttributes}
           {...props.attributes}
           disabled={loading}
         />

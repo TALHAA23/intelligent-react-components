@@ -84,7 +84,6 @@ import enhanceWithAI from "../enhanceWithAI";
  * @returns {JSX.Element} The rendered AIInput component.
  */
 
-// type AIInputPropsWithHOC = AIInputProps & HOCProps;
 const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
   const {
     handleEvent,
@@ -93,9 +92,7 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
     targetRef,
     refreshResponse,
     attributes
-  } = props as EnhancedComponentProps<AIInputProps>;
-
-
+  } = props as EnhancedComponentProps<AIInputProps, HTMLInputElement>;
 
   // * caching input value
   const storeInputValue = () => {
@@ -208,7 +205,7 @@ const AIInput: React.FC<AIInputProps> = enhanceWithAI((props: AIInputProps) => {
           ref={targetRef}
           type={props.type || "text"}
           {...eventListener}
-          {...props.htmlAttributes}
+          // {...props.htmlAttributes}
           {...attributes}
           disabled={loading}
         />

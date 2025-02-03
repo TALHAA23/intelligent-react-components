@@ -2,7 +2,6 @@ import React from "react"
 import { Common } from "./common";
 
 interface FormField {
-
     /**
    * Unique identifier for the field. 
    * Used for referencing the field in other parts of the form definition 
@@ -47,6 +46,8 @@ interface FormField {
 }
 
 interface AIFormProps extends Common<React.FormHTMLAttributes<HTMLFormElement>> {
+    children:React.ReactNode,
+
     /**
        * Hints for the desired form layout. 
        * Examples: "one-column", "two-column", "grid", "horizontal"

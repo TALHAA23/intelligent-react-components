@@ -1,16 +1,14 @@
-import { AIFormProps } from "@types"
-import React from "react"
-import enhanceWithAI from "../enhanceWithAI"
+import { AIFormProps, EnhancedComponentProps } from "@types";
+import React from "react";
+import enhanceWithAI from "../enhanceWithAI";
 const AIForm: React.FC<AIFormProps> = enhanceWithAI((props: AIFormProps) => {
-    const { prompt } = props;
-    prompt
-    return <form >
-        {
+  const { prompt } = props as EnhancedComponentProps<
+    AIFormProps,
+    HTMLFormElement
+  >;
+  prompt;
 
-        }
-    </form>
+  return <form>{props.children}</form>;
+}, "form");
 
-}, "form")
-
-
-export default AIForm
+export default AIForm;

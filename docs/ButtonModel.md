@@ -30,23 +30,23 @@ The following keys are optional but may be included to provide additional contex
 
 **Invalid Input Handling:** Any deviation from this format will result in a JSON error response following the structure and examples below.
 
-  ## Processing Steps
+## Processing Steps
 
-  The following steps outline how you should process the input JSON to generate the JavaScript event listener function:
+The following steps outline how you should process the input JSON to generate the JavaScript event listener function:
 
-  1. **Input Validation:** Validate the input JSON. Ensure that the required key `prompt` are present and contain valid values. **Check for the existence and validity of all referenced elements (variables in `supportingProps.variables`, utilities in `supportingProps.utils`, mutations in `mutation`, and callbacks in `callbacks`). If any required key is missing or contains an invalid value, or any referenced element is missing or has an invalid data type, return an error response (details below).** For example, an invalid `listner`, wrong or missing reference or an empty `prompt` should result in an error. If the `onInit` key is present, validate that its value is either a string. If it's a string, ensure the prompt is clear and actionable.
+1. **Input Validation:** Validate the input JSON. Ensure that the required key `prompt` are present and contain valid values. **Check for the existence and validity of all referenced elements (variables in `supportingProps.variables`, utilities in `supportingProps.utils`, mutations in `mutation`, and callbacks in `callbacks`). If any required key is missing or contains an invalid value, or any referenced element is missing or has an invalid data type, return an error response (details below).** For example, an invalid `listner`, wrong or missing reference or an empty `prompt` should result in an error. If the `onInit` key is present, validate that its value is either a string. If it's a string, ensure the prompt is clear and actionable.
 
-  2. **Prompt Parsing and Clarification:** Parse the prompt string. Identify any special markers (e.g., variable references using a prefix like `_`), function calls, or utility references. Identify keywords indicating database operations (e.g., fetch, insert, update, delete). If any part of the prompt is unclear or requires additional information, return an error asking a clarifying question. or onInit prompts, the string should describe initialization logic specific to the button element (e.g., disabling the button, setting initial styles). If the prompt is unclear, return a clarifying question.  
+2. **Prompt Parsing and Clarification:** Parse the prompt string. Identify any special markers (e.g., variable references using a prefix like `_`), function calls, or utility references. Identify keywords indicating database operations (e.g., fetch, insert, update, delete). If any part of the prompt is unclear or requires additional information, return an error asking a clarifying question. or onInit prompts, the string should describe initialization logic specific to the button element (e.g., disabling the button, setting initial styles). If the prompt is unclear, return a clarifying question.
 
-  3. **Contextual Data Processing:** Process any additional information in the JSON input (e.g., `supportingProps`, `mutation`, `callbacks`). Use this information to refine the generated code. Handle missing or invalid data in this section gracefully. Return an error if critical contextual data is missing or invalid.
+3. **Contextual Data Processing:** Process any additional information in the JSON input (e.g., `supportingProps`, `mutation`, `callbacks`). Use this information to refine the generated code. Handle missing or invalid data in this section gracefully. Return an error if critical contextual data is missing or invalid.
 
-  4. **Mutation Handling:** Process mutations from the mutation array. If the mutationType field is omitted for a mutation, assume that it's a callback function. Otherwise, handle assignment and callback types as described in the "Thought Process" section.
+4. **Mutation Handling:** Process mutations from the mutation array. If the mutationType field is omitted for a mutation, assume that it's a callback function. Otherwise, handle assignment and callback types as described in the "Thought Process" section.
 
-  5. **Database Configuration:** If the database field is present in supportingProps, use the name and envGuide fields to configure the database connection. The model should use the information to generate the code to connect to the specified database and handle any database operations mentioned in the prompt. The generated code should access environment variables using the information specified in envGuide.
+5. **Database Configuration:** If the database field is present in supportingProps, use the name and envGuide fields to configure the database connection. The model should use the information to generate the code to connect to the specified database and handle any database operations mentioned in the prompt. The generated code should access environment variables using the information specified in envGuide.
 
-  6. **Code Generation:** Generate the JavaScript event listener function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. Ensure the code is well-documented and adheres to best practices. If `onInit` is defined as a string, generate the `onInitialRender` function that accepts `target` (the input element) as first argument and `args` (same as the event listener). This function should encapsulate all initialization logic described in the `onInit`.
+6. **Code Generation:** Generate the JavaScript event listener function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. Ensure the code is well-documented and adheres to best practices. If `onInit` is defined as a string, generate the `onInitialRender` function that accepts `target` (the input element) as first argument and `args` (same as the event listener). This function should encapsulate all initialization logic described in the `onInit`.
 
-  7. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `onInitialRender`, `globals`, `helperFunctions` or `imports`.
+7. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `onInitialRender`, `globals`, `helperFunctions` or `imports`.
 
 ## Using the `globals` Field
 
@@ -137,8 +137,7 @@ The response should be a JSON object with the following structure:
     "helperFunctions": [
       /* An array of helper functions generated by the model. */
     ],
-      "onInitialRender":"This will be a function generated when the onInit field is a string (actionable prompt), describing actions to take during the initial render"
-    
+    "onInitialRender": "This will be a function generated when the onInit field is a string (actionable prompt), describing actions to take during the initial render"
   },
   "expect": "A string explaining what the user needs to provide for the generated code to work correctly.  This might include DOM elements, global variables, or other dependencies."
 }
@@ -1242,20 +1241,24 @@ This section provides examples illustrating how to use the `globals` field for s
 ```
 
 ## Working with `onInit`
+
 The onInit field allows defining initialization behavior for the button element on its first render. The field can hold a function, a string (prompt), or be undefined. Below are examples to guide the model in processing onInit in different scenarios.
 
 ### Example 1: When onInit is undefined
+
 When onInit is not defined, no initialization logic is required. The model should ignore this field entirely.
 
 **Input JSON**
+
 ```json
 {
   "listner": "onClick",
-  "prompt": "Log 'Button clicked!' to the console.",
+  "prompt": "Log 'Button clicked!' to the console."
 }
-
 ```
+
 **Output JSON**
+
 ```json
 {
   "thoughts": "The user wants to log 'Button clicked!' to the console when the button is clicked. Since onInit is undefined, no additional initialization logic is required.",
@@ -1265,45 +1268,49 @@ When onInit is not defined, no initialization logic is required. The model shoul
   "expect": "Ensure that the button element has the onClick listener attached."
   // No onInitialRender is created as the input has no onInit field
 }
-
 ```
 
 ### Example 2: When onInit is a Function
+
 When onInit is a function, the user is responsible for defining and handling the initialization logic.
 **Input JSON**
+
 ```json
 {
   "listner": "onClick",
   "prompt": "Log 'Button clicked!' to the console.",
   "onInit": "(target) => { target.disabled = false; }"
 }
-
 ```
+
 **Output JSON**
+
 ```json
 {
   "thoughts": "The user wants to log 'Button clicked!' to the console when the button is clicked. Since onInit is provided as a function, it is directly referenced and will handle enabling the button during initialization.",
   "response": {
-    "eventListener": "function main(event, args) { console.log('Button clicked!'); }",
+    "eventListener": "function main(event, args) { console.log('Button clicked!'); }"
   },
   "expect": "Ensure that the button is correctly referenced and that the onInit function initializes the button state as expected."
   // No onInitialRender is created as the input has onInit of type function meaning user want to handle the situation themself
 }
-
 ```
 
 ### Example 3: When onInit is a String
+
 When onInit is a string, it acts as a prompt describing the initialization logic. The model should generate a function named `onInitialRender` that holds the described behavior. This function should accept the button element (`target`) as its first argument and `args` as the second argument.
 **Input JSON**
+
 ```json
 {
   "listner": "onClick",
   "prompt": "a function that logs 'Button clicked!'",
   "onInit": "Disable the button and set its text to 'Loading...'."
 }
-
 ```
+
 **Output JSON**
+
 ```json
 {
   "thoughts": "The user wants to log 'Button clicked!' and initialize the button by disabling it and setting its text to 'Loading...'. An onInitialRender function is generated for the initialization logic.",
@@ -1313,14 +1320,15 @@ When onInit is a string, it acts as a prompt describing the initialization logic
   },
   "expect": "Ensure that the button has the onClick listener attached. On initialization, the button will be disabled, and its text will be set as described."
   // onInitialRender is created as the input has onInit with valid and actionable string prompt
-
 }
 ```
 
 ### Example 4: When onInit is a String with Supporting Props
+
 When onInit is a string and references supportingProps.variables, the model generates an onInitialRender function that uses the values from the args object to apply the described logic.
 
 **Input JSON**
+
 ```json
 {
   "listner": "onMouseEnter",
@@ -1333,9 +1341,10 @@ When onInit is a string and references supportingProps.variables, the model gene
     }
   }
 }
-
 ```
+
 **Output JSON**
+
 ```json
 {
   "thoughts": "The user wants to log 'Mouse entered the button!' and initialize the button by setting its text and disabling it conditionally using the provided supportingProps.variables.",

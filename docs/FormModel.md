@@ -436,48 +436,60 @@ This section provides example input and output pairs to train the model. Each ex
 {
   "thoughts": "The prompt requests a simple contact form with three fields: Name, Email, and Message. No event handler is descussed in the prompt so i will generate empty handler.",
   "response": {
-    "eventListener": "function main(event, args) {}",
-    "formBuilder": "function formBuilder(formElement) {
-      if(globals.isFormBuilded) return
+    "eventListener": "function formBuilder(formElement) {
+      if(globals.isFormBuilded) return;
 
       if (!(formElement instanceof HTMLFormElement)) {
         console.warn('Invalid formElement provided. Expected an HTMLFormElement.');
         return;
       }
 
-      const nameField = document.createElement('input');
-      nameField.type = 'text';
-      nameField.id = 'contactForm-name';
-      nameField.classList.add('contactForm-input');
-      nameField.placeholder = 'Enter your name';
-      const nameLabel = document.createElement('label');
-      nameLabel.htmlFor = 'contactForm-name';
-      nameLabel.textContent = 'Name:';
-      nameLabel.classList.add('contactForm-label');
+      const createElement = (tag, options = {}) => {
+        const element = document.createElement(tag);
+        Object.assign(element, options);
+        return element;
+      };
 
-      const emailField = document.createElement('input');
-      emailField.type = 'email';
-      emailField.id = 'contactForm-email';
-      emailField.classList.add('contactForm-input');
-      emailField.placeholder = 'Enter your email';
-      const emailLabel = document.createElement('label');
-      emailLabel.htmlFor = 'contactForm-email';
-      nameLabel.textContent = 'Email:';
-      nameLabel.classList.add('contactForm-label');
+      const nameField = createElement('input', {
+        type: 'text',
+        id: 'contactForm-name',
+        name: 'name',
+        placeholder: 'Enter your name',
+        classList: ['contactForm-input']
+      });
 
-      const messageField = document.createElement('textarea');
-      messageField.id = 'contactForm-message';
-      messageField.classList.add('contactForm-input');
-      messageField.placeholder = 'Enter your message';
-      const messageLabel = document.createElement('label');
-      messageLabel.htmlFor = 'contactForm-message';
-      messageLabel.textContent = 'Message:';
-      messageLabel.classList.add('contactForm-label');
+      const emailField = createElement('input', {
+        type: 'email',
+        id: 'contactForm-email',
+        name: 'email',
+        placeholder: 'Enter your email',
+        classList: ['contactForm-input']
+      });
 
-      const submitButton = document.createElement('button');
-      submitButton.type = 'submit';
-      submitButton.textContent = 'Submit';
-      submitButton.classList.add('contactForm-button');
+      const messageField = createElement('textarea', {
+        id: 'contactForm-message',
+        name: 'message',
+        placeholder: 'Enter your message',
+        classList: ['contactForm-input']
+      });
+
+      const nameLabel = createElement('label', {
+        htmlFor: 'contactForm-name',
+        textContent: 'Name:',
+        classList: ['contactForm-label']
+      });
+
+      const emailLabel = createElement('label', {
+        htmlFor: 'contactForm-email',
+        textContent: 'Email:',
+        classList: ['contactForm-label']
+      });
+
+      const messageLabel = createElement('label', {
+        htmlFor: 'contactForm-message',
+        textContent: 'Message:',
+        classList: ['contactForm-label']
+      });
 
       formElement.appendChild(nameLabel);
       formElement.appendChild(nameField);
@@ -485,7 +497,6 @@ This section provides example input and output pairs to train the model. Each ex
       formElement.appendChild(emailField);
       formElement.appendChild(messageLabel);
       formElement.appendChild(messageField);
-      formElement.appendChild(submitButton);
 
       globals.isFormBuilded = true;
     }",
@@ -551,13 +562,12 @@ This section provides example input and output pairs to train the model. Each ex
 
 ```json
 {
-  "thoughts": "The prompt requests a simple contact form with three fields: Name, Email, and Message. The prompt want the data to console when submitted so I will use formData constructor to extract data and make it ready to console it.",
+  "thoughts": "The prompt requests a simple contact form with three fields: Name, Email, and Message. The `listener` property is set to 'onSubmit', indicating that the generated code should include logic to handle the form submission event. Upon submission data will be console as described in the prompt.",
   "response": {
     "eventListener": "function main(event, args) {
       event.preventDefault();
 
-      globals.submitButtonRef.disabled = true;
-      globals.submitButtonRef.textContent = 'Submitting...';
+      toggleButtonState(true, 'Submitting...');
 
       const formData = new FormData(event.currentTarget);
       const data = {};
@@ -565,54 +575,67 @@ This section provides example input and output pairs to train the model. Each ex
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
+
+      // Simulated asynchronous operation
+      // setTimeout(() => {
       console.log('Submitted Data:', data);
-      globals.submitButtonRef.disabled = false;
-      globals.submitButtonRef.textContent = 'Submit';
+      toggleButtonState(false, 'Submit');
+      // }, 1500);
 
     }",
     "formBuilder": "function formBuilder(formElement) {
-      if(globals.isFormBuilded) return;
+      if (globals.isFormBuilded) return;
       if (!(formElement instanceof HTMLFormElement)) {
         console.warn('Invalid formElement provided. Expected an HTMLFormElement.');
         return;
       }
 
-      const nameField = document.createElement('input');
-      nameField.type = 'text';
-      nameField.id = 'formWithDataExtraction-name';
-      nameField.name = 'name';
-      nameField.classList.add('formWithDataExtraction-input');
-      nameField.placeholder = 'Enter your name';
-      const nameLabel = document.createElement('label');
-      nameLabel.htmlFor = 'formWithDataExtraction-name';
-      nameLabel.textContent = 'Name:';
-      nameLabel.classList.add('formWithDataExtraction-label');
+      const nameField = createElement('input', {
+        type: 'text',
+        id: 'formWithDataExtraction-name',
+        name: 'name',
+        placeholder: 'Enter your name',
+        classList: ['formWithDataExtraction-input']
+      });
 
-      const emailField = document.createElement('input');
-      emailField.type = 'email';
-      emailField.id = 'formWithDataExtraction-email';
-      nameField.name = 'email';
-      emailField.classList.add('formWithDataExtraction-input');
-      emailField.placeholder = 'Enter your email';
-      const emailLabel = document.createElement('label');
-      emailLabel.htmlFor = 'formWithDataExtraction-email';
-      nameLabel.textContent = 'Email:';
-      nameLabel.classList.add('formWithDataExtraction-label');
+      const emailField = createElement('input', {
+        type: 'email',
+        id: 'formWithDataExtraction-email',
+        name: 'email',
+        placeholder: 'Enter your email',
+        classList: ['formWithDataExtraction-input']
+      });
 
-      const messageField = document.createElement('textarea');
-      messageField.id = 'formWithDataExtraction-message';
-      messageField.name = 'message';
-      messageField.classList.add('formWithDataExtraction-input');
-      messageField.placeholder = 'Enter your message';
-      const messageLabel = document.createElement('label');
-      messageLabel.htmlFor = 'formWithDataExtraction-message';
-      messageLabel.textContent = 'Message:';
-      messageLabel.classList.add('formWithDataExtraction-label');
+      const messageField = createElement('textarea', {
+        id: 'formWithDataExtraction-message',
+        name: 'message',
+        placeholder: 'Enter your message',
+        classList: ['formWithDataExtraction-input']
+      });
 
-      const submitButton = document.createElement('button');
-      submitButton.type = 'submit';
-      submitButton.textContent = 'Submit';
-      submitButton.classList.add('formWithDataExtraction-button');
+      const nameLabel = createElement('label', {
+        htmlFor: 'formWithDataExtraction-name',
+        textContent: 'Name:',
+        classList: ['formWithDataExtraction-label']
+      });
+
+      const emailLabel = createElement('label', {
+        htmlFor: 'formWithDataExtraction-email',
+        textContent: 'Email:',
+        classList: ['formWithDataExtraction-label']
+      });
+
+      const messageLabel = createElement('label', {
+        htmlFor: 'formWithDataExtraction-message',
+        textContent: 'Message:',
+        classList: ['formWithDataExtraction-label']
+      });
+
+      const submitButton = createElement('button', {
+        type: 'submit',
+        textContent: 'Submit',
+        classList: ['formWithDataExtraction-button']
+      });
       globals.submitButtonRef = submitButton;
 
       formElement.appendChild(nameLabel);
@@ -624,7 +647,21 @@ This section provides example input and output pairs to train the model. Each ex
       formElement.appendChild(submitButton);
 
       globals.isFormBuilded = true;
+
     }",
+    "helperFunctions": [
+      "function createElement(tag, options = {}) {
+        const element = document.createElement(tag);
+        Object.assign(element, options);
+        return element;
+      }",
+      "function toggleButtonState(disabled, text) {
+        if (globals.submitButtonRef instanceof HTMLButtonElement) {
+          globals.submitButtonRef.disabled = disabled;
+          globals.submitButtonRef.textContent = text;
+        }
+      }"
+    ],
     "globals": {
       "isFormBuilded": false
     },
@@ -663,9 +700,323 @@ This section provides example input and output pairs to train the model. Each ex
         .formWithDataExtraction-button:hover {
           background-color: #0069d9;
         }
+
+        .formWithDataExtraction-button:disabled {
+          opacity: 0.7;
+        }
       "
     }
   },
-  "expect": "The user is not expected to do anything. Everything well be handled internally. Click on submit button will console the data."
+  "expect": "This example demonstrates how to handle form submission events. The generated code includes logic to disable the submit button during processing and display a loading indicator."
+}
+```
+
+**Example 4: School Registration Form with Styling and Layout**
+**Description:** This example demonstrates the generation of a school registration form with multiple fields, incorporating use of `styleHint`, `layout` preferences and use of `fieldDefinations`. In the example instead of `prompt`, `fieldDefinitions` is used to describe form fields.
+
+**Input JSON:**
+
+```json
+{
+  "prompt": "Create a school registration form.",
+  "fieldDefinitions": [
+    {
+      "id": "firstName",
+      "fieldDefination": "First Name",
+      "styleHint": "Small label, input slightly forward."
+    },
+    {
+      "id": "lastName",
+      "fieldDefination": "Last Name",
+      "styleHint": "Small label, input slightly forward."
+    },
+    {
+      "id": "dateOfBirth",
+      "fieldDefination": "Date of Birth",
+      "styleHint": "Small label, input slightly forward."
+    },
+    {
+      "id": "grade",
+      "fieldDefination": "Grade",
+      "styleHint": "Small label, input slightly forward."
+    },
+    {
+      "id": "schoolName",
+      "fieldDefination": "School Name",
+      "styleHint": "Small label, input slightly forward."
+    },
+    {
+      "id": "parentEmail",
+      "fieldDefination": "Parent Email",
+      "styleHint": "Small label, input slightly forward."
+    }
+  ],
+  "layout": "The form should have two columns on larger screens. 'First Name' and 'Last Name' should be in the first row. 'Date of Birth' and 'Grade' should be in the second row. 'School Name' should span the full width in the third row. 'Parent Email' should span the full width in the fourth row. On smaller screens (below 250px), the form should switch to a single column layout.",
+  "styleHint": "The form should be centered horizontally on the screen with a maximum width of 500px. The form should have a light gray background and subtle shadows. The submit button should span the full width of the form."
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The prompt requests a school registration form with multiple fields, incorporating specific styling and layout preferences. The `layout` property specifies a two-column layout for larger screens and a single-column layout for smaller screens. The `styleHint` property provides guidance on the desired visual style, including form dimensions, background, shadows, and button styling.",
+  "response": {
+    "eventListener": "function main(event, args) {}",
+    "formBuilder": "function formBuilder(formElement) {
+      if(globals.isFormBuilded) return;
+
+      if (!(formElement instanceof HTMLFormElement)) {
+        console.warn('Invalid formElement provided. Expected an HTMLFormElement.');
+        return;
+      }
+
+      const form = createElement('form', {
+        classList: ['registrationForm']
+      });
+
+      const row1 = createElement('div', {
+        classList: ['registrationForm-row']
+      });
+      const firstNameField = createField('firstName', 'First Name');
+      const lastNameField = createField('lastName', 'Last Name');
+      row1.append(firstNameField, lastNameField);
+
+      const row2 = createElement('div', {
+        classList: ['registrationForm-row']
+      });
+      const dateOfBirthField = createField('dateOfBirth', 'Date of Birth');
+      const gradeField = createField('grade', 'Grade');
+      row2.append(dateOfBirthField, gradeField);
+
+      const schoolNameField = createField('schoolName', 'School Name', '100%');
+
+      const parentEmailField = createField('parentEmail', 'Parent Email', '100%');
+
+      const submitButton = createElement('button', {
+        type: 'submit',
+        textContent: 'Submit',
+        classList: ['registrationForm-button']
+      });
+
+      form.append(row1, row2, schoolNameField, parentEmailField, submitButton);
+      formElement.appendChild(form);
+
+      globals.isFormBuilded = true;
+    }",
+    "helperFunctions": [
+      "function createElement(tag, options = {}) {
+        const element = document.createElement(tag);
+        Object.assign(element, options);
+        return element;
+      }",
+      "function createField(id, labelText, width = '50%') {
+        const fieldContainer = createElement('div', {
+          classList: ['registrationForm-field', width === '100%' ? 'registrationForm-field-full' : '']
+        });
+
+        const label = createElement('label', {
+          htmlFor: 'registrationForm-${id}',
+          textContent: '${labelText}:',
+          classList: ['registrationForm-label']
+        });
+
+        const field = createElement('input', {
+          type: 'text',
+          id: 'registrationForm-${id}',
+          name: id,
+          placeholder: 'Enter your ${labelText}',
+          classList: ['registrationForm-input']
+        });
+
+        fieldContainer.appendChild(label);
+        fieldContainer.appendChild(field);
+
+        return fieldContainer;
+      }"
+    ],
+    "globals": {
+      "isFormBuilded": false
+    },
+    "CSS": {
+      "styles": "
+        .registrationForm {
+          max-width: 500px;
+          margin: 0 auto;
+          padding: 30px;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          background-color: #f8f9fa;
+        }
+
+        .registrationForm-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 20px;
+        }
+
+        .registrationForm-field {
+          width: 48%;
+          margin-right: 2%;
+        }
+
+        .registrationForm-field-full {
+          width: 100%;
+        }
+
+        .registrationForm-label {
+          display: block;
+          margin-bottom: 5px;
+          font-size: 14px;
+          margin-left: 5px;
+        }
+
+        .registrationForm-input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          margin-left: 5px;
+        }
+
+        .registrationForm-button {
+          width: 100%;
+          background-color: #007bff;
+          color: #fff;
+          padding: 15px;
+          border: none;
+          border-radius: 3px;
+          cursor: pointer;
+        }
+
+        @media screen and (max-width: 250px) {
+          .registrationForm-row {
+            display: block;
+          }
+
+          .registrationForm-field {
+            width: 100%;
+            margin-right: 0;
+          }
+        }
+      "
+    }
+  },
+  "expect": "The generated form should reflect the specified styling and layout preferences, including two-column layout for larger screens and a single-column layout for smaller screens."
+}
+```
+
+**Example 5: Registration Form with Advanced Styling**
+**Description:** This example demonstrates the generation of a registration form with advanced styling and a more complex layout so you can learn more layouts and styling.
+
+**Input JSON:**
+
+```json
+{
+  "prompt": "Create a registration form",
+  "fieldDefinitions": [
+    {
+      "id": "firstName",
+      "fieldDefination": "Firstname"
+    },
+    {
+      "id": "lastName",
+      "fieldDefination": "Lastname"
+    },
+    {
+      "id": "email",
+      "fieldDefination": "Email"
+    },
+    {
+      "id": "password",
+      "fieldDefination": "Password"
+    },
+    {
+      "id": "confirmPassword",
+      "fieldDefination": "Confirm Password"
+    }
+  ]
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The prompt is to create a beautiful registration form. The design includes a prominent animated title, a brief message, two side-by-side input fields for the first and last names, individual fields for email, password, and confirm password, and a submit button along with a sign-in prompt. The CSS includes responsive flex layouts, animated pseudo-elements for the title, and subtle hover effects.",
+  "response": {
+    "eventListener": "function main(event, args) {}",
+    "formBuilder": "function formBuilder(formElement) {\n  if (globals.isFormBuilded) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  // Create the main form container with class 'form'\n  const form = createElement('form', { classList: ['form'] });\n\n  // Create the title\n  const title = createElement('p', {\n    classList: ['title'],\n    textContent: 'Register'\n  });\n\n  // Create the message\n  const message = createElement('p', {\n    classList: ['message'],\n    textContent: 'Signup now and get full access to our app.'\n  });\n\n  // Create a flex container for first and last name fields\n  const flexContainer = createElement('div', { classList: ['flex'] });\n  const firstNameField = createInputField('firstName', 'Firstname', 'text');\n  const lastNameField = createInputField('lastName', 'Lastname', 'text');\n  flexContainer.append(firstNameField, lastNameField);\n\n  // Create Email field\n  const emailField = createInputField('email', 'Email', 'email');\n\n  // Create Password field\n  const passwordField = createInputField('password', 'Password', 'password');\n\n  // Create Confirm Password field\n  const confirmPasswordField = createInputField('confirmPassword', 'Confirm password', 'password');\n\n  // Create Submit button\n  const submitButton = createElement('button', {\n    classList: ['submit'],\n    type: 'submit',\n    textContent: 'Submit'\n  });\n\n  // Create signin prompt\n  const signinParagraph = createElement('p', {\n    classList: ['signin'],\n    innerHTML: 'Already have an account? <a href=\"#\">Signin</a>'\n  });\n\n  // Append all elements to the form\n  form.append(title, message, flexContainer, emailField, passwordField, confirmPasswordField, submitButton, signinParagraph);\n  formElement.appendChild(form);\n\n  globals.isFormBuilded = true;\n}\n",
+    "helperFunctions": [
+      "function createElement(tag, options = {}) {\n  const element = document.createElement(tag);\n  if (options.classList) {\n    if (Array.isArray(options.classList)) {\n      options.classList.forEach(cls => element.classList.add(cls));\n    } else {\n      element.classList.add(options.classList);\n    }\n  }\n  if (options.textContent) element.textContent = options.textContent;\n  if (options.innerHTML) element.innerHTML = options.innerHTML;\n  if (options.type) element.type = options.type;\n  if (options.placeholder) element.placeholder = options.placeholder;\n  return element;\n}",
+      "function createInputField(id, labelText, type) {\n  // Create label element that wraps input and span\n  const label = createElement('label');\n  \n  // Create the input field\n  const input = createElement('input', {\n    type: type,\n    placeholder: '',\n    classList: ['input']\n  });\n  input.required = true;\n  \n  // Create the floating label text\n  const span = createElement('span', { textContent: labelText });\n  \n  // Append input and span to label\n  label.append(input, span);\n  \n  return label;\n}"
+    ],
+    "globals": {
+      "isFormBuilt": false
+    },
+    "CSS": {
+      "styles": ".form {  display: flex;  flex-direction: column;  gap: 10px;  max-width: 350px;  background-color: #fff;  padding: 20px;  border-radius: 20px;  position: relative;}.title {  font-size: 28px;  color: royalblue;  font-weight: 600;  letter-spacing: -1px;  position: relative;  display: flex;  align-items: center;  padding-left: 30px;}.title::before, .title::after {  position: absolute;  content: \"\";  height: 16px;  width: 16px;  border-radius: 50%;  left: 0px;  background-color: royalblue;}.title::before {  width: 18px;  height: 18px;  background-color: royalblue;}.title::after {  width: 18px;  height: 18px;  animation: pulse 1s linear infinite;}.message, .signin {  color: rgba(88, 87, 87, 0.822);  font-size: 14px;}.signin {  text-align: center;}.signin a {  color: royalblue;}.signin a:hover {  text-decoration: underline royalblue;}.flex {  display: flex;  width: 100%;  gap: 6px;}.form label {  position: relative;  width: 100%;}.form label .input {  width: 100%;  padding: 10px 10px 20px 10px;  outline: 0;  border: 1px solid rgba(105, 105, 105, 0.397);  border-radius: 10px;}.form label .input + span {  position: absolute;  left: 10px;  top: 15px;  color: grey;  font-size: 0.9em;  cursor: text;  transition: 0.3s ease;}.form label .input:placeholder-shown + span {  top: 15px;  font-size: 0.9em;}.form label .input:focus + span, .form label .input:valid + span {  top: 30px;  font-size: 0.7em;  font-weight: 600;}.form label .input:valid + span {  color: green;}.submit {  border: none;  outline: none;  background-color: royalblue;  padding: 10px;  border-radius: 10px;  color: #fff;  font-size: 16px;  transition: 0.3s ease;}.submit:hover {  background-color: rgb(56, 90, 194);}@keyframes pulse {  from {    transform: scale(0.9);    opacity: 1;  }  to {    transform: scale(1.8);    opacity: 0;  }}"
+    }
+  },
+  "expect": "The generated form should closely replicate the design provided by Uiverse.io, including the animated title, responsive flex layout for the first and last name fields, floating label effects on input focus/validation, and styled submit button with hover effects."
+}
+```
+
+## Interactive Forms
+
+**Example 1: Job Application Form**
+**Description:** This example demonstrates the creation of a Job Application form with basic validation, dynamic field updates, and a specific layout.
+
+**Input JSON:**
+
+```json
+{
+  "name": "Job Application Form",
+  "prompt": "Create a Job Application form with fields for 'First Name', 'Last Name', 'Email', 'Position Applying For', and 'Current Employment Status'.",
+  "fieldDefinitions": [
+    {
+      "id": "firstName",
+      "fieldDefination": "First Name",
+      "required": true,
+      "layout": "First column of the first row"
+    },
+    {
+      "id": "lastName",
+      "fieldDefination": "Last Name",
+      "required": true,
+      "layout": "Second column of the first row"
+    },
+    {
+      "id": "email",
+      "fieldDefination": "Email",
+      "required": true,
+      "validation": "Email format is invalid.",
+      "layout": "Spanning the full width of the second row"
+    },
+    {
+      "id": "position",
+      "fieldDefination": "What position are you applying for?",
+      "fieldType": "select",
+      "options": [
+        "Software Engineer",
+        "Data Scientist",
+        "Project Manager",
+        "Marketing Specialist"
+      ],
+      "layout": "Spanning the full width of the third row"
+    },
+    {
+      "id": "employmentStatus",
+      "fieldDefination": "Current Employment Status",
+      "fieldType": "radio",
+      "options": ["Employed", "Unemployed", "Freelancer"],
+      "layout": "Spanning the full width of the fourth row"
+    }
+  ],
+  "layout": "The form should have a two-column layout for the first row. The remaining fields should span the full width of the form.",
+  "styleHint": "The form should have a clean and professional look with a subtle gray background. The labels should be concise and aligned to the left. The input fields should have rounded corners and a slight shadow.",
+  "validationMessage": "Please correct the highlighted fields.",
+  "successMessage": "Form submitted successfully!"
 }
 ```

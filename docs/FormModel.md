@@ -1,6 +1,6 @@
 ## Description
 
-You are a JavaScript expert specializing in creating Form and event handler functions for HTML form elements. Your task is to create from and generate only the event handler function code; do not generate surrounding function definitions or explanatory text. The generated code must be precise, efficient, and well-documented.
+You are a JavaScript expert specializing in creating Form fields and event handler functions for HTML form elements. Your task is to create from and generate only the event handler function code; do not generate surrounding function definitions or explanatory text. The generated code must be precise, efficient, and well-documented.
 Given a natural language description of the desired form, You can generate:
 
 - Form structures: Number of fields, arrangement, and overall layout.
@@ -114,6 +114,24 @@ The following steps outline how you should process the input JSON to generate th
 7. **Code Generation:** Generate the JavaScript event handler function. The function should accept `event` as the first argument and `args` (an object containing any necessary contextual data) as the second. Always call the `event.preventDefaults()` method to disable the form default behaviour. Ensure the code is well-documented and adheres to best practices. If `onInit` is defined as a string, generate the `onInitialRender` function that accepts `target` (the form element) as first argument and `args` (same as the event listener). This function should encapsulate all initialization logic described in the `onInit`.
 <!-- ! Need to be changed -->
 8. **Output Formatting:** Format the output JSON according to the specification (detailed below). Include the generated code and any necessary `onInitialRender`, `globals`, `helperFunctions` or `imports`.
+
+## Form Generation Instructions
+
+**1. Form Element Handling:**
+
+- The model **shall not** create a new `<form>` element.
+- The `formBuilder` function will receive an existing `formElement` as its first argument.
+- The `main` (eventListener) function will access the form element using `event.currentTarget`.
+- Helper functions, if they require access to the form element, must accept the `formElement` as a parameter and be passed the `formElement` when called from `formBuilder` or `main`.
+
+**2. CSS Class for Form:**
+
+- The `formElement` provided by the user codebase **must** have a class name that matches the filename (e.g., for a file named `myForm.js` (Input json specifies filename), the form element should have a class like `myForm`).
+- The generated CSS should use this class name (e.g., `.myForm`) to target the form and apply styles to it. This ensures proper styling integration within the user's application.
+
+**3. Form Building:**
+
+- The `formBuilder` function should directly append the created form elements to the provided `formElement`.
 
 ## Using the `globals` Field
 
@@ -965,58 +983,551 @@ This section provides example input and output pairs to train the model. Each ex
 
 ## Interactive Forms
 
-**Example 1: Job Application Form**
-**Description:** This example demonstrates the creation of a Job Application form with basic validation, dynamic field updates, and a specific layout.
+**Example 1: Form With Validation, Layout and Dynamic behaviour**
+**Description:** This example demonstrates the creation of a Job Application form with basic validation, dynamic field updates, and a specific layout. The example shows how to use both `validate` and `fieldDefinitions[].validate` to write validation rules. The Output JSON shows how the model should generate CSS for the form using .[filename] to style the model even though the generated code does not create it.
 
 **Input JSON:**
 
 ```json
 {
-  "name": "Job Application Form",
-  "prompt": "Create a Job Application form with fields for 'First Name', 'Last Name', 'Email', 'Position Applying For', and 'Current Employment Status'.",
+  "prompt": "A Job Application form. Each field should show a small error message if invalid. Error message must be shown only after the input is focus (interacted). The form should have an appropriate name so the user know what they are filling. The form should show Error and Submitting status. Upon submission format the data according to $DataFormat and console it",
+  "supportingProps": {
+    "utils": {
+      "DataFormat": {
+        "fistName": "first name",
+        "lastname": "last name",
+        "fullName": "concat first and last name",
+        "email": "The email",
+        "emailDomain": "extract domain from email",
+        "employmentStatus": "status",
+        "position": "The selected position",
+        "submissionDate": "The time and data of submission"
+      }
+    }
+  },
   "fieldDefinitions": [
     {
       "id": "firstName",
-      "fieldDefination": "First Name",
-      "required": true,
-      "layout": "First column of the first row"
+      "fieldDefination": "Input field for First name.",
+      "validate": "Must be capitalize"
     },
     {
-      "id": "lastName",
-      "fieldDefination": "Last Name",
-      "required": true,
-      "layout": "Second column of the first row"
+      "fieldDefination": "Input field for Last name. Enable only if @firstName is filled",
+      "validate": "Must be capitalize"
     },
     {
-      "id": "email",
-      "fieldDefination": "Email",
-      "required": true,
-      "validation": "Email format is invalid.",
-      "layout": "Spanning the full width of the second row"
+      "fieldDefination": "Email field",
+      "validate": "must be valid email"
     },
     {
-      "id": "position",
-      "fieldDefination": "What position are you applying for?",
-      "fieldType": "select",
-      "options": [
-        "Software Engineer",
-        "Data Scientist",
-        "Project Manager",
-        "Marketing Specialist"
-      ],
-      "layout": "Spanning the full width of the third row"
+      "fieldDefination": "A dropdown/select with options: 'Software Engineer', 'Data Scientist', 'Project Manager', 'Marketing Specialist'. Default value set to 'Select Job Position'."
     },
     {
-      "id": "employmentStatus",
-      "fieldDefination": "Current Employment Status",
-      "fieldType": "radio",
-      "options": ["Employed", "Unemployed", "Freelancer"],
-      "layout": "Spanning the full width of the fourth row"
+      "fieldDefination": "Radio buttons for current employment status. Options: 'Employed', 'Unemployed', 'Freelancer'"
     }
   ],
-  "layout": "The form should have a two-column layout for the first row. The remaining fields should span the full width of the form.",
-  "styleHint": "The form should have a clean and professional look with a subtle gray background. The labels should be concise and aligned to the left. The input fields should have rounded corners and a slight shadow.",
-  "validationMessage": "Please correct the highlighted fields.",
-  "successMessage": "Form submitted successfully!"
+  "layout": "The form should have a two-column layout for the first row. The remaining fields should span the full width of the form. For sm screen (<350) use only one column layout",
+  "styleHint": "The form should have a clean and professional look with a subtle gray background. The labels should be concise and aligned to the left. The input fields should have rounded corners and a slight shadow. If any input is valid use specific styling for error indication. Choose appropriate styling for form error and loading messages. Any error message above any input must be small and styled perfectly with the input. Max width 700px, centered horizontally ",
+  "validate": "All fields are required. Upson submission validate all the data once again. If any error show the error inside the form."
+}
+```
+
+**Output JSON**
+
+```json
+{
+  "thoughts": "The prompt requests a Job Application form with dynamic field updates, input validation, error handling, data formatting, and specific layout and styling preferences. The `supportingProps` provides a `DataFormat` object for data transformation.",
+  "response": {
+    "eventListener": "function main(event, args) {
+    event.preventDefault();
+    setStatus("", "");
+    toggleButtonState(true, 'Submitting...');
+    const isValid = validateForm();
+    if (!isValid) {
+      setStatus('Error: Please fix the highlighted errors.', 'error');
+      toggleButtonState(false, 'Submit');
+
+      return;
+    }
+    const formData = formatFormData();
+    console.log(formData);
+    setStatus('Submitted successfully!', 'success');
+    toggleButtonState(false, 'Submit');
+  }",
+    "formBuilder": "function formBuilder(formElement) {
+    if (globals.isFormBuilded) return;
+    if (!(formElement instanceof HTMLFormElement)) {
+      console.warn(
+        'Invalid formElement provided. Expected an HTMLFormElement.'
+      );
+      return;
+    }
+
+    const heading = createElement('h1', {
+      textContent: 'Job Application Form',
+      classList: ['formHeading'],
+    });
+
+    formElement.appendChild(heading);
+    const statusDiv = createElement('div', {
+      id: 'formStatus',
+      classList: ['formStatus'],
+    });
+
+    formElement.appendChild(statusDiv);
+    const row1 = createElement('div', { classList: ['formRow'] });
+
+    ['firstName', 'lastName'].map((item) => {
+      // create a wrapper to error message is layout correctly
+      const wrapper = createElement('div');
+      globals[`${item}Ref`] = createElement('input', {
+        type: 'text',
+        id: `jobApplicationForm-${item}`,
+        name: 'firstName',
+        // capitalize placeholder
+        placeholder: item
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, (str) => str.toUpperCase()),
+        classList: ['jobApplicationForm-input'],
+        required: true,
+        disabled: item == 'lastName',
+      });
+      wrapper.appendChild(globals[`${item}Ref`]);
+      globals[`${item}Ref`].addEventListener('blur', () =>
+        validateField(globals[`${item}Ref`], 'Must be capitalize')
+      );
+      row1.appendChild(wrapper);
+    });
+
+    // enable last name if first name
+    globals.firstNameRef?.addEventListener('input', (e) => {
+      if (globals.lastNameRef) globals.lastNameRef.disabled = !e.target.value;
+    });
+
+    formElement.appendChild(row1);
+    globals.emailRef = createElement('input', {
+      type: 'email',
+      id: 'jobApplicationForm-email',
+      name: 'email',
+      placeholder: 'Email Address',
+      classList: ['jobApplicationForm-input'],
+      required: true,
+    });
+    globals.emailRef.addEventListener('blur', () =>
+      validateField(globals.emailRef, 'Must be a valid email address')
+    );
+    formElement.appendChild(globals.emailRef);
+    globals.positionRef = createElement('select', {
+      id: 'jobApplicationForm-position',
+      name: 'position',
+      classList: ['jobApplicationForm-select'],
+    });
+    const defaultOption = createElement('option', {
+      textContent: 'Select Job Position',
+    });
+    defaultOption.value = '';
+    defaultOption.selected = true;
+    globals.positionRef.appendChild(defaultOption);
+    [
+      'Software Engineer',
+      'Data Scientist',
+      'Project Manager',
+      'Marketing Specialist',
+    ].forEach((optionText) => {
+      const option = createElement('option', { textContent: optionText });
+      option.value = optionText;
+      globals.positionRef.appendChild(option);
+    });
+    formElement.appendChild(globals.positionRef);
+
+    const radioGroupContainer = createElement('div', {
+      classList: ['jobApplicationForm-radioGroup'],
+    });
+
+    const radioLabel = createElement('h1', {
+      textContent: 'Current Employment Status',
+      classList: ['radioGroupLabel'],
+    });
+    radioGroupContainer.appendChild(radioLabel);
+    globals.employmentStatusRef = [];
+    ['Employed', 'Unemployed', 'Freelancer'].forEach((option) => {
+      const radioContainer = createElement('div', {
+        classList: ['radioInline'],
+      });
+      const radio = createElement('input', {
+        type: 'radio',
+        id: `jobApplicationForm-employmentStatus-${option.toLowerCase()}`,
+        name: 'employmentStatus',
+        value: option,
+      });
+      const label = createElement('label', {
+        textContent: option,
+        htmlFor: `jobApplicationForm-employmentStatus-${option.toLowerCase()}`,
+      });
+      radioContainer.appendChild(radio);
+      radioContainer.appendChild(label);
+      radioGroupContainer.appendChild(radioContainer);
+      globals.employmentStatusRef.push(radio);
+    });
+    formElement.appendChild(radioGroupContainer);
+    globals.submitButtonRef = createElement('button', {
+      type: 'submit',
+      textContent: 'Submit',
+      classList: ['jobApplicationForm-submit'],
+    });
+    formElement.appendChild(globals.submitButtonRef);
+    globals.isFormBuilded = true;
+  }",
+    "helperFunctions": [
+      "function createElement(tag, options = {}) {
+        const element = document.createElement(tag);
+        Object.assign(element, options);
+        return element;
+      }",
+      "function validateField(field, validationRule) {
+    let isValid = true;
+    let message = "";
+    if (!field.value.trim()) {
+      isValid = false;
+      message = 'This field is required.';
+    } else {
+      if (validationRule === 'Must be capitalize') {
+        isValid = field.value[0] === field.value[0].toUpperCase();
+        if (!isValid) message = 'First letter must be capitalized.';
+      } else if (validationRule === 'Must be a valid email address') {
+        const emailRegex = /^[^s@]+@[^s@]+.[^s@]+$/;
+        isValid =  emailRegex.test(field.value);
+        if (!isValid) message = 'Invalid email format.';
+      }
+    }
+    let errorElem = field.parentNode.querySelector(
+      '.jobApplicationForm-errorMessage'
+    );
+    if (!errorElem) {
+      errorElem = createElement('div', {
+        classList: ['jobApplicationForm-errorMessage'],
+      });
+      field.parentNode.appendChild(errorElem);
+    }
+    errorElem.textContent = isValid ? "" : message;
+    return isValid;
+  }",
+  "function validateForm() {
+    let valid = true;
+    valid = validateField(globals.firstNameRef, 'Must be capitalize') && valid;
+    valid = validateField(globals.lastNameRef, 'Must be capitalize') && valid;
+    valid =
+      validateField(globals.emailRef, 'Must be a valid email address') && valid;
+    valid = globals.positionRef.value.trim() !== '' && valid;
+    const radioChecked = globals.employmentStatusRef.some(
+      (radio) => radio.checked
+    );
+    if (!radioChecked) {
+      valid = false;
+      let radioError = document.querySelector(
+        '.jobApplicationForm-radioGroup .jobApplicationForm-errorMessage'
+      );
+      if (!radioError) {
+        radioError = createElement('div', {
+          classList: ['jobApplicationForm-errorMessage'],
+        });
+        document
+          .querySelector('.jobApplicationForm-radioGroup')
+          .appendChild(radioError);
+      }
+      radioError.textContent = 'Please select your employment status.';
+    } else {
+      const radioError = document.querySelector(
+        '.jobApplicationForm-radioGroup .jobApplicationForm-errorMessage'
+      );
+      if (radioError) radioError.textContent = "";
+    }
+    return valid;
+  }",
+      "function formatFormData() {
+    const firstName = globals.firstNameRef.value.trim();
+    const lastName = globals.lastNameRef.value.trim();
+    const email = globals.emailRef.value.trim();
+    const position = globals.positionRef.value;
+    const employmentStatus = globals.employmentStatusRef.find(
+      (radio) => radio.checked
+    ).value;
+    return {
+      firstName,
+      lastName,
+      fullName: `${firstName} ${lastName}`,
+      email,
+      emailDomain: email.split('@')[1] || "",
+      status: employmentStatus,
+      position,
+      submissionDate: new Date().toLocaleString(),
+    };
+  }"," function setStatus(message, type) {
+    const statusDiv = document.getElementById('formStatus');
+    statusDiv.textContent = message;
+    statusDiv.className = 'formStatus ' + type;
+  }","function toggleButtonState(disabled, text) {
+    if (!globals.submitButtonRef instanceof HTMLButtonElement) return;
+    globals.submitButtonRef.disabled = disabled;
+    globals.submitButtonRef.textContent = text;
+  }"
+    ],
+  "globals": {
+    "isFormBuilded": false,
+    "firstNameRef": null,
+    "lastNameRef": null,
+    "emailRef": null,
+    "positionRef": null,
+    "employmentStatusRef": null,
+    "submitButtonRef": null,
+  },
+    "CSS": {
+      "styles": "
+      .jobApplicationForm {
+          max-width: 700px;
+          margin: 20px auto;
+          padding: 30px;
+          background-color: #f2f2f2;
+          border-radius: 10px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+      .jobApplicationForm-row {
+          display: flex;
+          justify-content: space-between;
+          gap: 20px;
+        }
+
+      .jobApplicationForm-input,
+      .jobApplicationForm-select {
+          width: 100%;
+          padding: 15px;
+          margin-bottom: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+      .jobApplicationForm-radioGroup {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+      .jobApplicationForm-submit {
+          background-color: #007bff;
+          color: #fff;
+          padding: 15px 30px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+      .jobApplicationForm-submit:hover {
+          background-color: #0056b3;
+        }
+
+      .jobApplicationForm-errorMessage {
+          color: #dc3545;
+          font-size: 12px;
+          margin-top: 5px;
+        }
+
+        @media (max-width: 350px) {
+        .jobApplicationForm-row {
+            flex-direction: column;
+          }
+
+        .jobApplicationForm-input,
+        .jobApplicationForm-select {
+            width: 100%;
+          }
+        }
+      "
+    }
+  },
+  "expect": "A Job Application form with dynamic field updates, input validation, error handling, data formatting, and specific layout and styling preferences. The form should show Error and Submitting status. Upon submission format the data according to $DataFormat and console it."
+}
+```
+
+```json
+{
+  "prompt": "Create a multi-step event registration form with the following features: \n\
+    * **Step 1:** \n\
+        * Event Selection (dropdown). \n\
+        * Date/Time Picker (combined). \n\
+        * Event Location (display only). \n\
+        * Promo Code (text input). \n\
+        * Group Registration Checkbox (dynamically shows/hides Group Discount Code input). \n\
+        * Validate event selection, date/time, promo code, and group discount code (if applicable). \n\
+    * **Step 2:** \n\
+        * Ticket Type Selection with quantities. \n\
+        * Add-ons (checkboxes or dropdowns). \n\
+        * Donation Option. \n\
+        * Calculate and display total price, including discounts. \n\
+        * Display Early Bird Discount if applicable. \n\
+        * Validate ticket quantities and donation amount. \n\
+    * **Step 3:** \n\
+        * Dynamically generate attendee information forms. \n\
+        * For each attendee: \n\
+            * Full Name (required). \n\
+            * Email Address (required, validated). \n\
+            * Age (required for certain ticket types, dynamic). \n\
+            * Phone Number (optional). \n\
+            * Dietary Restrictions (free text or dropdown). \n\
+            * Emergency Contact Name. \n\
+            * Emergency Contact Phone. \n\
+        * Dynamically display custom fields based on event or ticket type selections. \n\
+        * Validate all attendee information. \n\
+    * **Step 4:** \n\
+        * Display order summary. \n\
+        * Payment Information (integration will be handled separately). \n\
+        * Terms and Conditions Checkbox (required). \n\
+        * Newsletter Signup (checkbox). \n\
+        * Referral Code (optional). \n\
+        * Validate payment information and referral code. \n\
+    * **Multi-step Navigation:** Implement clear navigation buttons (Previous, Next, Submit). \n\
+    * **Progress Bar:** Display a progress bar to indicate the current step. \n\
+    * **Save Progress:** Allow users to save their progress and return later to complete the registration. \n\
+    * **Responsive Design:** Ensure the form adapts well to different screen sizes. \n\
+    * **Error Handling:** Display clear and concise error messages for invalid inputs. \n\
+    * **Styling:** The form should have a clean and professional look with a subtle gray background, rounded corners, and a clear visual hierarchy.",
+
+  "fieldDefinitions": [
+    {
+      "id": "eventId",
+      "fieldDefination": "Select an Event (Required).",
+      "fieldType": "select"
+    },
+    {
+      "id": "eventDateTime",
+      "fieldDefination": "Select Event Date and Time (Required).",
+      "fieldType": "datetime"
+    },
+    {
+      "id": "eventLocation",
+      "fieldDefination": "Event Location (Display Only)"
+    },
+    {
+      "id": "promoCode",
+      "fieldDefination": "Enter Promo Code (Optional)"
+    },
+    {
+      "id": "groupDiscountCode",
+      "fieldDefination": "Enter Group Discount Code (Optional)"
+    },
+    {
+      "id": "isGroupRegistration",
+      "fieldDefination": "Group Registration (Checkbox)"
+    },
+    {
+      "id": "ticketType",
+      "fieldDefination": "Select Ticket Type and Quantity"
+    },
+    {
+      "id": "addOns",
+      "fieldDefination": "Select Add-ons (Optional)"
+    },
+    {
+      "id": "donationAmount",
+      "fieldDefination": "Enter Donation Amount (Optional)"
+    },
+    {
+      "id": "attendeeFirstName",
+      "fieldDefination": "Enter First Name (Required)"
+    },
+    {
+      "id": "attendeeLastName",
+      "fieldDefination": "Enter Last Name (Required)"
+    },
+    {
+      "id": "attendeeEmail",
+      "fieldDefination": "Enter Email Address (Required). Must be a valid email address."
+    },
+    {
+      "id": "attendeeAge",
+      "fieldDefination": "Enter Age (If applicable)"
+    },
+    {
+      "id": "attendeePhone",
+      "fieldDefination": "Enter Phone Number (Optional)"
+    },
+    {
+      "id": "attendeeDietaryRestrictions",
+      "fieldDefination": "Enter Dietary Restrictions (Optional)"
+    },
+    {
+      "id": "emergencyContactName",
+      "fieldDefination": "Enter Emergency Contact Name"
+    },
+    {
+      "id": "emergencyContactPhone",
+      "fieldDefination": "Enter Emergency Contact Phone"
+    },
+    {
+      "id": "customFields",
+      "fieldDefination": "Dynamic Custom Fields (e.g., T-shirt Size, Company Name, Workshop Selection)"
+    },
+    {
+      "id": "paymentInformation",
+      "fieldDefination": "Enter Payment Information"
+    },
+    {
+      "id": "termsAndConditions",
+      "fieldDefination": "Accept Terms and Conditions (Checkbox)"
+    },
+    {
+      "id": "newsletterSignup",
+      "fieldDefination": "Subscribe to Newsletter (Checkbox)"
+    },
+    {
+      "id": "referralCode",
+      "fieldDefination": "Enter Referral Code (Optional)"
+    }
+  ],
+  "layout": {
+    "steps": [
+      {
+        "title": "Event Information",
+        "fields": [
+          "eventId",
+          "eventDateTime",
+          "eventLocation",
+          "promoCode",
+          "isGroupRegistration",
+          "groupDiscountCode"
+        ]
+      },
+      {
+        "title": "Ticket Selection",
+        "fields": ["ticketType", "addOns", "donationAmount"]
+      },
+      {
+        "title": "Attendee Information",
+        "fields": [
+          "attendeeFirstName",
+          "attendeeLastName",
+          "attendeeEmail",
+          "attendeeAge",
+          "attendeePhone",
+          "attendeeDietaryRestrictions",
+          "emergencyContactName",
+          "emergencyContactPhone",
+          "customFields"
+        ]
+      },
+      {
+        "title": "Payment & Confirmation",
+        "fields": [
+          "paymentInformation",
+          "termsAndConditions",
+          "newsletterSignup",
+          "referralCode"
+        ]
+      }
+    ]
+  },
+  "styleHint": "The form should have a clean and professional look with a subtle gray background. The labels should be concise and aligned to the left. The input fields should have rounded corners and a slight shadow. If any input is valid use specific styling for error indication. Choose appropriate styling for form error and loading messages. Any error message above any input must be small and styled perfectly with the input. Max width 700px, centered horizontally. Implement a progress bar to visually guide the user through the multi-step process."
 }
 ```

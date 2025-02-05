@@ -38,11 +38,6 @@ interface FormField {
      *   "Must match the password field"
      */
     validate?: string;
-
-    /**
-     * The step number to which this field belongs in a multi-step form.
-     */
-    step?: number;
 }
 
 interface AIFormProps extends Common<React.FormHTMLAttributes<HTMLFormElement>> {
@@ -90,7 +85,7 @@ interface AIFormProps extends Common<React.FormHTMLAttributes<HTMLFormElement>> 
          * An array of step descriptions. 
          * Each step description should be a string that describes the fields or content of that step.
          */
-        stepDescriptions?: string[];
+        stepDescriptions?: {title:string,fields:string[]}[]
     };
 }
 

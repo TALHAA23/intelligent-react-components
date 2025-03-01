@@ -1,7 +1,7 @@
-import { AIResponse, Common } from '@types';
-import { IRC_ACTIONS, postMethod, urls } from '@utils/utils';
-import React, { useEffect, useState, useRef } from 'react';
-import { useIrcRegistriesAndRegister } from '../hooks/ircRegisteryProvider';
+import { AIFormProps, AIResponse, Common } from "@types";
+import { IRC_ACTIONS, postMethod, urls } from "@utils/utils";
+import React, { useEffect, useState, useRef } from "react";
+import { useIrcRegistriesAndRegister } from "../hooks/ircRegisteryProvider";
 
 interface BaseComponentState {
   loading: boolean;
@@ -24,14 +24,12 @@ async function generateResponse(
 
     if (!response.ok) throw new Error(await response.text());
     const data = (await response.json()) as AIResponse;
-
     if (data.error) {
       setState((prevState) => ({ ...prevState, error: data.error }));
     }
-    // Handle successful response, e.g., update state with data 
-
+    // Handle successful response, e.g., update state with data
   } catch (err) {
-    console.log(err);
+    console.error(err);
     setState((prevState) => ({ ...prevState, error: { err: err } }));
   } finally {
     setState((prevState) => ({ ...prevState, loading: false }));
@@ -45,9 +43,13 @@ function jsonSanitizer(props: Common) {
   if (sanitizedProps.callbacks) {
     sanitizedProps.callbacks = sanitizeCallbacks(sanitizedProps.callbacks);
   }
+
   if (sanitizedProps.mutation) {
     sanitizedProps.mutation = sanitizeMutations(sanitizedProps.mutation);
   }
+
+  if (Object.keys(sanitizedProps).includes("children"))
+    delete (sanitizedProps as AIFormProps).children;
 
   return JSON.stringify(sanitizedProps); // Convert to JSON string
 }
@@ -130,16 +132,27 @@ const enhanceWithAI = <T extends Common>(
 ): React.FC<T> => {
   const EnhancedComponent = (props: T) => {
     const enhancedProps = { ...props, element };
-    const isOnInitCallback = React.useMemo(() => typeof props.onInit === "function", [props.onInit]);
+    const isOnInitCallback = React.useMemo(
+      () => typeof props.onInit === "function",
+      [props.onInit]
+    );
     const targetRef = useRef<HTMLElement>(null);
-    const [onInitialRender, setOnInitialRender] = useState<undefined | string | ((event: HTMLElement, ...args: unknown[]) => void)>(isOnInitCallback ? () => props.onInit : undefined);
+    const [onInitialRender, setOnInitialRender] = useState<
+      undefined | string | ((event: HTMLElement, ...args: unknown[]) => void)
+    >(isOnInitCallback ? () => props.onInit : undefined);
+    const [formBuilder, setFormBuilder] = React.useState<undefined | Function>(
+      undefined
+    );
     const [state, setState] = useState<BaseComponentState>({
       loading: true,
       error: undefined,
       event: undefined,
       responseMeta: undefined,
     });
-    const args = React.useMemo(() => extractInfoFromProps(props), [props, state]);
+    const args = React.useMemo(
+      () => extractInfoFromProps(props),
+      [props, state]
+    );
 
     const handleEvent = (e: any) => {
       if (state.event && state.event.default) {
@@ -150,16 +163,18 @@ const enhanceWithAI = <T extends Common>(
     useEffect(() => {
       const getEvent = async () => {
         try {
-          setState(prev => ({ ...prev, loading: true }))
+          setState((prev) => ({ ...prev, loading: true }));
           const event = await import(`/dynamic/${props.filename}.js`);
           setState((prev) => ({ ...prev, event, responseMeta: event.meta }));
           if (props.onInit && !isOnInitCallback && event.onInitialRender) {
             setOnInitialRender(() => event.onInitialRender);
           }
+          if (event.formBuilder) {
+            setFormBuilder(() => event.formBuilder);
+          }
         } catch (err) {
           console.error(err);
           await generateResponse(setState, enhancedProps); // Handle error generically
-
         } finally {
           setState((prev) => ({ ...prev, loading: false }));
         }
@@ -170,7 +185,10 @@ const enhanceWithAI = <T extends Common>(
       if (typeof onInitialRender === "function" && targetRef.current) {
         onInitialRender(targetRef.current, args); // Pass args to onInitialRender
       }
-    }, [onInitialRender]);
+      if (formBuilder && targetRef.current instanceof HTMLFormElement) {
+        formBuilder(targetRef.current, args); // Pass args to onInitialRender
+      }
+    }, [onInitialRender, formBuilder]);
 
     // * Component registration for Devtools
 
@@ -188,7 +206,11 @@ const enhanceWithAI = <T extends Common>(
       ircRegisteryAndRegister.register(IRC_ACTIONS.updateStatus, {
         filename: props.filename,
         props,
-        status: state.loading ? "pending" : state.event ? "successful" : "unknown",
+        status: state.loading
+          ? "pending"
+          : state.event
+            ? "successful"
+            : "unknown",
         refreshResponse: () => generateResponse(setState, enhancedProps),
       });
     }, [state.loading, state.event]); // Use state.loading and state.event
@@ -199,7 +221,11 @@ const enhanceWithAI = <T extends Common>(
         props,
         error: state.error, // Use state.error
         response: state.responseMeta, // Use state.responseMeta
-        status: state.error ? "error" : state.responseMeta ? "successful" : "unknown",
+        status: state.error
+          ? "error"
+          : state.responseMeta
+            ? "successful"
+            : "unknown",
         refreshResponse: () => generateResponse(setState, enhancedProps),
       });
     }, [state.error, state.responseMeta]); // Use state.error and state.responseMeta
@@ -215,9 +241,9 @@ const enhanceWithAI = <T extends Common>(
     );
   };
 
-  EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
-  return EnhancedComponent
+  return EnhancedComponent;
 };
 
 export default enhanceWithAI;

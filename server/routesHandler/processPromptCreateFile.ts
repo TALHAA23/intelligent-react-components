@@ -16,7 +16,7 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
     const cleanedResponse = clearResponse(generatedResponse);
 
     log("4. Sanitizing and validating the response").step();
-    if (Object.keys(cleanedResponse.error).length) {
+    if (cleanedResponse?.error && Object.keys(cleanedResponse?.error).length) {
       return res.json(cleanedResponse);
     }
 

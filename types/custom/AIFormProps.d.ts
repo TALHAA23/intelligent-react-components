@@ -42,7 +42,7 @@ interface FormField {
 
 interface AIFormProps
   extends Common<React.FormHTMLAttributes<HTMLFormElement>> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 
   /**
    * Hints for the desired form layout.

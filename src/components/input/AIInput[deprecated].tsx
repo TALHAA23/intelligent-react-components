@@ -21,20 +21,30 @@ interface MyModule {
 }
 
 export default function AIInput(props: AIInputProps) {
-  const isOnInitCallback = React.useMemo(() => typeof props.onInit === "function", [props.onInit]);
+  const isOnInitCallback = React.useMemo(
+    () => typeof props.onInit === "function",
+    [props.onInit]
+  );
   const targetRef = React.useRef<HTMLInputElement>(null);
-  const [onInitialRender, setOnInitialRender] = React.useState<undefined | string | ((event: HTMLInputElement, ...args: unknown[]) => void)>(isOnInitCallback ? () => props.onInit : undefined);
+  const [onInitialRender, setOnInitialRender] = React.useState<
+    undefined | string | ((event: HTMLInputElement, ...args: unknown[]) => void)
+  >(isOnInitCallback ? () => props.onInit : undefined);
   const [error, setError] = React.useState<any>(undefined);
   const [loading, setLoading] = React.useState(true);
   const [event, setEvent] = React.useState<undefined | MyModule>(undefined);
-  const [responseMeta, setResponseMeta] = React.useState<undefined | MyModule["meta"]>(undefined);
+  const [responseMeta, setResponseMeta] = React.useState<
+    undefined | MyModule["meta"]
+  >(undefined);
   const args = React.useMemo(() => extractInfoFromProps(props), [props]);
 
-  const eventListener: React.DOMAttributes<HTMLInputElement> = React.useMemo(() => ({
-    [props?.listener || "onChange"]: event
-      ? (e: React.ChangeEvent<HTMLInputElement>) => event.default(e, args)
-      : undefined,
-  }), [event, args, props?.listener]);
+  const eventListener: React.DOMAttributes<HTMLInputElement> = React.useMemo(
+    () => ({
+      [props?.listener || "onChange"]: event
+        ? (e: React.ChangeEvent<HTMLInputElement>) => event.default(e, args)
+        : undefined,
+    }),
+    [event, args, props?.listener]
+  );
 
   React.useEffect(() => {
     const getEvent = async () => {
@@ -50,7 +60,7 @@ export default function AIInput(props: AIInputProps) {
         console.error(err);
         await generateResponse(setLoading, setError, {
           ...props,
-          element: "input",
+          // element: "input",
         });
       } finally {
         setLoading(false);
@@ -65,7 +75,6 @@ export default function AIInput(props: AIInputProps) {
     }
   }, [onInitialRender, event]);
 
-
   componentRegistrar({
     props,
     loading,
@@ -73,7 +82,7 @@ export default function AIInput(props: AIInputProps) {
     error,
     responseMeta,
     refreshResponse: () => generateResponse(setLoading, setError, props),
-  })
+  });
   return (
     <StyledComponentsWrapper>
       <span>
@@ -95,7 +104,7 @@ export default function AIInput(props: AIInputProps) {
             onClick={() =>
               generateResponse(setLoading, setError, {
                 ...props,
-                element: "input",
+                // element: "input",
               })
             }
           />

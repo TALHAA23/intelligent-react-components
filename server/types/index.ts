@@ -50,7 +50,9 @@ interface AIResponse {
     };
     imports?: string[];
     helperFunctions?: Function[];
-    onInitialRender?: string
+    onInitialRender?: string;
+    formBuilder?: string;
+    CSS?: { styles: string };
   };
   error: {
     message: string;
@@ -58,7 +60,6 @@ interface AIResponse {
     details: string;
     code: string;
   };
-
   expect?: string;
 }
 

@@ -52,15 +52,14 @@ The input to the model will be a JSON object conforming to the following structu
       "validate": "<string>",
       "step": "<number>"
     }
-    // ... more field definitions
   ],
   "multiStep": {
     "steps": "<number>",
     "stepDescriptions": [
       "<string>"
-      // ... more step descriptions
     ]
-  }
+  },
+  "element":"<string>"
 }
 ```
 
@@ -79,6 +78,11 @@ The input to the model will be a JSON object conforming to the following structu
 - `"mutations"`: An array of objects, each describing a mutation operation to be performed within the event listener. Each mutation object should have an `id`, `returnFormat`, and `mutate` field.
 - `"callbacks"`: An object containing independent and dependent callbacks. See the "Callbacks" section for details.
 - `"onInit"`: A string defining initialization logic for the form element, executed on the first render.
+
+**Non-Processing Keys**
+Keys which the model has nothing to do with.
+
+- element: The type of element .i.e form
 
 ## Processing Steps
 

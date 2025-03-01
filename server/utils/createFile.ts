@@ -10,10 +10,31 @@ const createFile = async (
   filename: string,
   responseObj?: AIResponse
 ) => {
+  const g = await format(
+    `export default ${stringToFunctionDefination(responseObj?.response?.eventListener)}`,
+    {
+      parser: "babel",
+    }
+  );
+  const css = responseObj?.response?.CSS?.styles;
   const isThereInitialRender = responseObj?.response?.onInitialRender;
-  const onInitialRender =isThereInitialRender&& await format(`export ${stringToFunctionDefination(responseObj?.response?.onInitialRender)}`,{
-    parser:"babel"
-  });
+  const onInitialRender =
+    isThereInitialRender &&
+    (await format(
+      `export ${stringToFunctionDefination(responseObj?.response?.onInitialRender)}`,
+      {
+        parser: "babel",
+      }
+    ));
+  const isThereFormBuilder = responseObj?.response?.formBuilder;
+  const formBuilder =
+    isThereFormBuilder &&
+    (await format(
+      `export ${stringToFunctionDefination(responseObj?.response?.formBuilder)}`,
+      {
+        parser: "babel",
+      }
+    ));
 
   log("6.1: Extracting helper functions from global definitions").subStep();
   const helperFunctions = createFunctionDefinationFromGlobals(
@@ -24,7 +45,9 @@ const createFile = async (
   const rootDir = process.cwd();
 
   log("6.3: Creating 'dynamic' directory if it doesn't exist").subStep();
-  await fs.mkdir(`${rootDir}/dynamic`, { recursive: true });
+  await fs.mkdir(`${rootDir}/dynamic`, { recursive: true }).then(async () => {
+    await fs.mkdir(`${rootDir}/dynamic/css`, { recursive: true });
+  });
 
   log("6.4: Formatting the generated content").subStep();
   const formattedCode = await format(`export default ${content.toString()}`, {
@@ -32,9 +55,14 @@ const createFile = async (
   });
 
   log("6.5: Writing the formatted code to the file system").subStep();
+  if (css) {
+    await fs.writeFile(`${rootDir}/dynamic/css/${filename}.css`, css);
+  }
   await fs.writeFile(
     `${rootDir}/dynamic/${filename}.js`,
-    `${
+    `
+    ${css ? `import "./css/${filename}.css"` : "\n"}
+    ${
       responseObj?.response?.imports
         ?.toString()
         .replace(/,\s*import/g, "; import") + ";"
@@ -46,8 +74,9 @@ const createFile = async (
         .replaceAll(/\}\s*,\s*(async\s*function|function)/g, "}; $1"),
       { parser: "babel" }
     )}
-    ${formattedCode}
-    ${isThereInitialRender?onInitialRender:"\n"}
+    ${g}
+    ${isThereFormBuilder ? formBuilder : "\n"}
+    ${isThereInitialRender ? onInitialRender : "\n"}
     export const meta = {
      thoughts: "${responseObj?.thoughts}",
      expect: "${responseObj?.expect}"

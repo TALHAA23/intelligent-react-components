@@ -47,8 +47,5 @@ export default function Loader() {
     <StyledLoader viewBox="25 25 50 50 ">
       <StyledCircle r={20} cy={50} cx={50}></StyledCircle>
     </StyledLoader>
-    // <svg className="loader" viewBox="25 25 50 50">
-    //   <circle r="20" cy="50" cx="50"></circle>
-    // </svg>
   );
 }

@@ -61,27 +61,27 @@ const createFile = async (
   await fs.writeFile(
     `${rootDir}/dynamic/${filename}.js`,
     `
-    ${css ? `import "./css/${filename}.css"` : "\n"}
-    ${
-      responseObj?.response?.imports
-        ?.toString()
-        .replace(/,\s*import/g, "; import") + ";"
-    };
-    const globals=${JSON.stringify(responseObj?.response?.globals || {})};
-    ${await format(
-      helperFunctions
-        .toString()
-        .replaceAll(/\}\s*,\s*(async\s*function|function)/g, "}; $1"),
-      { parser: "babel" }
-    )}
-    ${g}
-    ${isThereFormBuilder ? formBuilder : "\n"}
-    ${isThereInitialRender ? onInitialRender : "\n"}
-    export const meta = {
-     thoughts: "${responseObj?.thoughts}",
-     expect: "${responseObj?.expect}"
-    }
-    `
+${css ? `import "./css/${filename}.css"` : "\n"}
+${
+  responseObj?.response?.imports
+    ?.toString()
+    .replace(/,\s*import/g, "; import") + ";"
+};
+const globals=${JSON.stringify(responseObj?.response?.globals || {})};
+${await format(
+  helperFunctions
+    .toString()
+    .replaceAll(/\}\s*,\s*(async\s*function|function)/g, "}; $1"),
+  { parser: "babel" }
+)}
+${g}
+${isThereFormBuilder ? formBuilder : "\n"}
+${isThereInitialRender ? onInitialRender : "\n"}
+export const meta = {
+ thoughts: "${responseObj?.thoughts}",
+ expect: "${responseObj?.expect}"
+}
+`
   );
 
   log(

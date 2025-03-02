@@ -94,7 +94,7 @@ interface Result {
 }
 
 function extractInfoFromProps(props: Common): Result {
-  const result: Result = {};
+  const result: Result = { ...props };
 
   if (props.supportingProps) {
     const { utils = {}, variables = {} } = props.supportingProps;
@@ -186,7 +186,7 @@ const enhanceWithAI = <T extends Common>(
         onInitialRender(targetRef.current, args); // Pass args to onInitialRender
       }
       if (formBuilder && targetRef.current instanceof HTMLFormElement) {
-        formBuilder(targetRef.current, args); // Pass args to onInitialRender
+        formBuilder(targetRef.current, args);
       }
     }, [onInitialRender, formBuilder]);
 

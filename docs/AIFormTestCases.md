@@ -164,100 +164,277 @@
 ```
 
 **Result:**
-<span style="color:green;font-weight:bold">Success</span>
+<span style="color:red;font-weight:bold">Failed</span>
 
-**Analysis:**
+**Analysis:** The model is not able to generate multi-steps form even the simplest one.
 
-### Test Case --
+### Test Case 06
 
 **Prompt**
 
 ```tsx
-
+<AIForm
+  prompt="Create a restaurant feedback form with the following fields: customer name, visit date, meal type (breakfast, lunch, dinner), food quality rating (1-5), service rating (1-5), ambiance rating (1-5), and additional comments"
+  filename="restaurantFeedbackForm"
+  listener="onSubmit"
+  layout="two-column"
+  attributes={{
+    className: "feedback-form",
+    id: "restaurant-feedback",
+    autoComplete: "off",
+    noValidate: true,
+  }}
+  styleHint="Elegant design with food-themed subtle background"
+/>
 ```
 
 **Result:**
 <span style="color:green;font-weight:bold">Success</span>
 
-**Analysis:**
+**Analysis:** A bit of struggle but good.
 
-### Test Case --
+### Test Case 07
 
 **Prompt**
 
 ```tsx
-
+<AIForm
+  prompt="Create an employee onboarding form with the following fields: full name, employee ID, department (dropdown with options: HR, Engineering, Marketing, Finance, Operations), start date, job title, manager name, office location, emergency contact name, emergency contact phone, and preferred communication channel (email, phone, slack)"
+  filename="employeeOnboardingForm"
+  listener="onSubmit"
+  layout="three-column"
+  attributes={{
+    className: "onboarding-form corporate-theme",
+    id: "new-employee-form",
+    autoComplete: "on",
+    encType: "multipart/form-data",
+  }}
+  styleHint="Professional corporate design with subtle grid lines between columns and company logo placeholder at the top"
+/>
 ```
 
 **Result:**
 <span style="color:green;font-weight:bold">Success</span>
 
-**Analysis:**
+**Analysis:** The model did well.
 
-### Test Case --
+### Test Case 08
 
 **Prompt**
 
 ```tsx
-
+<AIForm
+  prompt="Create a password change form with current password, new password, and confirm new password fields"
+  filename="passwordChangeForm"
+  listener="onSubmit"
+  fieldDefinitions={[
+    {
+      id: "currentPassword",
+      fieldDefination: "Current password field with masked input",
+      validate: "Required",
+    },
+    {
+      id: "newPassword",
+      fieldDefination:
+        "New password field with masked input and password strength indicator",
+      validate:
+        "Required, must be at least 8 characters with one uppercase letter, one lowercase letter, one number, and one special character, and must not be the same as the current password",
+    },
+    {
+      id: "confirmPassword",
+      fieldDefination: "Confirm new password field with masked input",
+      validate: "Required, must match exactly with @newPassword",
+    },
+  ]}
+  validate="Show validation errors in real-time as the user types"
+  styleHint="Secure appearance with lock icons and visual password strength feedback"
+/>
 ```
 
 **Result:**
 <span style="color:green;font-weight:bold">Success</span>
 
-**Analysis:**
+**Analysis:** The model did Great
 
-### Test Case --
+### Test Case 09
 
 **Prompt**
 
 ```tsx
-
+<AIForm
+  prompt="Create a product order form with product name, quantity, shipping address, and payment method. Apply specific tax rates based on $REGION and show $SHIPPING_OPTIONS for delivery options."
+  filename="productOrderForm"
+  listener="onSubmit"
+  supportingProps={{
+    utils: {
+      $REGION: {
+        US: 0.07,
+        EU: 0.19,
+        CA: 0.13,
+        UK: 0.2,
+      },
+      $SHIPPING_OPTIONS: [
+        { method: "Standard", days: "5-7 days", cost: 4.99 },
+        { method: "Express", days: "2-3 days", cost: 9.99 },
+        { method: "Next Day", days: "1 day", cost: 19.99 },
+      ],
+    },
+    variables: {
+      productInventory: 15,
+      customerDiscount: 0.1,
+    },
+  }}
+  styleHint="E-commerce style with clean layout and order summary section"
+/>
 ```
 
 **Result:**
 <span style="color:green;font-weight:bold">Success</span>
 
-**Analysis:**
+**Analysis:** Model did really well.
 
-### Test Case --
+### Test Case 10
 
 **Prompt**
 
 ```tsx
+<AIForm
+  prompt="Create a comprehensive travel booking form with trip type (one-way, round-trip, multi-city), departure date, return date (conditional on round-trip), destination search with autocomplete suggestion, number of travelers (adults, children, infants), travel class (economy, premium economy, business, first), and special accommodations textarea"
+  filename="travelBookingForm"
+  listener="onSubmit"
+  styleHint="Modern travel website design with gradient accents, flight icons, and responsive layout that adjusts for mobile devices"
+  validate="Departure date must be in the future, return date must be after departure date for round-trip bookings, at least one traveler must be selected"
+  cacheResponse={false}
+/>
+```
 
+**Result:**
+<span style="color:orange;font-weight:bold">Partially Passed</span>
+
+**Analysis:** The form render is successful and complete but the form submission wasn't consoling the result.
+
+### Test Case 11
+
+**Prompt**
+
+```tsx
+<AIForm
+  prompt="Create a survey form with name field and age range selection (under 18, 18-25, 26-40, 41-60, over 60). The form should display different questions based on the selected age range. Use the _surveyQuestions variable from supportingProps to get the full list of questions, and filter them based on the age range selected. When the age range changes, call the adjustQuestionsForAge callback with the selected value to update the displayed questions."
+  filename="productSurveyForm"
+  listener="onSubmit"
+  supportingProps={{
+    variables: {
+      _surveyQuestions: [
+        {
+          id: 1,
+          text: "Do you use social media daily?",
+          ageRanges: ["under 18", "18-25", "26-40"],
+        },
+        {
+          id: 2,
+          text: "Do you have children in your household?",
+          ageRanges: ["26-40", "41-60"],
+        },
+        {
+          id: 3,
+          text: "Are you currently employed?",
+          ageRanges: ["18-25", "26-40", "41-60"],
+        },
+        { id: 4, text: "Are you retired?", ageRanges: ["over 60"] },
+        {
+          id: 5,
+          text: "Do you own a smartphone?",
+          ageRanges: ["under 18", "18-25", "26-40", "41-60", "over 60"],
+        },
+        {
+          id: 6,
+          text: "Do you have a college degree?",
+          ageRanges: ["18-25", "26-40", "41-60", "over 60"],
+        },
+        {
+          id: 7,
+          text: "Do you play video games?",
+          ageRanges: ["under 18", "18-25", "26-40"],
+        },
+      ],
+      _currentQuestions: [],
+    },
+  }}
+  mutation={[
+    {
+      id: "surveyResults",
+      returnFormat: {
+        completed: true,
+        timestamp: "ISO date string",
+        responses: [],
+      },
+      mutate: "setSurveyData",
+      mutationType: "callback",
+    },
+  ]}
+  callbacks={{
+    independent: [
+      {
+        callGuide:
+          "Call this function when the form is first loaded to track form impression",
+        callback: "trackFormImpression",
+      },
+    ],
+    dependent: [
+      {
+        callGuide:
+          "Call this function when a user changes their age range to filter and update the displayed questions",
+        parametersGuide: ["The selected age range value"],
+        callback: "adjustQuestionsForAge",
+      },
+    ],
+  }}
+  styleHint="Clean survey design with dynamic question sections that update based on age selection"
+/>
 ```
 
 **Result:**
 <span style="color:green;font-weight:bold">Success</span>
 
-**Analysis:**
+**Analysis:** The model was instructed to complete the request properly
 
-### Test Case --
+### Test Case 12
 
 **Prompt**
 
 ```tsx
-
+<AIForm
+  prompt="Create a newsletter subscription form with email field, interests checkboxes (Technology, Business, Health, Entertainment), and frequency dropdown (Daily, Weekly, Monthly)"
+  filename="newsletterSubscriptionForm"
+  listener="onSubmit"
+  onInit="()=>{}"
+  fieldDefinitions={[
+    {
+      id: "email",
+      fieldDefination: "Email input field with placeholder 'your@email.com'",
+      validate: "Required, must be a valid email format",
+      styleHint: "Prominent with floating label effect",
+    },
+    {
+      id: "interests",
+      fieldDefination: "Checkbox group for newsletter topics",
+      layout: "grid",
+      styleHint: "Modern toggle-style checkboxes with icons for each topic",
+    },
+    {
+      id: "frequency",
+      fieldDefination: "Dropdown for selecting newsletter frequency",
+      styleHint: "Custom styled select with dropdown animation",
+    },
+  ]}
+  styleHint="Engaging newsletter form with subtle animation effects and visual feedback"
+/>
 ```
 
 **Result:**
 <span style="color:green;font-weight:bold">Success</span>
 
-**Analysis:**
-
-### Test Case --
-
-**Prompt**
-
-```tsx
-
-```
-
-**Result:**
-<span style="color:green;font-weight:bold">Success</span>
-
-**Analysis:**
+**Analysis:** Complete in first try!
 
 ### Test Case --
 

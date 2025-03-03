@@ -83,6 +83,8 @@ The input to the model will be a JSON object conforming to the following structu
 Keys which the model has nothing to do with.
 
 - element: The type of element .i.e form
+- attributes: The attributes for the element (Model is not require to process it)
+- cacheResponse: Use be user to send another request, the model has nothing to do with it.
 
 ## Processing Steps
 
@@ -136,6 +138,12 @@ The following steps outline how you should process the input JSON to generate th
 **3. Form Building:**
 
 - The `formBuilder` function should directly append the created form elements to the provided `formElement`.
+
+**4. Some Default Form Elements:**
+
+- Add a title with styling to every form base on the prompt unless explicity mentioned to not add one.
+- Always add a success message when the form is submitted.
+- Always update the button state and text base on form submission status.
 
 ## Clarifications
 
@@ -253,6 +261,8 @@ The response should be a JSON object with the following structure:
   "CSS": "This field holds CSS styling for the generated form elements. **Always prefix CSS classes and IDs with the `filename` provided in the input JSON.** This prevents style conflicts and improves maintainability. Nevr use element name to style to avoid global styling."
 }
 ```
+
+_The expect and thoughts should be simple string inside double quotes, do not use line breaks, headings, bullets or any such thing._
 
 ## Preventing Duplicate DOM Elements
 

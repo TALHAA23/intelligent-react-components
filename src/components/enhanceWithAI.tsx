@@ -182,11 +182,11 @@ const enhanceWithAI = <T extends Common>(
       getEvent();
     }, [props.filename]);
     useEffect(() => {
-      if (typeof onInitialRender === "function" && targetRef.current) {
-        onInitialRender(targetRef.current, args); // Pass args to onInitialRender
-      }
       if (formBuilder && targetRef.current instanceof HTMLFormElement) {
         formBuilder(targetRef.current, args);
+      }
+      if (typeof onInitialRender === "function" && targetRef.current) {
+        onInitialRender(targetRef.current, args); // Pass args to onInitialRender
       }
     }, [onInitialRender, formBuilder]);
 

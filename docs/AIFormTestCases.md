@@ -436,18 +436,169 @@
 
 **Analysis:** Complete in first try!
 
-### Test Case --
+### Test Case 13
 
 **Prompt**
 
 ```tsx
+<AIForm
+  prompt="Create a comprehensive job application form with personal details section, education history section, work experience section, skills assessment, and document uploads. Include form validation and dynamic fields that change based on job type selection."
+  filename="complexJobApplicationForm"
+  listener="onSubmit"
+  cacheResponse={false}
+  layout="responsive-sections"
+  attributes={{
+    className: "job-application-master-form corporate-theme",
+    id: "career-application-form",
+    encType: "multipart/form-data",
+    "data-analytics-id": "job-app-form-v3",
+  }}
+  styleHint="Professional enterprise design with collapsible sections, progress tracking, and responsive layout that works well on all devices"
+  validate="Comprehensive validation with real-time feedback and cross-field validation"
+  fieldDefinitions={[
+    {
+      id: "jobType",
+      fieldDefination:
+        "Job type selection (Full-time, Part-time, Contract, Internship)",
+      validate: "Required",
+      styleHint: "Prominent selection buttons with icons",
+    },
+    {
+      id: "personalInfo",
+      fieldDefination:
+        "Personal information section with fields for full name, email, phone, and address",
+      validate: "All fields required, email and phone must be valid formats",
+      layout: "two-column",
+      styleHint: "Clean layout with subtle field separators",
+    },
+    {
+      id: "education",
+      fieldDefination:
+        "Education history with degree, institution, field of study, and graduation year",
+      validate:
+        "At least one education entry required for all job types except internship",
+      styleHint: "Repeatable section with add/remove buttons",
+    },
+    {
+      id: "experience",
+      fieldDefination:
+        "Work experience with job title, company, duration, and responsibilities",
+      validate:
+        "At least 2 years of experience required for Full-time positions, validate against @jobType",
+      styleHint:
+        "Repeatable section with rich text editor for responsibilities",
+    },
+    {
+      id: "skills",
+      fieldDefination:
+        "Skills assessment with 5-point self-rating scale for relevant skills based on job type",
+      validate: "At least 3 skills must be rated",
+      styleHint: "Interactive skills rating with visual indicators",
+    },
+    {
+      id: "documents",
+      fieldDefination:
+        "Document upload section for resume, cover letter, and portfolio",
+      validate:
+        "Resume required for all applications, cover letter required for Full-time and Part-time, portfolio optional",
+      styleHint: "Drag-and-drop upload area with file type validation",
+    },
+  ]}
+  supportingProps={{
+    utils: {
+      $SKILLS_BY_JOB: {
+        "Full-time": [
+          "Project Management",
+          "Team Leadership",
+          "Strategic Planning",
+          "Budget Management",
+        ],
+        "Part-time": ["Time Management", "Communication", "Multitasking"],
+        Contract: [
+          "Self-Management",
+          "Technical Expertise",
+          "Client Communication",
+        ],
+        Internship: [
+          "Eagerness to Learn",
+          "Basic Technical Skills",
+          "Communication",
+        ],
+      },
+    },
+    variables: {
+      _jobDescriptions: {
+        "Full-time": "40 hours per week, benefits eligible",
+        "Part-time": "20-30 hours per week, limited benefits",
+        Contract: "Project-based, flexible hours",
+        Internship: "Learning opportunity, 15-20 hours per week",
+      },
+    },
+  }}
+  onInit={(formElement) => {
+    // Add smooth scrolling between sections
+    formElement.querySelectorAll(".section-nav-button").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const targetSection = document.getElementById(e.target.dataset.target);
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    });
 
+    // Initialize tooltips on help icons
+    formElement.querySelectorAll(".help-icon").forEach((icon) => {
+      // Tooltip initialization code would go here
+    });
+  }}
+  mutation={[
+    {
+      id: "applicationData",
+      returnFormat: {
+        status: "submitted",
+        timestamp: "ISO date string",
+        applicationId: "generated ID",
+        completionPercentage: 100,
+      },
+      mutate: "setApplicationState",
+      mutationType: "callback",
+    },
+  ]}
+  callbacks={{
+    independent: [
+      {
+        callGuide:
+          "Call this function when the form is first loaded to track form impression",
+        callback: "trackFormView",
+      },
+    ],
+    dependent: [
+      {
+        callGuide:
+          "Call this function when job type changes to update required fields and skills",
+        parametersGuide: ["Selected job type value"],
+        callback: "updateFormForJobType",
+      },
+      {
+        callGuide:
+          "Call this function when a section is completed to update the progress tracker",
+        parametersGuide: ["Section ID", "Completion status boolean"],
+        callback: "updateProgressTracker",
+      },
+    ],
+  }}
+>
+  <div className="form-header">
+    <h1>Career Application Portal</h1>
+    <p>Please complete all sections to submit your application</p>
+  </div>
+</AIForm>
 ```
 
 **Result:**
-<span style="color:green;font-weight:bold">Success</span>
+<span style="color:red;font-weight:bold">Failed</span>
 
-**Analysis:**
+**Analysis:** After lots of try, the model still can't generate good code.
 
 ### Test Case --
 

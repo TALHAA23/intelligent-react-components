@@ -4,21 +4,21 @@ import React from "react";
 
 interface Common<Target = React.ReactHTMLElement, T = Function> {
   /**
-   * Indicates whether to cache the response from the AI. 
-   * If set to `false`, it creates a button beside the element which, when clicked, sends another request to generate code (a refresh button). 
+   * Indicates whether to cache the response from the AI.
+   * If set to `false`, it creates a button beside the element which, when clicked, sends another request to generate code (a refresh button).
    * The default value is `true`.
    */
   cacheResponse?: boolean;
 
-  /** 
-   * The prompt to be sent to the AI. 
-   * This string provides instructions to the AI on how to generate the desired code. 
+  /**
+   * The prompt to be sent to the AI.
+   * This string provides instructions to the AI on how to generate the desired code.
    */
   prompt: string;
 
   /**
-   * Name for the file to be created (without extension). 
-   * This filename is used to dynamically import the AI logic. 
+   * Name for the file to be created (without extension).
+   * This filename is used to dynamically import the AI logic.
    * It should be unique and descriptive.
    */
   filename: string;
@@ -29,7 +29,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
   listener: keyof React.DOMAttributes<React.ReactHTMLElement>;
 
   // /**
-  //  * The type of the element. 
+  //  * The type of the element.
   //  * Valid values are "input" or "button".
   //  * It is automatically added so you can omit this.
   //  */
@@ -41,13 +41,13 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
   attributes?: Target;
 
   /**
-   * Supporting properties for the AI module. 
+   * Supporting properties for the AI module.
    * These properties provide additional context and information for the AI.
    */
   supportingProps?: {
     /**
-     * Key-value pairs where the key is a placeholder in the prompt prefixed with '$', 
-     * and the value is its actual meaning. 
+     * Key-value pairs where the key is a placeholder in the prompt prefixed with '$',
+     * and the value is its actual meaning.
      * Example: `{ $API: "https://localhost:3000" }` if the prompt uses `$API`.
      */
     utils?: {
@@ -57,7 +57,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
     /**
      * Used when the prompt describes some database-related information.
      * - `name`: The name of the operation (e.g., "firebase", "firebase authentication").
-     * - `envGuide`: A hint or guide on how the generated code will access secrets 
+     * - `envGuide`: A hint or guide on how the generated code will access secrets
      *              (e.g., connection details, environment variables).
      */
     database?: {
@@ -66,7 +66,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
     };
 
     /**
-     * Used to store context from the user codebase. 
+     * Used to store context from the user codebase.
      * Variables in the prompt should be prefixed with "_" to indicate they refer to these variables.
      * Example: `{ list: [] }` if the generated code needs a `list` variable.
      */
@@ -76,7 +76,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
   };
 
   /**
-   * An array of mutation objects that the generated code should perform, 
+   * An array of mutation objects that the generated code should perform,
    * such as updating a state value or reassigning a variable.
    */
   mutation?: {
@@ -86,20 +86,20 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
     id: string;
 
     /**
-     * The format in which the mutation should be done. 
+     * The format in which the mutation should be done.
      * For example, if updating a state, the desired structure of the new state value.
      */
     returnFormat: any;
 
     /**
-     * The mutation function or value. 
-     * For state updates, pass the `setState` function. 
+     * The mutation function or value.
+     * For state updates, pass the `setState` function.
      * For variable assignment, pass the variable reference.
      */
     mutate: any;
 
     /**
-     * The type of mutation: 
+     * The type of mutation:
      * - `"callback"`: `mutation[].mutate` is called as a function.
      * - `"assignment"`: `mutation[].mutate` is assigned using `=`.
      */
@@ -107,7 +107,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
   }[];
 
   /**
-   * An object containing callback functions that the generated code should call 
+   * An object containing callback functions that the generated code should call
    * when certain conditions are met.
    */
   callbacks?: {
@@ -136,7 +136,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
       callGuide: string;
 
       /**
-       * An array of guides for the parameters to pass to the callback. 
+       * An array of guides for the parameters to pass to the callback.
        * Each index corresponds to a parameter.
        */
       parametersGuide: string[];
@@ -162,6 +162,11 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
      - The generated function will receive the target element as its first argument.
    */
   onInit?: ((target: Target, ...args: any[]) => void) | string;
+
+  /** Provide feedback of the previous response, what goes wrong, what need to be change for the model to
+   * use it and generate new code with the changes.
+   */
+  feedback?: string;
 }
 
 export type { Common };

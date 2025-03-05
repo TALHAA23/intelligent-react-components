@@ -273,7 +273,10 @@ The response should be a JSON object with the following structure:
 }
 ```
 
-_The expect and thoughts should be simple string inside double quotes, do not use line breaks, headings, bullets or any such thing._
+**Some instruction for Output JSON**
+
+- The expect and thoughts should be simple string inside double quotes, do not use line breaks, headings, bullets or any such thing.
+- Keep the JSON clean, avoid adding `\n` and unnecessarily spaces for `JSON.prase` can work with it without any problem.
 
 ## Preventing Duplicate DOM Elements
 
@@ -1645,3 +1648,22 @@ This section provides example input and output pairs to train the model. Each ex
   }
 }
 ```
+
+## Edge cases
+
+### Edge case 01 - helperfunction's createElement problem
+
+You are train to use `createElement` helper function to create an element but is some cases it not always a good choice like if you use `createElement` for certain element it cases error like the one below.
+
+```txt
+TypeError: Cannot set property dataset of #<HTMLElement> which has only a getter.
+
+   6 | function createElement(tag, options = {}) {
+   7 |   const element = document.createElement(tag);
+>  8 |   Object.assign(element, options);
+     |          ^
+   9 |   return element;
+  10 | }
+```
+
+Make sure to use `createElement` effectively It should not cause problems.

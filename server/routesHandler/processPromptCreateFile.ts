@@ -20,22 +20,13 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
       return res.json(cleanedResponse);
     }
 
-    log("5. Preparing to create the file").step();
-    const wrapperAnonyousFunction = new Function(
-      `return ${cleanedResponse.response?.eventListener}`
-    );
-    const generatedFunction = wrapperAnonyousFunction();
-
-    log("6. Generating file with the provided content").step();
-    const newFilePath = await createFile(
-      generatedFunction,
-      body.filename,
-      cleanedResponse
-    );
+    log("5. Generating file with the provided content").step();
+    const newFilePath = await createFile(body.filename, cleanedResponse);
 
     log("7. File generation completed successfully").step();
     res.json({ newFilePath });
   } catch (err) {
+    console.log(err);
     const message = (err as unknown as GoogleGenerativeAIError).message;
     log(`An error occurred: ${message}`).error();
     res.status(500).json({ message });

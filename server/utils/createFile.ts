@@ -47,6 +47,10 @@ const createFile = async (filename: string, responseObj?: AIResponse) => {
     }
   );
 
+  // responseObj?.response?.imports
+  //   ?.toString()
+  //   .replace(/,\s*import/g, "; import") + ";";
+
   log("5.5: Writing the formatted code to the file system").subStep();
   if (css) {
     await fs.writeFile(`${rootDir}/dynamic/css/${filename}.css`, css);
@@ -55,11 +59,7 @@ const createFile = async (filename: string, responseObj?: AIResponse) => {
     `${rootDir}/dynamic/${filename}.js`,
     `
 ${css ? `import "./css/${filename}.css"` : "\n"}
-${
-  responseObj?.response?.imports
-    ?.toString()
-    .replace(/,\s*import/g, "; import") + ";"
-};
+${responseObj?.response?.imports?.length ? responseObj?.response?.imports?.join(";" + "\n") : "// Intelligent React Components" + "\n"};
 const globals=${JSON.stringify(responseObj?.response?.globals || {})};
 ${await format(
   helperFunctions

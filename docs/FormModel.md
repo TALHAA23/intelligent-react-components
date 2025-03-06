@@ -276,7 +276,6 @@ The response should be a JSON object with the following structure:
 **Some instruction for Output JSON**
 
 - The expect and thoughts should be simple string inside double quotes, do not use line breaks, headings, bullets or any such thing.
-- Keep the JSON clean, avoid adding `\n` and unnecessarily spaces for `JSON.prase` can work with it without any problem.
 
 ## Preventing Duplicate DOM Elements
 
@@ -502,7 +501,7 @@ This section provides example input and output pairs to train the model. Each ex
         return;
       }
 
-      const createElement = (tag, options = {}) => {
+      const createElement = (tag, options) => {
         const element = document.createElement(tag);
         Object.assign(element, options);
         return element;
@@ -708,11 +707,20 @@ This section provides example input and output pairs to train the model. Each ex
 
     }",
     "helperFunctions": [
-      "function createElement(tag, options = {}) {
+      "function createElement(tag, options) {
         const element = document.createElement(tag);
-        Object.assign(element, options);
-        return element;
-      }",
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
       "function toggleButtonState(disabled, text) {
         if (globals.submitButtonRef instanceof HTMLButtonElement) {
           globals.submitButtonRef.disabled = disabled;
@@ -863,11 +871,20 @@ This section provides example input and output pairs to train the model. Each ex
       globals.isFormBuilded = true;
     }",
     "helperFunctions": [
-      "function createElement(tag, options = {}) {
+      "function createElement(tag, options) {
         const element = document.createElement(tag);
-        Object.assign(element, options);
-        return element;
-      }",
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
       "function createField(id, labelText, width = '50%') {
         const fieldContainer = createElement('div', {
           classList: ['registrationForm-field', width === '100%' ? 'registrationForm-field-full' : '']
@@ -1007,7 +1024,7 @@ This section provides example input and output pairs to train the model. Each ex
     "eventListener": "function main(event, args) {}",
     "formBuilder": "function formBuilder(formElement) {\n  if (globals.isFormBuilded) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  // Create the main form container with class 'form'\n  const form = createElement('form', { classList: ['form'] });\n\n  // Create the title\n  const title = createElement('p', {\n    classList: ['title'],\n    textContent: 'Register'\n  });\n\n  // Create the message\n  const message = createElement('p', {\n    classList: ['message'],\n    textContent: 'Signup now and get full access to our app.'\n  });\n\n  // Create a flex container for first and last name fields\n  const flexContainer = createElement('div', { classList: ['flex'] });\n  const firstNameField = createInputField('firstName', 'Firstname', 'text');\n  const lastNameField = createInputField('lastName', 'Lastname', 'text');\n  flexContainer.append(firstNameField, lastNameField);\n\n  // Create Email field\n  const emailField = createInputField('email', 'Email', 'email');\n\n  // Create Password field\n  const passwordField = createInputField('password', 'Password', 'password');\n\n  // Create Confirm Password field\n  const confirmPasswordField = createInputField('confirmPassword', 'Confirm password', 'password');\n\n  // Create Submit button\n  const submitButton = createElement('button', {\n    classList: ['submit'],\n    type: 'submit',\n    textContent: 'Submit'\n  });\n\n  // Create signin prompt\n  const signinParagraph = createElement('p', {\n    classList: ['signin'],\n    innerHTML: 'Already have an account? <a href=\"#\">Signin</a>'\n  });\n\n  // Append all elements to the form\n  form.append(title, message, flexContainer, emailField, passwordField, confirmPasswordField, submitButton, signinParagraph);\n  formElement.appendChild(form);\n\n  globals.isFormBuilded = true;\n}\n",
     "helperFunctions": [
-      "function createElement(tag, options = {}) {\n  const element = document.createElement(tag);\n  if (options.classList) {\n    if (Array.isArray(options.classList)) {\n      options.classList.forEach(cls => element.classList.add(cls));\n    } else {\n      element.classList.add(options.classList);\n    }\n  }\n  if (options.textContent) element.textContent = options.textContent;\n  if (options.innerHTML) element.innerHTML = options.innerHTML;\n  if (options.type) element.type = options.type;\n  if (options.placeholder) element.placeholder = options.placeholder;\n  return element;\n}",
+      "function createElement(tag, options) {\n  const element = document.createElement(tag);\n  if (options.classList) {\n    if (Array.isArray(options.classList)) {\n      options.classList.forEach(cls => element.classList.add(cls));\n    } else {\n      element.classList.add(options.classList);\n    }\n  }\n  if (options.textContent) element.textContent = options.textContent;\n  if (options.innerHTML) element.innerHTML = options.innerHTML;\n  if (options.type) element.type = options.type;\n  if (options.placeholder) element.placeholder = options.placeholder;\n  return element;\n}",
       "function createInputField(id, labelText, type) {\n  // Create label element that wraps input and span\n  const label = createElement('label');\n  \n  // Create the input field\n  const input = createElement('input', {\n    type: type,\n    placeholder: '',\n    classList: ['input']\n  });\n  input.required = true;\n  \n  // Create the floating label text\n  const span = createElement('span', { textContent: labelText });\n  \n  // Append input and span to label\n  label.append(input, span);\n  \n  return label;\n}"
     ],
     "globals": {
@@ -1219,11 +1236,20 @@ This section provides example input and output pairs to train the model. Each ex
     globals.isFormBuilded = true;
   }",
     "helperFunctions": [
-      "function createElement(tag, options = {}) {
+      "function createElement(tag, options) {
         const element = document.createElement(tag);
-        Object.assign(element, options);
-        return element;
-      }",
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
       "function validateField(field, validationRule) {
     let isValid = true;
     let message = "";
@@ -1447,7 +1473,20 @@ This section provides example input and output pairs to train the model. Each ex
     "import { initializeApp } from 'firebase/app'"
   ],
   "helperFunctions": [
-    "function createElement(tag, options = {}) { const element = document.createElement(tag); Object.assign(element, options); return element; }",
+    "function createElement(tag, options) {
+        const element = document.createElement(tag);
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
     "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
   ],
   "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; }  const heading = createElement('h1', { textContent: 'User Sign In', classList: ['firebaseSignInForm-title']}); globals.loadingMessage = createElement('p', { textContent: 'Loading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); globals.emailField = createElement('input', { type: 'email', id: 'firebaseSignInForm-email', name: 'email', placeholder: 'Enter your email', classList: ['firebaseSignInForm-input'] }); const emailLabel = createElement('label', { htmlFor: 'firebaseSignInForm-email', textContent: 'Email:', classList: ['firebaseSignInForm-label'] }); globals.passwordField = createElement('input', { type: 'password', id: 'firebaseSignInForm-password', name: 'password', placeholder: 'Enter your password', classList: ['firebaseSignInForm-input'] }); const passwordLabel = createElement('label', { htmlFor: 'firebaseSignInForm-password', textContent: 'Password:', classList: ['firebaseSignInForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Sign In', classList: ['firebaseSignInForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(emailLabel); formElement.appendChild(globals.emailField); formElement.appendChild(passwordLabel); formElement.appendChild(globals.passwordField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }",
@@ -1508,7 +1547,20 @@ This section provides example input and output pairs to train the model. Each ex
     },
     "imports": ["import { createClient } from '@supabase/supabase-js'"],
     "helperFunctions": [
-      "function createElement(tag, options = {}) { const element = document.createElement(tag); Object.assign(element, options); return element; }",
+      "function createElement(tag, options) {
+        const element = document.createElement(tag);
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
       "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
     ],
     "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'User Sign In' }); globals.loadingMessage = createElement('p', { textContent: 'Loading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); globals.emailField = createElement('input', { type: 'email', id: 'supabaseSignInForm-email', name: 'email', placeholder: 'Enter your email', classList: ['supabaseSignInForm-input'] }); const emailLabel = createElement('label', { htmlFor: 'supabaseSignInForm-email', textContent: 'Email:', classList: ['supabaseSignInForm-label'] }); globals.passwordField = createElement('input', { type: 'password', id: 'supabaseSignInForm-password', name: 'password', placeholder: 'Enter your password', classList: ['supabaseSignInForm-input'] }); const passwordLabel = createElement('label', { htmlFor: 'supabaseSignInForm-password', textContent: 'Password:', classList: ['supabaseSignInForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Sign In', classList: ['supabaseSignInForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(emailLabel); formElement.appendChild(globals.emailField); formElement.appendChild(passwordLabel); formElement.appendChild(globals.passwordField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }"
@@ -1581,7 +1633,20 @@ This section provides example input and output pairs to train the model. Each ex
       "import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'"
     ],
     "helperFunctions": [
-      "function createElement(tag, options = {}) { const element = document.createElement(tag); Object.assign(element, options); return element; }",
+      "function createElement(tag, options) {
+        const element = document.createElement(tag);
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
       "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
     ],
     "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'Product Upload' }); globals.loadingMessage = createElement('p', { textContent: 'Uploading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); const nameField = createElement('input', { type: 'text', id: 'firebaseProductUploadForm-name', name: 'name', placeholder: 'Product Name', classList: ['firebaseProductUploadForm-input'] }); const nameLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-name', textContent: 'Name:', classList: ['firebaseProductUploadForm-label'] }); const priceField = createElement('input', { type: 'number', id: 'firebaseProductUploadForm-price', name: 'price', placeholder: 'Price', classList: ['firebaseProductUploadForm-input'] }); const priceLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-price', textContent: 'Price:', classList: ['firebaseProductUploadForm-label'] }); const categorySelect = createElement('select', { id: 'firebaseProductUploadForm-category', name: 'category', classList: ['firebaseProductUploadForm-input'] }); const categories = ['Food', 'Cloth', 'Toys', 'Furniture', 'Books']; categories.forEach(category => { const option = createElement('option', { value: category, textContent: category }); categorySelect.appendChild(option); }); const categoryLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-category', textContent: 'Category:', classList: ['firebaseProductUploadForm-label'] }); const imageField = createElement('input', { type: 'file', id: 'firebaseProductUploadForm-image', name: 'image', accept: 'image/jpeg, image/png', classList: ['firebaseProductUploadForm-input'] }); const imageLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-image', textContent: 'Image (JPG or PNG):', classList: ['firebaseProductUploadForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Upload', classList: ['firebaseProductUploadForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(nameLabel); formElement.appendChild(nameField); formElement.appendChild(priceLabel); formElement.appendChild(priceField); formElement.appendChild(categoryLabel); formElement.appendChild(categorySelect); formElement.appendChild(imageLabel); formElement.appendChild(imageField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }"
@@ -1637,7 +1702,20 @@ This section provides example input and output pairs to train the model. Each ex
     },
     "imports": ["import { createClient } from '@supabase/supabase-js'"],
     "helperFunctions": [
-      "function createElement(tag, options = {}) { const element = document.createElement(tag); Object.assign(element, options); return element; }",
+      "function createElement(tag, options) {
+        const element = document.createElement(tag);
+        // Handle dataset separately
+        if (options.dataset) {
+          for (const key in options.dataset) {
+            if (options.dataset.hasOwnProperty(key)) {
+              element.dataset[key] = options.dataset[key];
+            }
+          }
+        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
+      }
+    Object.assign(element, options);
+    return element;
+  }",
       "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
     ],
     "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'Update Sale Prices' }); globals.loadingMessage = createElement('p', { textContent: 'Updating...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); const discountPercentageContainer = createElement('div', { classList: ['supabaseUpdateSalePriceForm-input-container'] }); globals.discountPercentageField = createElement('input', { type: 'number', id: 'supabaseUpdateSalePriceForm-discountPercentage', name: 'discountPercentage', placeholder: 'Discount Percentage', classList: ['supabaseUpdateSalePriceForm-input'] }); const percentageLabel = createElement('span', { textContent: '%', classList: ['supabaseUpdateSalePriceForm-percentage-label'] }); discountPercentageContainer.appendChild(globals.discountPercentageField); discountPercentageContainer.appendChild(percentageLabel); const discountPercentageLabel = createElement('label', { htmlFor: 'supabaseUpdateSalePriceForm-discountPercentage', textContent: 'Discount Percentage:', classList: ['supabaseUpdateSalePriceForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Update', classList: ['supabaseUpdateSalePriceForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(discountPercentageLabel); formElement.appendChild(discountPercentageContainer); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }"
@@ -1658,7 +1736,7 @@ You are train to use `createElement` helper function to create an element but is
 ```txt
 TypeError: Cannot set property dataset of #<HTMLElement> which has only a getter.
 
-   6 | function createElement(tag, options = {}) {
+   6 | function createElement(tag, options) {
    7 |   const element = document.createElement(tag);
 >  8 |   Object.assign(element, options);
      |          ^

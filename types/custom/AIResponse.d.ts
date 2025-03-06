@@ -6,12 +6,11 @@ export interface AIResponse {
       [key: string]: any;
     };
     imports?: string[];
-    helperFunctions?:Function[]
+    helperFunctions?: string[];
   };
   error?: {
     message: string;
     status: string;
     statusText: string;
   };
-  
 }

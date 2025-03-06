@@ -49,7 +49,7 @@ interface AIResponse {
       [key: string]: any;
     };
     imports?: string[];
-    helperFunctions?: Function[];
+    helperFunctions?: string[];
     onInitialRender?: string;
     formBuilder?: string;
     CSS?: { styles: string };

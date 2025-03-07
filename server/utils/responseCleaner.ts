@@ -14,7 +14,7 @@ export default function clearResponse(response: string): AIResponse {
     .replaceAll(/^\s+|\s+$/g, "") // Trim leading and trailing spaces
     // .replaceAll(/\\"/g, '"')                                   // Fix escaped double quotes
     // .replaceAll(/\\\\/g, '\\')                                 // Fix double backslashes
-    .replaceAll(/\n/g, "") // Remove all newlines
+    // .replaceAll(/\n/g, "") // Remove all newlines
     // .replaceAll(/,\s*([}\]])/g, '$1')                          // Remove trailing commas
     // .replaceAll(/'/g, '"')                                     // Convert single quotes to double quotes
     // .replaceAll(/\s*([{}\[\]])\s*/g, '$1')                     // Normalize spacing around braces/brackets

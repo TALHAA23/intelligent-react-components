@@ -600,6 +600,123 @@
 
 **Analysis:** After lots of try, the model still can't generate good code.
 
+### Test Case 14
+
+**Prompt**
+
+```tsx
+<AIForm
+  // feedback="Prev response error: Expected ',' or '}' after property value in JSON at position 12864 (line 1 column 12865)"
+  prompt="A course registration from. Upload the data to firebase enrolls collections."
+  filename="courseRegistration"
+  listener="onSubmit"
+  supportingProps={{
+    database: {
+      name: "firebase firestore and storage",
+      envGuide: "NEXT_PUBLIC before each and _P2 at the end",
+    },
+  }}
+  fieldDefinitions={[
+    {
+      fieldDefination: "first name",
+      styleHint: "row 1",
+    },
+    {
+      fieldDefination: "last name",
+      styleHint: "row 1",
+    },
+    {
+      id: "selectCourse",
+      fieldDefination:
+        "Drop down to select course; DSA, IELTS, SCRAM Master, Blender",
+      styleHint: "row 2/span",
+    },
+    {
+      fieldDefination:
+        "Education. This should be a button that will open a dialog box and it should take degree, percentage, passing year, and image (jpg only, <=100KB). As they submit it should be shown on the section, user can remove any education they have added",
+      styleHint: "row 3/span",
+    },
+    {
+      fieldDefination:
+        "A Set of radio buttons to select shift; morning, evening and part-time",
+      styleHint: "row 4/span",
+    },
+    {
+      id: "blenderChoice",
+      fieldDefination:
+        "Dynamic drop-down; 3D Modeling, animation, video editing. show only of Blender is selected is @selectCourse",
+      styleHint: "row 5",
+    },
+    {
+      fieldDefination:
+        "A message, show only of Blender is selected is @selectCourse. Show a message base on what is selected in @blenderChoice like for 3D model;Print Your Imagination Into Reality and so on",
+      styleHint: "row 5",
+    },
+  ]}
+  validate="All fields are required. Show message right below the input when wrong not at the top"
+  styleHint="500px max in width, centered horizontailly. Use less spacing do not use lots of margin and padding in between inputs. Inputs label should be small and light in color only focus should darker the label. Color pattele: F1E3D3, E07A5F, 690B22. The dialog box for education should be centerd to the screen both x and y axis."
+  layout="tow-columns"
+  feedback="radio buttons need to be horizontal. 'span' mean to take all the columns. Submit button also need to be span."
+  cacheResponse={false}
+/>
+```
+
+**Result:**
+<span style="color:green;font-weight:bold">Success</span>
+
+**Analysis:** Passed
+
+### Test Case 15
+
+**Prompt**
+
+```tsx
+<AIForm
+  prompt="Design a comprehensive form for managing a complex e-commerce product listing. Include fields for product title, detailed description with rich text formatting, multiple image uploads with drag-and-drop functionality, category selection (hierarchical dropdown), variant management (dynamic list with fields for size, color, stock, and price), shipping options (multiple select with shipping cost calculation), and customer review management (display existing reviews and allow for new review submission). Update product data in a firebase 'products' collection."
+  filename="firebaseProductListing"
+  listener="onSubmit"
+  supportingProps={{
+    database: {
+      name: "firebase firestore",
+      envGuide: "Use NEXT_PUBLIC before and _P2 at the end.",
+    },
+  }}
+  styleHint="Comprehensive e-commerce product listing form with advanced features"
+  layout="grid"
+/>
+```
+
+**Result:**
+<span style="color:green;font-weight:bold">Success</span>
+
+**Analysis:** Passed
+
+### Test Case --
+
+**Prompt**
+
+```tsx
+
+```
+
+**Result:**
+<span style="color:green;font-weight:bold">Success</span>
+
+**Analysis:**
+
+### Test Case --
+
+**Prompt**
+
+```tsx
+
+```
+
+**Result:**
+<span style="color:green;font-weight:bold">Success</span>
+
+**Analysis:**
+
 ### Test Case --
 
 **Prompt**

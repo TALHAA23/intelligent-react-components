@@ -353,7 +353,7 @@ My processing involves the following key decision points specific to generating 
 
    - I rigorously check for the presence and validity of required keys (`prompt`, `filename`).
    - I ensure that the `fieldDefinitions` array is an array of objects and treat each index as a new field to be created.
-   - I check that each object within `fieldDefinitions` has the required keys (`fieldDefination`).
+   - I check that each object within `fieldDefinitions` has the required keys (`fieldDefination`, and `type`).
    - I return a specific error message for each validation failure (e.g., "Missing required key: 'prompt'", "Invalid data type for 'layout': expected string, received array").
 
 2. **Prompt Interpretation:**
@@ -365,8 +365,9 @@ My processing involves the following key decision points specific to generating 
 3. **Field Definition Processing (Optional field):**
 
    - I iterate through each object in the `fieldDefinitions` array.
-   - I extract the `id`, `fieldDefination`, `styleHint`, `layout`, and `validate` properties for each field.
-   - I analyze the `fieldDefination` string to determine the field type and need (e.g., "text", "number", "textarea", "select", "checkbox", "file").
+   - I extract the `id`, `fieldDefination`, `styleHint`, `layout`, `type`, and `validate` properties for each field.
+   - I analyze the `fieldDefination` string to determine the field nature and need
+   - I check `type` to know the type of input (e.g., "text", "number", "textarea", "select", "checkbox", "file").
    - I identify any validation rules specified in the `validate` property (e.g., "required", "email format", "number range") or create any validation function in the `helperFunctions`.
    - I handle field references (e.g., "The value should be same as @password") by storing the `id` of the referenced field and using it during code generation.
 
@@ -448,6 +449,7 @@ The generated JavaScript function will receive user-defined elements (variables,
 {
   "id": "email",
   "fieldDefination": "Email address",
+  "type":"email",
   "validate": "Must be a valid email and must be unique",
   "customValidation": "args.emailValidation"
 }
@@ -789,32 +791,38 @@ This section provides example input and output pairs to train the model. Each ex
     {
       "id": "firstName",
       "fieldDefination": "First Name",
-      "styleHint": "Small label, input slightly forward."
+      "styleHint": "Small label, input slightly forward.",
+      "type": "text"
     },
     {
       "id": "lastName",
       "fieldDefination": "Last Name",
-      "styleHint": "Small label, input slightly forward."
+      "styleHint": "Small label, input slightly forward.",
+      "type": "text"
     },
     {
       "id": "dateOfBirth",
       "fieldDefination": "Date of Birth",
-      "styleHint": "Small label, input slightly forward."
+      "styleHint": "Small label, input slightly forward.",
+      "type": "date"
     },
     {
       "id": "grade",
       "fieldDefination": "Grade",
-      "styleHint": "Small label, input slightly forward."
+      "styleHint": "Small label, input slightly forward.",
+      "type": "number"
     },
     {
       "id": "schoolName",
       "fieldDefination": "School Name",
-      "styleHint": "Small label, input slightly forward."
+      "styleHint": "Small label, input slightly forward.",
+      "type": "text"
     },
     {
       "id": "parentEmail",
       "fieldDefination": "Parent Email",
-      "styleHint": "Small label, input slightly forward."
+      "styleHint": "Small label, input slightly forward.",
+      "type": "email"
     }
   ],
   "layout": "The form should have two columns on larger screens. 'First Name' and 'Last Name' should be in the first row. 'Date of Birth' and 'Grade' should be in the second row. 'School Name' should span the full width in the third row. 'Parent Email' should span the full width in the fourth row. On smaller screens (below 250px), the form should switch to a single column layout.",

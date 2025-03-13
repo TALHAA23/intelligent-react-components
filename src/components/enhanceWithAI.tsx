@@ -76,7 +76,6 @@ function sanitizeCallbacks(callbacks: Common["callbacks"]) {
       );
     }
   }
-
   return sanitizedCallbacks;
 }
 

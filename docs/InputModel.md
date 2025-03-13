@@ -368,24 +368,13 @@ The generated JavaScript function will receive user-defined elements (variables,
    args.updateValue("new input value"); // Using the &updateValue mutation
    ```
 
-3. **`callbacks:`**
-   The callbacks field contains independent and dependent callbacks, which the generated function must access via the args object.
+3. **`callbacks`:** The `callbacks` field contains independent and dependent callbacks. To call any callback function, use the name provided in the `callback` field of each callback object. Access these callbacks through the `args` object as follows:
 
-   **Independent Callbacks:**
-   These are directly named and accessed as args.[callbackName].
-   Example:
+- For all callbacks (both independent and dependent), use the exact string value found in the `callback` field as the key to access the function from the `args` object. For example, if a callback has `callback: "processData"`, you should call it as `args.processData()`.
 
-```js
-args.showError("Invalid input"); // Accessing an independent callback
-```
+- The `callGuide` field provides information about when to call the callback.
 
-**Dependent Callbacks:**
-These may lack explicit names. Instead, they are accessed using keys based on their index (e.g., args.dependent0, args.dependent1). The callGuide and parametersGuide fields in the callback object provide details on how to invoke these callbacks.
-Example:
-
-```js
-const result = args.dependent0("value"); // Calling the first dependent callback
-```
+- For dependent callbacks, the `parametersGuide` array provides details about what parameters to pass to the callback function, with each array element corresponding to a parameter in the same order.
 
 ## Database Interaction Keywords
 

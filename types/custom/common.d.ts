@@ -62,7 +62,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
      */
     database?: {
       name: string;
-      envGuide: string;
+      envGuide?: string;
     };
 
     /**

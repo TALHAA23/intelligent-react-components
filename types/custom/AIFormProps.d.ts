@@ -12,6 +12,11 @@ interface FormField {
   id?: string;
 
   /**
+   * The type of input .i.e text, email, password etc.
+   */
+  type: React.HTMLInputTypeAttribute;
+
+  /**
    * A concise description of the desired field.
    * This prompt will be used by the AI to generate the field's properties.
    */

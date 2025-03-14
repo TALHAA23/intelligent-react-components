@@ -495,109 +495,13 @@ This section provides example input and output pairs to train the model. Each ex
 {
   "thoughts": "The prompt requests a simple contact form with three fields: Name, Email, and Message. No event handler is descussed in the prompt so i will generate empty handler.",
   "response": {
-    "eventListener": "function formBuilder(formElement, args) {
-      if(globals.isFormBuilded) return;
-
-      if (!(formElement instanceof HTMLFormElement)) {
-        console.warn('Invalid formElement provided. Expected an HTMLFormElement.');
-        return;
-      }
-
-      const createElement = (tag, options) => {
-        const element = document.createElement(tag);
-        Object.assign(element, options);
-        return element;
-      };
-
-      const nameField = createElement('input', {
-        type: 'text',
-        id: 'contactForm-name',
-        name: 'name',
-        placeholder: 'Enter your name',
-        classList: ['contactForm-input']
-      });
-
-      const emailField = createElement('input', {
-        type: 'email',
-        id: 'contactForm-email',
-        name: 'email',
-        placeholder: 'Enter your email',
-        classList: ['contactForm-input']
-      });
-
-      const messageField = createElement('textarea', {
-        id: 'contactForm-message',
-        name: 'message',
-        placeholder: 'Enter your message',
-        classList: ['contactForm-input']
-      });
-
-      const nameLabel = createElement('label', {
-        htmlFor: 'contactForm-name',
-        textContent: 'Name:',
-        classList: ['contactForm-label']
-      });
-
-      const emailLabel = createElement('label', {
-        htmlFor: 'contactForm-email',
-        textContent: 'Email:',
-        classList: ['contactForm-label']
-      });
-
-      const messageLabel = createElement('label', {
-        htmlFor: 'contactForm-message',
-        textContent: 'Message:',
-        classList: ['contactForm-label']
-      });
-
-      formElement.appendChild(nameLabel);
-      formElement.appendChild(nameField);
-      formElement.appendChild(emailLabel);
-      formElement.appendChild(emailField);
-      formElement.appendChild(messageLabel);
-      formElement.appendChild(messageField);
-
-      globals.isFormBuilded = true;
-    }",
+    "eventListener": "function main(event, args) {\n    event.preventDefault();\n    console.log('Form Submitted');\n    }",
+    "formBuilder": "function formBuilder(formElement, args) {\n  if(globals.isFormBuilded) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  const createElement = (tag, options) => {\n    const element = document.createElement(tag);\n    Object.assign(element, options);\n    return element;\n  };\n\n  const nameField = createElement('input', {\n    type: 'text',\n    id: 'contactForm-name',\n    name: 'name',\n    placeholder: 'Enter your name',\n    classList: ['contactForm-input']\n  });\n\n  const emailField = createElement('input', {\n    type: 'email',\n    id: 'contactForm-email',\n    name: 'email',\n    placeholder: 'Enter your email',\n    classList: ['contactForm-input']\n  });\n\n  const messageField = createElement('textarea', {\n    id: 'contactForm-message',\n    name: 'message',\n    placeholder: 'Enter your message',\n    classList: ['contactForm-input']\n  });\n\n  const nameLabel = createElement('label', {\n    htmlFor: 'contactForm-name',\n    textContent: 'Name:',\n    classList: ['contactForm-label']\n  });\n\n  const emailLabel = createElement('label', {\n    htmlFor: 'contactForm-email',\n    textContent: 'Email:',\n    classList: ['contactForm-label']\n  });\n\n  const messageLabel = createElement('label', {\n    htmlFor: 'contactForm-message',\n    textContent: 'Message:',\n    classList: ['contactForm-label']\n  });\n\n  formElement.appendChild(nameLabel);\n  formElement.appendChild(nameField);\n  formElement.appendChild(emailLabel);\n  formElement.appendChild(emailField);\n  formElement.appendChild(messageLabel);\n  formElement.appendChild(messageField);\n\n  globals.isFormBuilded = true;\n}",
     "globals": {
       "isFormBuilded": false
     },
     "CSS": {
-      "styles": "
-        .contactForm {
-          max-width: 400px;
-          margin: 20px auto;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-        }
-
-        .contactForm-label {
-          display: block;
-          margin-bottom: 5px;
-        }
-
-        .contactForm-input {
-          width: 100%;
-          padding: 10px;
-          margin-bottom: 15px;
-          border: 1px solid #ccc;
-          border-radius: 3px;
-        }
-
-        .contactForm-button {
-          background-color: #007bff;
-          color: #fff;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 3px;
-          cursor: pointer;
-        }
-
-        .contactForm-button:hover {
-          background-color: #0069d9;
-        }
-      "
+      "styles": "\n.contactForm {\n  max-width: 400px;\n  margin: 20px auto;\n  padding: 20px;\n  border: 1px solid #ccc;\n  border-radius: 5px;\n}\n\n.contactForm-label {\n  display: block;\n  margin-bottom: 5px;\n}\n\n.contactForm-input {\n  width: 100%;\n  padding: 10px;\n  margin-bottom: 15px;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n.contactForm-button {\n  background-color: #007bff;\n  color: #fff;\n  padding: 10px 20px;\n  border: none;\n  border-radius: 3px;\n  cursor: pointer;\n}\n\n.contactForm-button:hover {\n  background-color: #0069d9;\n}"
     }
   },
   "expect": "The user do not need to do anything. everything will be handled internally."
@@ -642,7 +546,7 @@ This section provides example input and output pairs to train the model. Each ex
       // }, 1500);
 
     }",
-    "formBuilder": "function formBuilder(formElement) {
+    "formBuilder": "function formBuilder(formElement, args) {
       if (globals.isFormBuilded) return;
       if (!(formElement instanceof HTMLFormElement)) {
         console.warn('Invalid formElement provided. Expected an HTMLFormElement.');
@@ -837,153 +741,16 @@ This section provides example input and output pairs to train the model. Each ex
   "thoughts": "The prompt requests a school registration form with multiple fields, incorporating specific styling and layout preferences. The `layout` property specifies a two-column layout for larger screens and a single-column layout for smaller screens. The `styleHint` property provides guidance on the desired visual style, including form dimensions, background, shadows, and button styling.",
   "response": {
     "eventListener": "function main(event, args) {}",
-    "formBuilder": "function formBuilder(formElement) {
-      if(globals.isFormBuilded) return;
-
-      if (!(formElement instanceof HTMLFormElement)) {
-        console.warn('Invalid formElement provided. Expected an HTMLFormElement.');
-        return;
-      }
-
-      const form = createElement('form', {
-        classList: ['registrationForm']
-      });
-
-      const row1 = createElement('div', {
-        classList: ['registrationForm-row']
-      });
-      const firstNameField = createField('firstName', 'First Name');
-      const lastNameField = createField('lastName', 'Last Name');
-      row1.append(firstNameField, lastNameField);
-
-      const row2 = createElement('div', {
-        classList: ['registrationForm-row']
-      });
-      const dateOfBirthField = createField('dateOfBirth', 'Date of Birth');
-      const gradeField = createField('grade', 'Grade');
-      row2.append(dateOfBirthField, gradeField);
-
-      const schoolNameField = createField('schoolName', 'School Name', '100%');
-
-      const parentEmailField = createField('parentEmail', 'Parent Email', '100%');
-
-      const submitButton = createElement('button', {
-        type: 'submit',
-        textContent: 'Submit',
-        classList: ['registrationForm-button']
-      });
-
-      form.append(row1, row2, schoolNameField, parentEmailField, submitButton);
-      formElement.appendChild(form);
-
-      globals.isFormBuilded = true;
-    }",
+    "formBuilder": "function formBuilder(formElement, args) {\n  if(globals.isFormBuilded) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  const form = createElement('form', {\n    classList: ['registrationForm']\n  });\n\n  const row1 = createElement('div', {\n    classList: ['registrationForm-row']\n  });\n  const firstNameField = createField('firstName', 'First Name');\n  const lastNameField = createField('lastName', 'Last Name');\n  row1.append(firstNameField, lastNameField);\n\n  const row2 = createElement('div', {\n    classList: ['registrationForm-row']\n  });\n  const dateOfBirthField = createField('dateOfBirth', 'Date of Birth');\n  const gradeField = createField('grade', 'Grade');\n  row2.append(dateOfBirthField, gradeField);\n\n  const schoolNameField = createField('schoolName', 'School Name', '100%');\n\n  const parentEmailField = createField('parentEmail', 'Parent Email', '100%');\n\n  const submitButton = createElement('button', {\n    type: 'submit',\n    textContent: 'Submit',\n    classList: ['registrationForm-button']\n  });\n\n  form.append(row1, row2, schoolNameField, parentEmailField, submitButton);\n  formElement.appendChild(form);\n\n  globals.isFormBuilded = true;\n}",
     "helperFunctions": [
-      "function createElement(tag, options) {
-        const element = document.createElement(tag);
-        // Handle dataset separately
-        if (options.dataset) {
-          for (const key in options.dataset) {
-            if (options.dataset.hasOwnProperty(key)) {
-              element.dataset[key] = options.dataset[key];
-            }
-          }
-        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
-      }
-    Object.assign(element, options);
-    return element;
-  }",
-      "function createField(id, labelText, width = '50%') {
-        const fieldContainer = createElement('div', {
-          classList: ['registrationForm-field', width === '100%' ? 'registrationForm-field-full' : '']
-        });
-
-        const label = createElement('label', {
-          htmlFor: 'registrationForm-${id}',
-          textContent: '${labelText}:',
-          classList: ['registrationForm-label']
-        });
-
-        const field = createElement('input', {
-          type: 'text',
-          id: 'registrationForm-${id}',
-          name: id,
-          placeholder: 'Enter your ${labelText}',
-          classList: ['registrationForm-input']
-        });
-
-        fieldContainer.appendChild(label);
-        fieldContainer.appendChild(field);
-
-        return fieldContainer;
-      }"
+      "function createElement(tag, options) {\n  const element = document.createElement(tag);\n  // Handle dataset separately\n  if (options.dataset) {\n    for (const key in options.dataset) {\n      if (options.dataset.hasOwnProperty(key)) {\n        element.dataset[key] = options.dataset[key];\n      }\n    }\n    delete options.dataset; // Remove dataset from options to prevent Object.assign error.\n  }\n    Object.assign(element, options);\n    return element;\n  }",
+      "function createField(id, labelText, width = '50%') {\n  const fieldContainer = createElement('div', {\n    classList: ['registrationForm-field', width === '100%' ? 'registrationForm-field-full' : '']\n  });\n\n  const label = createElement('label', {\n    htmlFor: `registrationForm-${id}`,\n    textContent: `${labelText}:`,\n    classList: ['registrationForm-label']\n  });\n\n  const field = createElement('input', {\n    type: 'text',\n    id: `registrationForm-${id}`,\n    name: id,\n    placeholder: `Enter your ${labelText}`,\n    classList: ['registrationForm-input']\n  });\n\n  fieldContainer.appendChild(label);\n  fieldContainer.appendChild(field);\n\n  return fieldContainer;\n}"
     ],
     "globals": {
       "isFormBuilded": false
     },
     "CSS": {
-      "styles": "
-        .registrationForm {
-          max-width: 500px;
-          margin: 0 auto;
-          padding: 30px;
-          border-radius: 5px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          background-color: #f8f9fa;
-        }
-
-        .registrationForm-row {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 20px;
-        }
-
-        .registrationForm-field {
-          width: 48%;
-          margin-right: 2%;
-        }
-
-        .registrationForm-field-full {
-          width: 100%;
-        }
-
-        .registrationForm-label {
-          display: block;
-          margin-bottom: 5px;
-          font-size: 14px;
-          margin-left: 5px;
-        }
-
-        .registrationForm-input {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 3px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          margin-left: 5px;
-        }
-
-        .registrationForm-button {
-          width: 100%;
-          background-color: #007bff;
-          color: #fff;
-          padding: 15px;
-          border: none;
-          border-radius: 3px;
-          cursor: pointer;
-        }
-
-        @media screen and (max-width: 250px) {
-          .registrationForm-row {
-            display: block;
-          }
-
-          .registrationForm-field {
-            width: 100%;
-            margin-right: 0;
-          }
-        }
-      "
+      "styles": "\n.registrationForm {\n  max-width: 500px;\n  margin: 0 auto;\n  padding: 30px;\n  border-radius: 5px;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n  background-color: #f8f9fa;\n}\n\n.registrationForm-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 20px;\n}\n\n.registrationForm-field {\n  width: 48%;\n  margin-right: 2%;\n}\n\n.registrationForm-field-full {\n  width: 100%;\n}\n\n.registrationForm-label {\n  display: block;\n  margin-bottom: 5px;\n  font-size: 14px;\n  margin-left: 5px;\n}\n\n.registrationForm-input {\n  width: 100%;\n  padding: 10px;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n  margin-left: 5px;\n}\n\n.registrationForm-button {\n  width: 100%;\n  background-color: #007bff;\n  color: #fff;\n  padding: 15px;\n  border: none;\n  border-radius: 3px;\n  cursor: pointer;\n}\n\n@media screen and (max-width: 250px) {\n  .registrationForm-row {\n    display: block;\n  }\n\n  .registrationForm-field {\n    width: 100%;\n    margin-right: 0;\n  }\n}"
     }
   },
   "expect": "The generated form should reflect the specified styling and layout preferences, including two-column layout for larger screens and a single-column layout for smaller screens."
@@ -1030,7 +797,7 @@ This section provides example input and output pairs to train the model. Each ex
   "thoughts": "The prompt is to create a beautiful registration form. The design includes a prominent animated title, a brief message, two side-by-side input fields for the first and last names, individual fields for email, password, and confirm password, and a submit button along with a sign-in prompt. The CSS includes responsive flex layouts, animated pseudo-elements for the title, and subtle hover effects.",
   "response": {
     "eventListener": "function main(event, args) {}",
-    "formBuilder": "function formBuilder(formElement) {\n  if (globals.isFormBuilded) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  // Create the main form container with class 'form'\n  const form = createElement('form', { classList: ['form'] });\n\n  // Create the title\n  const title = createElement('p', {\n    classList: ['title'],\n    textContent: 'Register'\n  });\n\n  // Create the message\n  const message = createElement('p', {\n    classList: ['message'],\n    textContent: 'Signup now and get full access to our app.'\n  });\n\n  // Create a flex container for first and last name fields\n  const flexContainer = createElement('div', { classList: ['flex'] });\n  const firstNameField = createInputField('firstName', 'Firstname', 'text');\n  const lastNameField = createInputField('lastName', 'Lastname', 'text');\n  flexContainer.append(firstNameField, lastNameField);\n\n  // Create Email field\n  const emailField = createInputField('email', 'Email', 'email');\n\n  // Create Password field\n  const passwordField = createInputField('password', 'Password', 'password');\n\n  // Create Confirm Password field\n  const confirmPasswordField = createInputField('confirmPassword', 'Confirm password', 'password');\n\n  // Create Submit button\n  const submitButton = createElement('button', {\n    classList: ['submit'],\n    type: 'submit',\n    textContent: 'Submit'\n  });\n\n  // Create signin prompt\n  const signinParagraph = createElement('p', {\n    classList: ['signin'],\n    innerHTML: 'Already have an account? <a href=\"#\">Signin</a>'\n  });\n\n  // Append all elements to the form\n  form.append(title, message, flexContainer, emailField, passwordField, confirmPasswordField, submitButton, signinParagraph);\n  formElement.appendChild(form);\n\n  globals.isFormBuilded = true;\n}\n",
+    "formBuilder": "function formBuilder(formElement, args) {\n  if (globals.isFormBuilded) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  // Create the main form container with class 'form'\n  const form = createElement('form', { classList: ['form'] });\n\n  // Create the title\n  const title = createElement('p', {\n    classList: ['title'],\n    textContent: 'Register'\n  });\n\n  // Create the message\n  const message = createElement('p', {\n    classList: ['message'],\n    textContent: 'Signup now and get full access to our app.'\n  });\n\n  // Create a flex container for first and last name fields\n  const flexContainer = createElement('div', { classList: ['flex'] });\n  const firstNameField = createInputField('firstName', 'Firstname', 'text');\n  const lastNameField = createInputField('lastName', 'Lastname', 'text');\n  flexContainer.append(firstNameField, lastNameField);\n\n  // Create Email field\n  const emailField = createInputField('email', 'Email', 'email');\n\n  // Create Password field\n  const passwordField = createInputField('password', 'Password', 'password');\n\n  // Create Confirm Password field\n  const confirmPasswordField = createInputField('confirmPassword', 'Confirm password', 'password');\n\n  // Create Submit button\n  const submitButton = createElement('button', {\n    classList: ['submit'],\n    type: 'submit',\n    textContent: 'Submit'\n  });\n\n  // Create signin prompt\n  const signinParagraph = createElement('p', {\n    classList: ['signin'],\n    innerHTML: 'Already have an account? <a href=\"#\">Signin</a>'\n  });\n\n  // Append all elements to the form\n  form.append(title, message, flexContainer, emailField, passwordField, confirmPasswordField, submitButton, signinParagraph);\n  formElement.appendChild(form);\n\n  globals.isFormBuilded = true;\n}\n",
     "helperFunctions": [
       "function createElement(tag, options) {\n  const element = document.createElement(tag);\n  if (options.classList) {\n    if (Array.isArray(options.classList)) {\n      options.classList.forEach(cls => element.classList.add(cls));\n    } else {\n      element.classList.add(options.classList);\n    }\n  }\n  if (options.textContent) element.textContent = options.textContent;\n  if (options.innerHTML) element.innerHTML = options.innerHTML;\n  if (options.type) element.type = options.type;\n  if (options.placeholder) element.placeholder = options.placeholder;\n  return element;\n}",
       "function createInputField(id, labelText, type) {\n  // Create label element that wraps input and span\n  const label = createElement('label');\n  \n  // Create the input field\n  const input = createElement('input', {\n    type: type,\n    placeholder: '',\n    classList: ['input']\n  });\n  input.required = true;\n  \n  // Create the floating label text\n  const span = createElement('span', { textContent: labelText });\n  \n  // Append input and span to label\n  label.append(input, span);\n  \n  return label;\n}"
@@ -1101,324 +868,29 @@ This section provides example input and output pairs to train the model. Each ex
 
 ```json
 {
-  "thoughts": "The prompt requests a Job Application form with dynamic field updates, input validation, error handling, data formatting, and specific layout and styling preferences. The `supportingProps` provides a `DataFormat` object for data transformation.",
+  "thoughts": "This prompt requests a Job Application form with dynamic field updates, input validation, error handling, data formatting, and specific layout and styling preferences. The `supportingProps` provides a `DataFormat` object for data transformation.",
   "response": {
-    "eventListener": "function main(event, args) {
-    event.preventDefault();
-    setStatus("", "");
-    toggleButtonState(true, 'Submitting...');
-    const isValid = validateForm();
-    if (!isValid) {
-      setStatus('Error: Please fix the highlighted errors.', 'error');
-      toggleButtonState(false, 'Submit');
-
-      return;
-    }
-    const formData = formatFormData();
-    console.log(formData);
-    setStatus('Submitted successfully!', 'success');
-    toggleButtonState(false, 'Submit');
-  }",
-    "formBuilder": "function formBuilder(formElement) {
-    if (globals.isFormBuilded) return;
-    if (!(formElement instanceof HTMLFormElement)) {
-      console.warn(
-        'Invalid formElement provided. Expected an HTMLFormElement.'
-      );
-      return;
-    }
-
-    const heading = createElement('h1', {
-      textContent: 'Job Application Form',
-      classList: ['formHeading'],
-    });
-
-    formElement.appendChild(heading);
-    const statusDiv = createElement('div', {
-      id: 'multiStepForm-formStatus',
-      classList: ['multiStepForm-formStatus'],
-    });
-
-    formElement.appendChild(statusDiv);
-    const row1 = createElement('div', { classList: ['formRow'] });
-
-    ['firstName', 'lastName'].map((item) => {
-      // create a wrapper to error message is layout correctly
-      const wrapper = createElement('div');
-      globals[`${item}Ref`] = createElement('input', {
-        type: 'text',
-        id: `jobApplicationForm-${item}`,
-        name: 'firstName',
-        // capitalize placeholder
-        placeholder: item
-          .replace(/([A-Z])/g, ' $1')
-          .replace(/^./, (str) => str.toUpperCase()),
-        classList: ['jobApplicationForm-input'],
-        required: true,
-        disabled: item == 'lastName',
-      });
-      wrapper.appendChild(globals[`${item}Ref`]);
-      globals[`${item}Ref`].addEventListener('blur', () =>
-        validateField(globals[`${item}Ref`], 'Must be capitalize')
-      );
-      row1.appendChild(wrapper);
-    });
-
-    // enable last name if first name
-    globals.firstNameRef?.addEventListener('input', (e) => {
-      if (globals.lastNameRef) globals.lastNameRef.disabled = !e.target.value;
-    });
-
-    formElement.appendChild(row1);
-    globals.emailRef = createElement('input', {
-      type: 'email',
-      id: 'jobApplicationForm-email',
-      name: 'email',
-      placeholder: 'Email Address',
-      classList: ['jobApplicationForm-input'],
-      required: true,
-    });
-    globals.emailRef.addEventListener('blur', () =>
-      validateField(globals.emailRef, 'Must be a valid email address')
-    );
-    formElement.appendChild(globals.emailRef);
-    globals.positionRef = createElement('select', {
-      id: 'jobApplicationForm-position',
-      name: 'position',
-      classList: ['jobApplicationForm-select'],
-    });
-    const defaultOption = createElement('option', {
-      textContent: 'Select Job Position',
-    });
-    defaultOption.value = '';
-    defaultOption.selected = true;
-    globals.positionRef.appendChild(defaultOption);
-    [
-      'Software Engineer',
-      'Data Scientist',
-      'Project Manager',
-      'Marketing Specialist',
-    ].forEach((optionText) => {
-      const option = createElement('option', { textContent: optionText });
-      option.value = optionText;
-      globals.positionRef.appendChild(option);
-    });
-    formElement.appendChild(globals.positionRef);
-
-    const radioGroupContainer = createElement('div', {
-      classList: ['jobApplicationForm-radioGroup'],
-    });
-
-    const radioLabel = createElement('h1', {
-      textContent: 'Current Employment Status',
-      classList: ['radioGroupLabel'],
-    });
-    radioGroupContainer.appendChild(radioLabel);
-    globals.employmentStatusRef = [];
-    ['Employed', 'Unemployed', 'Freelancer'].forEach((option) => {
-      const radioContainer = createElement('div', {
-        classList: ['radioInline'],
-      });
-      const radio = createElement('input', {
-        type: 'radio',
-        id: `jobApplicationForm-employmentStatus-${option.toLowerCase()}`,
-        name: 'employmentStatus',
-        value: option,
-      });
-      const label = createElement('label', {
-        textContent: option,
-        htmlFor: `jobApplicationForm-employmentStatus-${option.toLowerCase()}`,
-      });
-      radioContainer.appendChild(radio);
-      radioContainer.appendChild(label);
-      radioGroupContainer.appendChild(radioContainer);
-      globals.employmentStatusRef.push(radio);
-    });
-    formElement.appendChild(radioGroupContainer);
-    globals.submitButtonRef = createElement('button', {
-      type: 'submit',
-      textContent: 'Submit',
-      classList: ['jobApplicationForm-submit'],
-    });
-    formElement.appendChild(globals.submitButtonRef);
-    globals.isFormBuilded = true;
-  }",
+    "eventListener": "function main(event, args) {\n    event.preventDefault();\n    setStatus(\"\", \"\");\n    toggleButtonState(true, 'Submitting...');\n    const isValid = validateForm();\n    if (!isValid) {\n      setStatus('Error: Please fix the highlighted errors.', 'error');\n      toggleButtonState(false, 'Submit');\n\n      return;\n    }\n    const formData = formatFormData();\n    console.log(formData);\n    setStatus('Submitted successfully!', 'success');\n    toggleButtonState(false, 'Submit');\n  }",
+    "formBuilder": "function formBuilder(formElement, args) {\n    if (globals.isFormBuilded) return;\n    if (!(formElement instanceof HTMLFormElement)) {\n      console.warn(\n        'Invalid formElement provided. Expected an HTMLFormElement.'\n      );\n      return;\n    }\n\n    const heading = createElement('h1', {\n      textContent: 'Job Application Form',\n      classList: ['formHeading'],\n    });\n\n    formElement.appendChild(heading);\n    const statusDiv = createElement('div', {\n      id: 'multiStepForm-formStatus',\n      classList: ['multiStepForm-formStatus'],\n    });\n\n    formElement.appendChild(statusDiv);\n    const row1 = createElement('div', {\n       classList: ['formRow'] \n     });\n\n    ['firstName', 'lastName'].map((item) => {\n      // create a wrapper to error message is layout correctly\n      const wrapper = createElement('div');\n      globals[`${item}Ref`] = createElement('input', {\n        type: 'text',\n        id: `jobApplicationForm-${item}`,\n        name: 'firstName',\n        // capitalize placeholder\n        placeholder: item\n          .replace(/([A-Z])/g, ' $1')\n          .replace(/^./, (str) => str.toUpperCase()),\n        classList: ['jobApplicationForm-input'],\n        required: true,\n        disabled: item == 'lastName',\n      });\n      wrapper.appendChild(globals[`${item}Ref`]);\n      globals[`${item}Ref`].addEventListener('blur', () =>\n        validateField(globals[`${item}Ref`], 'Must be capitalize')\n      );\n      row1.appendChild(wrapper);\n    });\n\n    // enable last name if first name\n    globals.firstNameRef?.addEventListener('input', (e) => {\n      if (globals.lastNameRef) globals.lastNameRef.disabled = !e.target.value;\n    });\n\n    formElement.appendChild(row1);\n    globals.emailRef = createElement('input', {\n      type: 'email',\n      id: 'jobApplicationForm-email',\n      name: 'email',\n      placeholder: 'Email Address',\n      classList: ['jobApplicationForm-input'],\n      required: true,\n    });\n    globals.emailRef.addEventListener('blur', () =>\n      validateField(globals.emailRef, 'Must be a valid email address')\n    );\n    formElement.appendChild(globals.emailRef);\n    globals.positionRef = createElement('select', {\n      id: 'jobApplicationForm-position',\n      name: 'position',\n      classList: ['jobApplicationForm-select'],\n    });\n    const defaultOption = createElement('option', {\n      textContent: 'Select Job Position',\n    });\n    defaultOption.value = '';\n    defaultOption.selected = true;\n    globals.positionRef.appendChild(defaultOption);\n    [\n      'Software Engineer',\n      'Data Scientist',\n      'Project Manager',\n      'Marketing Specialist',\n    ].forEach((optionText) => {\n      const option = createElement('option', { textContent: optionText });\n      option.value = optionText;\n      globals.positionRef.appendChild(option);\n    });\n    formElement.appendChild(globals.positionRef);\n\n    const radioGroupContainer = createElement('div', {\n      classList: ['jobApplicationForm-radioGroup'],\n    });\n\n    const radioLabel = createElement('h1', {\n      textContent: 'Current Employment Status',\n      classList: ['radioGroupLabel'],\n    });\n    radioGroupContainer.appendChild(radioLabel);\n    globals.employmentStatusRef = [];\n    ['Employed', 'Unemployed', 'Freelancer'].forEach((option) => {\n      const radioContainer = createElement('div', {\n        classList: ['radioInline'],\n      });\n      const radio = createElement('input', {\n        type: 'radio',\n        id: `jobApplicationForm-employmentStatus-${option.toLowerCase()}`,\n        name: 'employmentStatus',\n        value: option,\n      });\n      const label = createElement('label', {\n        textContent: option,\n        htmlFor: `jobApplicationForm-employmentStatus-${option.toLowerCase()}`,\n      });\n      radioContainer.appendChild(radio);\n      radioContainer.appendChild(label);\n      radioGroupContainer.appendChild(radioContainer);\n      globals.employmentStatusRef.push(radio);\n    });\n    formElement.appendChild(radioGroupContainer);\n    globals.submitButtonRef = createElement('button', {\n      type: 'submit',\n      textContent: 'Submit',\n      classList: ['jobApplicationForm-submit'],\n    });\n    formElement.appendChild(globals.submitButtonRef);\n    globals.isFormBuilded = true;\n  }",
     "helperFunctions": [
-      "function createElement(tag, options) {
-        const element = document.createElement(tag);
-        // Handle dataset separately
-        if (options.dataset) {
-          for (const key in options.dataset) {
-            if (options.dataset.hasOwnProperty(key)) {
-              element.dataset[key] = options.dataset[key];
-            }
-          }
-        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
-      }
-    Object.assign(element, options);
-    return element;
-  }",
-      "function validateField(field, validationRule) {
-    let isValid = true;
-    let message = "";
-    if (!field.value.trim()) {
-      isValid = false;
-      message = 'This field is required.';
-    } else {
-      if (validationRule === 'Must be capitalize') {
-        isValid = field.value[0] === field.value[0].toUpperCase();
-        if (!isValid) message = 'First letter must be capitalized.';
-      } else if (validationRule === 'Must be a valid email address') {
-        const emailRegex = /^[^s@]+@[^s@]+.[^s@]+$/;
-        isValid =  emailRegex.test(field.value);
-        if (!isValid) message = 'Invalid email format.';
-      }
-    }
-    let errorElem = field.parentNode.querySelector(
-      '.jobApplicationForm-errorMessage'
-    );
-    if (!errorElem) {
-      errorElem = createElement('div', {
-        classList: ['jobApplicationForm-errorMessage'],
-      });
-      field.parentNode.appendChild(errorElem);
-    }
-    errorElem.textContent = isValid ? "" : message;
-    return isValid;
-  }",
-  "function validateForm() {
-    let valid = true;
-    valid = validateField(globals.firstNameRef, 'Must be capitalize') && valid;
-    valid = validateField(globals.lastNameRef, 'Must be capitalize') && valid;
-    valid =
-      validateField(globals.emailRef, 'Must be a valid email address') && valid;
-    valid = globals.positionRef.value.trim() !== '' && valid;
-    const radioChecked = globals.employmentStatusRef.some(
-      (radio) => radio.checked
-    );
-    if (!radioChecked) {
-      valid = false;
-      let radioError = document.querySelector(
-        '.jobApplicationForm-radioGroup .jobApplicationForm-errorMessage'
-      );
-      if (!radioError) {
-        radioError = createElement('div', {
-          classList: ['jobApplicationForm-errorMessage'],
-        });
-        document
-          .querySelector('.jobApplicationForm-radioGroup')
-          .appendChild(radioError);
-      }
-      radioError.textContent = 'Please select your employment status.';
-    } else {
-      const radioError = document.querySelector(
-        '.jobApplicationForm-radioGroup .jobApplicationForm-errorMessage'
-      );
-      if (radioError) radioError.textContent = "";
-    }
-    return valid;
-  }",
-      "function formatFormData() {
-    const firstName = globals.firstNameRef.value.trim();
-    const lastName = globals.lastNameRef.value.trim();
-    const email = globals.emailRef.value.trim();
-    const position = globals.positionRef.value;
-    const employmentStatus = globals.employmentStatusRef.find(
-      (radio) => radio.checked
-    ).value;
-    return {
-      firstName,
-      lastName,
-      fullName: `${firstName} ${lastName}`,
-      email,
-      emailDomain: email.split('@')[1] || "",
-      status: employmentStatus,
-      position,
-      submissionDate: new Date().toLocaleString(),
-    };
-  }"," function setStatus(message, type) {
-    const statusDiv = document.getElementById('multiStepForm-formStatus');
-    statusDiv.textContent = message;
-    statusDiv.className = 'multiStepForm-formStatus ' + type;
-  }","function toggleButtonState(disabled, text) {
-    if (!globals.submitButtonRef instanceof HTMLButtonElement) return;
-    globals.submitButtonRef.disabled = disabled;
-    globals.submitButtonRef.textContent = text;
-  }"
+      "function createElement(tag, options) {\n        const element = document.createElement(tag);\n        // Handle dataset separately\n        if (options.dataset) {\n          for (const key in options.dataset) {\n            if (options.dataset.hasOwnProperty(key)) {\n              element.dataset[key] = options.dataset[key];\n            }\n          }\n        delete options.dataset; // Remove dataset from options to prevent Object.assign error.\n      }\n    Object.assign(element, options);\n    return element;\n  }",
+      "function validateField(field, validationRule) {\n    let isValid = true;\n    let message = \"\";\n    if (!field.value.trim()) {\n      isValid = false;\n      message = 'This field is required.';\n    } else {\n      if (validationRule === 'Must be capitalize') {\n        isValid = field.value[0] === field.value[0].toUpperCase();\n        if (!isValid) message = 'First letter must be capitalized.';\n      } else if (validationRule === 'Must be a valid email address') {\n        const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n        isValid =  emailRegex.test(field.value);\n        if (!isValid) message = 'Invalid email format.';\n      }\n    }\n    let errorElem = field.parentNode.querySelector(\n      '.jobApplicationForm-errorMessage'\n    );\n    if (!errorElem) {\n      errorElem = createElement('div', {\n        classList: ['jobApplicationForm-errorMessage'],\n      });\n      field.parentNode.appendChild(errorElem);\n    }\n    errorElem.textContent = isValid ? \"\" : message;\n    return isValid;\n  }",
+      "function validateForm() {\n    let valid = true;\n    valid = validateField(globals.firstNameRef, 'Must be capitalize') && valid;\n    valid = validateField(globals.lastNameRef, 'Must be capitalize') && valid;\n    valid =\n      validateField(globals.emailRef, 'Must be a valid email address') && valid;\n    valid = globals.positionRef.value.trim() !== '' && valid;\n    const radioChecked = globals.employmentStatusRef.some(\n      (radio) => radio.checked\n    );\n    if (!radioChecked) {\n      valid = false;\n      let radioError = document.querySelector(\n        '.jobApplicationForm-radioGroup .jobApplicationForm-errorMessage'\n      );\n      if (!radioError) {\n        radioError = createElement('div', {\n          classList: ['jobApplicationForm-errorMessage'],\n        });\n        document\n          .querySelector('.jobApplicationForm-radioGroup')\n          .appendChild(radioError);\n      }\n      radioError.textContent = 'Please select your employment status.';\n    } else {\n      const radioError = document.querySelector(\n        '.jobApplicationForm-radioGroup .jobApplicationForm-errorMessage'\n      );\n      if (radioError) radioError.textContent = \"\";\n    }\n    return valid;\n  }",
+      "function formatFormData() {\n    const firstName = globals.firstNameRef.value.trim();\n    const lastName = globals.lastNameRef.value.trim();\n    const email = globals.emailRef.value.trim();\n    const position = globals.positionRef.value;\n    const employmentStatus = globals.employmentStatusRef.find(\n      (radio) => radio.checked\n    ).value;\n    return {\n      firstName,\n      lastName,\n      fullName: `${firstName} ${lastName}`,\n      email,\n      emailDomain: email.split('@')[1] || \"\",\n      status: employmentStatus,\n      position,\n      submissionDate: new Date().toLocaleString(),\n    };\n  }",
+      " function setStatus(message, type) {\n    const statusDiv = document.getElementById('multiStepForm-formStatus');\n    statusDiv.textContent = message;\n    statusDiv.className = 'multiStepForm-formStatus ' + type;\n  }",
+      "function toggleButtonState(disabled, text) {\n    if (!globals.submitButtonRef instanceof HTMLButtonElement) return;\n    globals.submitButtonRef.disabled = disabled;\n    globals.submitButtonRef.textContent = text;\n  }"
     ],
-  "globals": {
-    "isFormBuilded": false,
-    "firstNameRef": null,
-    "lastNameRef": null,
-    "emailRef": null,
-    "positionRef": null,
-    "employmentStatusRef": null,
-    "submitButtonRef": null,
-  },
+    "globals": {
+      "isFormBuilded": false,
+      "firstNameRef": null,
+      "lastNameRef": null,
+      "emailRef": null,
+      "positionRef": null,
+      "employmentStatusRef": null,
+      "submitButtonRef": null
+    },
     "CSS": {
-      "styles": "
-      .jobApplicationForm {
-          max-width: 700px;
-          margin: 20px auto;
-          padding: 30px;
-          background-color: #f2f2f2;
-          border-radius: 10px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-      .jobApplicationForm-row {
-          display: flex;
-          justify-content: space-between;
-          gap: 20px;
-        }
-
-      .jobApplicationForm-input,
-      .jobApplicationForm-select {
-          width: 100%;
-          padding: 15px;
-          margin-bottom: 20px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-      .jobApplicationForm-radioGroup {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-      .jobApplicationForm-submit {
-          background-color: #007bff;
-          color: #fff;
-          padding: 15px 30px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-        }
-
-      .jobApplicationForm-submit:hover {
-          background-color: #0056b3;
-        }
-
-      .jobApplicationForm-errorMessage {
-          color: #dc3545;
-          font-size: 12px;
-          margin-top: 5px;
-        }
-
-        @media (max-width: 350px) {
-        .jobApplicationForm-row {
-            flex-direction: column;
-          }
-
-        .jobApplicationForm-input,
-        .jobApplicationForm-select {
-            width: 100%;
-          }
-        }
-      "
+      "styles": "\n      .jobApplicationForm {\n          max-width: 700px;\n          margin: 20px auto;\n          padding: 30px;\n          background-color: #f2f2f2;\n          border-radius: 10px;\n          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n        }\n\n      .jobApplicationForm-row {\n          display: flex;\n          justify-content: space-between;\n          gap: 20px;\n        }\n\n      .jobApplicationForm-input,\n      .jobApplicationForm-select {\n          width: 100%;\n          padding: 15px;\n          margin-bottom: 20px;\n          border: 1px solid #ccc;\n          border-radius: 5px;\n          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n        }\n\n      .jobApplicationForm-radioGroup {\n          display: flex;\n          flex-direction: column;\n          gap: 10px;\n        }\n\n      .jobApplicationForm-submit {\n          background-color: #007bff;\n          color: #fff;\n          padding: 15px 30px;\n          border: none;\n          border-radius: 5px;\n          cursor: pointer;\n          transition: background-color 0.3s ease;\n        }\n\n      .jobApplicationForm-submit:hover {\n          background-color: #0056b3;\n        }\n\n      .jobApplicationForm-errorMessage {\n          color: #dc3545;\n          font-size: 12px;\n          margin-top: 5px;\n        }\n\n        @media (max-width: 350px) {\n        .jobApplicationForm-row {\n            flex-direction: column;\n          }\n\n        .jobApplicationForm-input,\n        .jobApplicationForm-select {\n            width: 100%;\n          }\n        }\n      "
     }
   },
   "expect": "A Job Application form with dynamic field updates, input validation, error handling, data formatting, and specific layout and styling preferences. The form should show Error and Submitting status. Upon submission format the data according to $DataFormat and console it."
@@ -1481,23 +953,10 @@ This section provides example input and output pairs to train the model. Each ex
     "import { initializeApp } from 'firebase/app'"
   ],
   "helperFunctions": [
-    "function createElement(tag, options) {
-        const element = document.createElement(tag);
-        // Handle dataset separately
-        if (options.dataset) {
-          for (const key in options.dataset) {
-            if (options.dataset.hasOwnProperty(key)) {
-              element.dataset[key] = options.dataset[key];
-            }
-          }
-        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
-      }
-    Object.assign(element, options);
-    return element;
-  }",
+    "function createElement(tag, options) { const element = document.createElement(tag); // Handle dataset separately if (options.dataset) { for (const key in options.dataset) { if (options.dataset.hasOwnProperty(key)) { element.dataset[key] = options.dataset[key]; } } delete options.dataset; // Remove dataset from options to prevent Object.assign error. } Object.assign(element, options); return element; }",
     "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
   ],
-  "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; }  const heading = createElement('h1', { textContent: 'User Sign In', classList: ['firebaseSignInForm-title']}); globals.loadingMessage = createElement('p', { textContent: 'Loading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); globals.emailField = createElement('input', { type: 'email', id: 'firebaseSignInForm-email', name: 'email', placeholder: 'Enter your email', classList: ['firebaseSignInForm-input'] }); const emailLabel = createElement('label', { htmlFor: 'firebaseSignInForm-email', textContent: 'Email:', classList: ['firebaseSignInForm-label'] }); globals.passwordField = createElement('input', { type: 'password', id: 'firebaseSignInForm-password', name: 'password', placeholder: 'Enter your password', classList: ['firebaseSignInForm-input'] }); const passwordLabel = createElement('label', { htmlFor: 'firebaseSignInForm-password', textContent: 'Password:', classList: ['firebaseSignInForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Sign In', classList: ['firebaseSignInForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(emailLabel); formElement.appendChild(globals.emailField); formElement.appendChild(passwordLabel); formElement.appendChild(globals.passwordField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }",
+  "formBuilder": "function formBuilder(formElement, args) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'User Sign In', classList: ['firebaseSignInForm-title']}); globals.loadingMessage = createElement('p', { textContent: 'Loading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); globals.emailField = createElement('input', { type: 'email', id: 'firebaseSignInForm-email', name: 'email', placeholder: 'Enter your email', classList: ['firebaseSignInForm-input'] }); const emailLabel = createElement('label', { htmlFor: 'firebaseSignInForm-email', textContent: 'Email:', classList: ['firebaseSignInForm-label'] }); globals.passwordField = createElement('input', { type: 'password', id: 'firebaseSignInForm-password', name: 'password', placeholder: 'Enter your password', classList: ['firebaseSignInForm-input'] }); const passwordLabel = createElement('label', { htmlFor: 'firebaseSignInForm-password', textContent: 'Password:', classList: ['firebaseSignInForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Sign In', classList: ['firebaseSignInForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(emailLabel); formElement.appendChild(globals.emailField); formElement.appendChild(passwordLabel); formElement.appendChild(globals.passwordField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }",
   "expect": "The user must have the Firebase package installed. Environment variables for Firebase configuration must be set. The form should have input fields for email and password. The form should handle submission and display success or error messages directly within the form. Make sure that each firebase cred in you .env is prefix with NEXT_PUBLIC and _P2 suffix",
   "CSS": {
     "styles": ".firebaseSignInForm { max-width: 350px; margin: 30px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: sans-serif; } .firebaseSignInForm-title { text-align: center; margin-bottom: 20px; color: #333; font-weight: bold; font-size: larger;} .firebaseSignInForm-label { display: block; margin-bottom: 8px; color: #555; } .firebaseSignInForm-input { width: calc(100% - 22px); padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } .firebaseSignInForm-button { width: 100%; background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; } .firebaseSignInForm-button:hover { background-color: #0056b3; } .firebaseSignInForm p[style*='color: red'] { color: red; margin-bottom: 10px; } .firebaseSignInForm p[style*='color: blue'] { color: blue; margin-bottom: 10px; }"
@@ -1544,7 +1003,7 @@ This section provides example input and output pairs to train the model. Each ex
   "thoughts": "This prompt requests a user sign-in form using Supabase Authentication. The form will include email and password fields. The generated code will handle the form submission, initialize Supabase, and use signInWithPassword to authenticate the user. It will also manage loading and error states *internally*, by adding loading and error display elements to the form itself",
   "error": {},
   "response": {
-    "eventListener": "async function main(event, args) { try { globals.loadingMessage.style.display = 'block'; toggleButtonState(true, 'Signing In...'); event.preventDefault(); const email = globals.emailField.value; const password = globals.passwordField.value; const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY); const { error } = await supabase.auth.signInWithPassword({ email: email, password: password }); if (error) { throw error; } globals.errorMessage.style.display = 'none';  } catch (error) { globals.errorMessage.textContent = 'Error: ' + error.message; globals.errorMessage.style.display = 'block'; } finally { globals.loadingMessage.style.display = 'none'; toggleButtonState(false, 'Sign In'); } }",
+    "eventListener": "async function main(event, args) {\n  try {\n    globals.loadingMessage.style.display = 'block';\n    toggleButtonState(true, 'Signing In...');\n    event.preventDefault();\n\n    const email = globals.emailField.value;\n    const password = globals.passwordField.value;\n\n    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);\n\n    const { error } = await supabase.auth.signInWithPassword({\n      email: email,\n      password: password\n    });\n\n    if (error) {\n      throw error;\n    }\n\n    globals.errorMessage.style.display = 'none';\n  } catch (error) {\n    globals.errorMessage.textContent = 'Error: ' + error.message;\n    globals.errorMessage.style.display = 'block';\n  } finally {\n    globals.loadingMessage.style.display = 'none';\n    toggleButtonState(false, 'Sign In');\n  }\n}",
     "globals": {
       "isFormBuilt": false,
       "emailField": null,
@@ -1555,27 +1014,14 @@ This section provides example input and output pairs to train the model. Each ex
     },
     "imports": ["import { createClient } from '@supabase/supabase-js'"],
     "helperFunctions": [
-      "function createElement(tag, options) {
-        const element = document.createElement(tag);
-        // Handle dataset separately
-        if (options.dataset) {
-          for (const key in options.dataset) {
-            if (options.dataset.hasOwnProperty(key)) {
-              element.dataset[key] = options.dataset[key];
-            }
-          }
-        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
-      }
-    Object.assign(element, options);
-    return element;
-  }",
-      "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
+      "function createElement(tag, options) {\n  const element = document.createElement(tag);\n  // Handle dataset separately\n  if (options.dataset) {\n    for (const key in options.dataset) {\n      if (options.dataset.hasOwnProperty(key)) {\n        element.dataset[key] = options.dataset[key];\n      }\n    }\n    delete options.dataset; // Remove dataset from options to prevent Object.assign error.\n  }\n    Object.assign(element, options);\n    return element;\n  }",
+      "function toggleButtonState(disabled, text) {\n  if (globals.submitButtonRef instanceof HTMLButtonElement) {\n    globals.submitButtonRef.disabled = disabled;\n    globals.submitButtonRef.textContent = text;\n  }\n}"
     ],
-    "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'User Sign In' }); globals.loadingMessage = createElement('p', { textContent: 'Loading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); globals.emailField = createElement('input', { type: 'email', id: 'supabaseSignInForm-email', name: 'email', placeholder: 'Enter your email', classList: ['supabaseSignInForm-input'] }); const emailLabel = createElement('label', { htmlFor: 'supabaseSignInForm-email', textContent: 'Email:', classList: ['supabaseSignInForm-label'] }); globals.passwordField = createElement('input', { type: 'password', id: 'supabaseSignInForm-password', name: 'password', placeholder: 'Enter your password', classList: ['supabaseSignInForm-input'] }); const passwordLabel = createElement('label', { htmlFor: 'supabaseSignInForm-password', textContent: 'Password:', classList: ['supabaseSignInForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Sign In', classList: ['supabaseSignInForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(emailLabel); formElement.appendChild(globals.emailField); formElement.appendChild(passwordLabel); formElement.appendChild(globals.passwordField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }"
+    "formBuilder": "function formBuilder(formElement, args) {\n  if (globals.isFormBuilt) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  const heading = createElement('h1', {\n    textContent: 'User Sign In'\n  });\n\n  globals.loadingMessage = createElement('p', {\n    textContent: 'Loading...', style: 'display: none; color: blue;'\n  });\n\n  globals.errorMessage = createElement('p', {\n    textContent: '', style: 'display: none; color: red;'\n  });\n\n  globals.emailField = createElement('input', {\n    type: 'email',\n    id: 'supabaseSignInForm-email',\n    name: 'email',\n    placeholder: 'Enter your email',\n    classList: ['supabaseSignInForm-input']\n  });\n\n  const emailLabel = createElement('label', {\n    htmlFor: 'supabaseSignInForm-email',\n    textContent: 'Email:',\n    classList: ['supabaseSignInForm-label']\n  });\n\n  globals.passwordField = createElement('input', {\n    type: 'password',\n    id: 'supabaseSignInForm-password',\n    name: 'password',\n    placeholder: 'Enter your password',\n    classList: ['supabaseSignInForm-input']\n  });\n\n  const passwordLabel = createElement('label', {\n    htmlFor: 'supabaseSignInForm-password',\n    textContent: 'Password:',\n    classList: ['supabaseSignInForm-label']\n  });\n\n  globals.submitButtonRef = createElement('button', {\n    type: 'submit',\n    textContent: 'Sign In',\n    classList: ['supabaseSignInForm-button']\n  });\n\n  formElement.appendChild(heading);\n  formElement.appendChild(globals.loadingMessage);\n  formElement.appendChild(globals.errorMessage);\n  formElement.appendChild(emailLabel);\n  formElement.appendChild(globals.emailField);\n  formElement.appendChild(passwordLabel);\n  formElement.appendChild(globals.passwordField);\n  formElement.appendChild(globals.submitButtonRef);\n\n  globals.isFormBuilt = true;\n}"
   },
   "expect": "The user must have the Supabase package installed. Environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set. The form should have input fields for email and password. The form should handle submission and display success or error messages directly within the form. A form element will be passed to formBuilder function, the formBuilder function must append all the form element to it.",
   "CSS": {
-    "styles": ".supabaseSignInForm { max-width: 350px; margin: 30px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: sans-serif; } .supabaseSignInForm h1 { text-align: center; margin-bottom: 20px; color: #333; } .supabaseSignInForm-label { display: block; margin-bottom: 8px; color: #555; } .supabaseSignInForm-input { width: calc(100% - 22px); padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } .supabaseSignInForm-button { width: 100%; background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; } .supabaseSignInForm-button:hover { background-color: #0056b3; } .supabaseSignInForm p[style*='color: red'] { color: red; margin-bottom: 10px; } .supabaseSignInForm p[style*='color: blue'] { color: blue; margin-bottom: 10px; }"
+    "styles": ".supabaseSignInForm {\n  max-width: 350px;\n  margin: 30px auto;\n  padding: 30px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  font-family: sans-serif;\n}\n\n.supabaseSignInForm h1 {\n  text-align: center;\n  margin-bottom: 20px;\n  color: #333;\n}\n\n.supabaseSignInForm-label {\n  display: block;\n  margin-bottom: 8px;\n  color: #555;\n}\n\n.supabaseSignInForm-input {\n  width: calc(100% - 22px);\n  padding: 10px;\n  margin-bottom: 20px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.supabaseSignInForm-button {\n  width: 100%;\n  background-color: #007bff;\n  color: white;\n  padding: 12px 20px;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 16px;\n  transition: background-color 0.3s;\n}\n\n.supabaseSignInForm-button:hover {\n  background-color: #0056b3;\n}\n\n.supabaseSignInForm p[style*='color: red'] {\n  color: red;\n  margin-bottom: 10px;\n}\n\n.supabaseSignInForm p[style*='color: blue'] {\n  color: blue;\n  margin-bottom: 10px;\n}"
   }
 }
 ```
@@ -1628,7 +1074,7 @@ This section provides example input and output pairs to train the model. Each ex
   "thoughts": "The prompt requests a product upload form with specific validations and a dropdown for the category. The code will handle image upload to Firebase Storage and product data storage in Firestore, using FormData for input extraction. The category field will be a dropdown with predefined options.",
   "error": {},
   "response": {
-    "eventListener": "async function main(event, args) { try { globals.loadingMessage.style.display = 'block'; toggleButtonState(true, 'Uploading...'); event.preventDefault(); const formData = new FormData(event.currentTarget); const name = formData.get('name'); const price = formData.get('price'); const category = formData.get('category'); const imageFile = formData.get('image'); if (!name) throw new Error('Product name is required.'); if (!price) throw new Error('Product price is required.'); if (!category) throw new Error('Product category is required.'); if (!imageFile) throw new Error('Please select an image.'); if (!['image/jpeg', 'image/png'].includes(imageFile.type)) { throw new Error('Image must be JPG or PNG.'); } initializeApp({ apiKey: process.env.NEXT_PUBLIC_API_KEY_P2, authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2, projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2, storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2, messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, appId: process.env.NEXT_PUBLIC_APP_ID_P2 }); const storageRef = ref(getStorage(), 'images/' + imageFile.name); const snapshot = await uploadBytes(storageRef, imageFile); const downloadURL = await getDownloadURL(snapshot.ref); const docRef = await addDoc(collection(getFirestore(), 'products'), { name: name, price: parseFloat(price), category: category, imageUrl: downloadURL }); globals.errorMessage.style.display = 'none'; } catch (error) { globals.errorMessage.textContent = 'Error: ' + error.message; globals.errorMessage.style.display = 'block'; } finally { globals.loadingMessage.style.display = 'none'; toggleButtonState(false, 'Upload'); } }",
+    "eventListener": "async function main(event, args) {\n  try {\n    globals.loadingMessage.style.display = 'block';\n    toggleButtonState(true, 'Uploading...');\n    event.preventDefault();\n\n    const formData = new FormData(event.currentTarget);\n    const name = formData.get('name');\n    const price = formData.get('price');\n    const category = formData.get('category');\n    const imageFile = formData.get('image');\n\n    if (!name) throw new Error('Product name is required.');\n    if (!price) throw new Error('Product price is required.');\n    if (!category) throw new Error('Product category is required.');\n    if (!imageFile) throw new Error('Please select an image.');\n    if (!['image/jpeg', 'image/png'].includes(imageFile.type)) {\n      throw new Error('Image must be JPG or PNG.');\n    }\n\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n      appId: process.env.NEXT_PUBLIC_APP_ID_P2\n    });\n\n    const storageRef = ref(getStorage(), 'images/' + imageFile.name);\n    const snapshot = await uploadBytes(storageRef, imageFile);\n    const downloadURL = await getDownloadURL(snapshot.ref);\n\n    const docRef = await addDoc(collection(getFirestore(), 'products'), {\n      name: name,\n      price: parseFloat(price),\n      category: category,\n      imageUrl: downloadURL\n    });\n\n    globals.errorMessage.style.display = 'none';\n  } catch (error) {\n    globals.errorMessage.textContent = 'Error: ' + error.message;\n    globals.errorMessage.style.display = 'block';\n  } finally {\n    globals.loadingMessage.style.display = 'none';\n    toggleButtonState(false, 'Upload');\n  }\n}",
     "globals": {
       "isFormBuilt": false,
       "submitButtonRef": null,
@@ -1641,27 +1087,14 @@ This section provides example input and output pairs to train the model. Each ex
       "import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'"
     ],
     "helperFunctions": [
-      "function createElement(tag, options) {
-        const element = document.createElement(tag);
-        // Handle dataset separately
-        if (options.dataset) {
-          for (const key in options.dataset) {
-            if (options.dataset.hasOwnProperty(key)) {
-              element.dataset[key] = options.dataset[key];
-            }
-          }
-        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
-      }
-    Object.assign(element, options);
-    return element;
-  }",
-      "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
+      "function createElement(tag, options) {\n  const element = document.createElement(tag);\n  // Handle dataset separately\n  if (options.dataset) {\n    for (const key in options.dataset) {\n      if (options.dataset.hasOwnProperty(key)) {\n        element.dataset[key] = options.dataset[key];\n      }\n    }\n    delete options.dataset; // Remove dataset from options to prevent Object.assign error.\n  }\n    Object.assign(element, options);\n    return element;\n  }",
+      "function toggleButtonState(disabled, text) {\n  if (globals.submitButtonRef instanceof HTMLButtonElement) {\n    globals.submitButtonRef.disabled = disabled;\n    globals.submitButtonRef.textContent = text;\n  }\n}"
     ],
-    "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'Product Upload' }); globals.loadingMessage = createElement('p', { textContent: 'Uploading...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); const nameField = createElement('input', { type: 'text', id: 'firebaseProductUploadForm-name', name: 'name', placeholder: 'Product Name', classList: ['firebaseProductUploadForm-input'] }); const nameLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-name', textContent: 'Name:', classList: ['firebaseProductUploadForm-label'] }); const priceField = createElement('input', { type: 'number', id: 'firebaseProductUploadForm-price', name: 'price', placeholder: 'Price', classList: ['firebaseProductUploadForm-input'] }); const priceLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-price', textContent: 'Price:', classList: ['firebaseProductUploadForm-label'] }); const categorySelect = createElement('select', { id: 'firebaseProductUploadForm-category', name: 'category', classList: ['firebaseProductUploadForm-input'] }); const categories = ['Food', 'Cloth', 'Toys', 'Furniture', 'Books']; categories.forEach(category => { const option = createElement('option', { value: category, textContent: category }); categorySelect.appendChild(option); }); const categoryLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-category', textContent: 'Category:', classList: ['firebaseProductUploadForm-label'] }); const imageField = createElement('input', { type: 'file', id: 'firebaseProductUploadForm-image', name: 'image', accept: 'image/jpeg, image/png', classList: ['firebaseProductUploadForm-input'] }); const imageLabel = createElement('label', { htmlFor: 'firebaseProductUploadForm-image', textContent: 'Image (JPG or PNG):', classList: ['firebaseProductUploadForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Upload', classList: ['firebaseProductUploadForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(nameLabel); formElement.appendChild(nameField); formElement.appendChild(priceLabel); formElement.appendChild(priceField); formElement.appendChild(categoryLabel); formElement.appendChild(categorySelect); formElement.appendChild(imageLabel); formElement.appendChild(imageField); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }"
+    "formBuilder": "function formBuilder(formElement, args) {\n  if (globals.isFormBuilt) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  const heading = createElement('h1', {\n    textContent: 'Product Upload'\n  });\n\n  globals.loadingMessage = createElement('p', {\n    textContent: 'Uploading...', style: 'display: none; color: blue;'\n  });\n\n  globals.errorMessage = createElement('p', {\n    textContent: '', style: 'display: none; color: red;'\n  });\n\n  const nameField = createElement('input', {\n    type: 'text',\n    id: 'firebaseProductUploadForm-name',\n    name: 'name',\n    placeholder: 'Product Name',\n    classList: ['firebaseProductUploadForm-input']\n  });\n\n  const nameLabel = createElement('label', {\n    htmlFor: 'firebaseProductUploadForm-name',\n    textContent: 'Name:',\n    classList: ['firebaseProductUploadForm-label']\n  });\n\n  const priceField = createElement('input', {\n    type: 'number',\n    id: 'firebaseProductUploadForm-price',\n    name: 'price',\n    placeholder: 'Price',\n    classList: ['firebaseProductUploadForm-input']\n  });\n\n  const priceLabel = createElement('label', {\n    htmlFor: 'firebaseProductUploadForm-price',\n    textContent: 'Price:',\n    classList: ['firebaseProductUploadForm-label']\n  });\n\n  const categorySelect = createElement('select', {\n    id: 'firebaseProductUploadForm-category',\n    name: 'category',\n    classList: ['firebaseProductUploadForm-input']\n  });\n\n  const categories = ['Food', 'Cloth', 'Toys', 'Furniture', 'Books'];\n  categories.forEach(category => {\n    const option = createElement('option', {\n      value: category,\n      textContent: category\n    });\n    categorySelect.appendChild(option);\n  });\n\n  const categoryLabel = createElement('label', {\n    htmlFor: 'firebaseProductUploadForm-category',\n    textContent: 'Category:',\n    classList: ['firebaseProductUploadForm-label']\n  });\n\n  const imageField = createElement('input', {\n    type: 'file',\n    id: 'firebaseProductUploadForm-image',\n    name: 'image',\n    accept: 'image/jpeg, image/png',\n    classList: ['firebaseProductUploadForm-input']\n  });\n\n  const imageLabel = createElement('label', {\n    htmlFor: 'firebaseProductUploadForm-image',\n    textContent: 'Image (JPG or PNG):',\n    classList: ['firebaseProductUploadForm-label']\n  });\n\n  globals.submitButtonRef = createElement('button', {\n    type: 'submit',\n    textContent: 'Upload',\n    classList: ['firebaseProductUploadForm-button']\n  });\n\n  formElement.appendChild(heading);\n  formElement.appendChild(globals.loadingMessage);\n  formElement.appendChild(globals.errorMessage);\n  formElement.appendChild(nameLabel);\n  formElement.appendChild(nameField);\n  formElement.appendChild(priceLabel);\n  formElement.appendChild(priceField);\n  formElement.appendChild(categoryLabel);\n  formElement.appendChild(categorySelect);\n  formElement.appendChild(imageLabel);\n  formElement.appendChild(imageField);\n  formElement.appendChild(globals.submitButtonRef);\n\n  globals.isFormBuilt = true;\n}"
   },
   "expect": "The user must have the Firebase package installed. Environment variables for Firebase configuration must be set. The form should have input fields for product name, price, category (dropdown), and an image upload. The form should handle image upload to Firebase Storage, retrieve the download URL, and store the product details along with the URL in Firestore. All fields are required, and the image must be a JPG or PNG file. A form element will be passed to formBuilder function, the formBuilder function must append all the form element to it.",
   "CSS": {
-    "styles": ".firebaseProductUploadForm { max-width: 450px; margin: 40px auto; padding: 40px; background: #f9f9f9; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; } .firebaseProductUploadForm h1 { text-align: center; margin-bottom: 30px; color: #3a3a3a; font-size: 28px; letter-spacing: 0.5px; } .firebaseProductUploadForm-label { display: block; margin-bottom: 10px; color: #4a4a4a; font-weight: 600; } .firebaseProductUploadForm-input, .firebaseProductUploadForm select { width: calc(100% - 24px); padding: 12px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s ease; } .firebaseProductUploadForm-input:focus, .firebaseProductUploadForm select:focus { border-color: #007bff; outline: none; } .firebaseProductUploadForm-button { width: 100%; background: linear-gradient(to right, #007bff, #66a7ff); color: white; padding: 14px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4); } .firebaseProductUploadForm-button:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5); } .firebaseProductUploadForm-button:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4); } .firebaseProductUploadForm p[style*='color: red'] { color: #d32f2f; margin-top: -15px; margin-bottom: 20px; font-size: 14px; } .firebaseProductUploadForm p[style*='color: blue'] { color: #1976d2; margin-top: -15px; margin-bottom: 20px; font-size: 14px; }"
+    "styles": ".firebaseProductUploadForm {\n  max-width: 450px;\n  margin: 40px auto;\n  padding: 40px;\n  background: #f9f9f9;\n  border-radius: 12px;\n  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n}\n\n.firebaseProductUploadForm h1 {\n  text-align: center;\n  margin-bottom: 30px;\n  color: #3a3a3a;\n  font-size: 28px;\n  letter-spacing: 0.5px;\n}\n\n.firebaseProductUploadForm-label {\n  display: block;\n  margin-bottom: 10px;\n  color: #4a4a4a;\n  font-weight: 600;\n}\n\n.firebaseProductUploadForm-input,\n.firebaseProductUploadForm select {\n  width: calc(100% - 24px);\n  padding: 12px;\n  margin-bottom: 25px;\n  border: 1px solid #ddd;\n  border-radius: 6px;\n  box-sizing: border-box;\n  font-size: 16px;\n  transition: border-color 0.3s ease;\n}\n\n.firebaseProductUploadForm-input:focus,\n.firebaseProductUploadForm select:focus {\n  border-color: #007bff;\n  outline: none;\n}\n\n.firebaseProductUploadForm-button {\n  width: 100%;\n  background: linear-gradient(to right, #007bff, #66a7ff);\n  color: white;\n  padding: 14px 20px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 18px;\n  font-weight: 600;\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);\n}\n\n.firebaseProductUploadForm-button:hover {\n  transform: translateY(-3px);\n  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5);\n}\n\n.firebaseProductUploadForm-button:active {\n  transform: translateY(1px);\n  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);\n}\n\n.firebaseProductUploadForm p[style*='color: red'] {\n  color: #d32f2f;\n  margin-top: -15px;\n  margin-bottom: 20px;\n  font-size: 14px;\n}\n\n.firebaseProductUploadForm p[style*='color: blue'] {\n  color: #1976d2;\n  margin-top: -15px;\n  margin-bottom: 20px;\n  font-size: 14px;\n}"
   }
 }
 ```
@@ -1700,7 +1133,7 @@ This section provides example input and output pairs to train the model. Each ex
   "thoughts": "The prompt requests a form to update the salePrice of products in a Supabase 'products' table, applying a discount percentage. The generated code will include a field for the discount percentage, calculate the new salePrice, and update the table.",
   "error": {},
   "response": {
-    "eventListener": "async function main(event, args) { try { globals.loadingMessage.style.display = 'block'; toggleButtonState(true, 'Updating...'); event.preventDefault(); const discountPercentage = parseFloat(globals.discountPercentageField.value); if (isNaN(discountPercentage) || discountPercentage < 0 || discountPercentage > 100) { throw new Error('Discount percentage must be a number between 0 and 100.'); } const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY); const { data: products, error: fetchError } = await supabase.from('products').select('id, price'); if (fetchError) { throw fetchError; } for (const product of products) { const salePrice = product.price * (1 - discountPercentage / 100); const { error: updateError } = await supabase.from('products').update({ salePrice: salePrice }).eq('id', product.id); if (updateError) { throw updateError; } } globals.errorMessage.style.display = 'none'; } catch (error) { globals.errorMessage.textContent = 'Error: ' + error.message; globals.errorMessage.style.display = 'block'; } finally { globals.loadingMessage.style.display = 'none'; toggleButtonState(false, 'Update'); } }",
+    "eventListener": "async function main(event, args) {\n  try {\n    globals.loadingMessage.style.display = 'block';\n    toggleButtonState(true, 'Updating...');\n    event.preventDefault();\n\n    const discountPercentage = parseFloat(globals.discountPercentageField.value);\n\n    if (isNaN(discountPercentage) || discountPercentage < 0 || discountPercentage > 100) {\n      throw new Error('Discount percentage must be a number between 0 and 100.');\n    }\n\n    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);\n\n    const { data: products, error: fetchError } = await supabase\n      .from('products')\n      .select('id, price');\n\n    if (fetchError) {\n      throw fetchError;\n    }\n\n    for (const product of products) {\n      const salePrice = product.price * (1 - discountPercentage / 100);\n\n      const { error: updateError } = await supabase\n        .from('products')\n        .update({ salePrice: salePrice })\n        .eq('id', product.id);\n\n      if (updateError) {\n        throw updateError;\n      }\n    }\n\n    globals.errorMessage.style.display = 'none';\n  } catch (error) {\n    globals.errorMessage.textContent = 'Error: ' + error.message;\n    globals.errorMessage.style.display = 'block';\n  } finally {\n    globals.loadingMessage.style.display = 'none';\n    toggleButtonState(false, 'Update');\n  }\n}",
     "globals": {
       "isFormBuilt": false,
       "discountPercentageField": null,
@@ -1710,27 +1143,14 @@ This section provides example input and output pairs to train the model. Each ex
     },
     "imports": ["import { createClient } from '@supabase/supabase-js'"],
     "helperFunctions": [
-      "function createElement(tag, options) {
-        const element = document.createElement(tag);
-        // Handle dataset separately
-        if (options.dataset) {
-          for (const key in options.dataset) {
-            if (options.dataset.hasOwnProperty(key)) {
-              element.dataset[key] = options.dataset[key];
-            }
-          }
-        delete options.dataset; // Remove dataset from options to prevent Object.assign error.
-      }
-    Object.assign(element, options);
-    return element;
-  }",
-      "function toggleButtonState(disabled, text) { if (globals.submitButtonRef instanceof HTMLButtonElement) { globals.submitButtonRef.disabled = disabled; globals.submitButtonRef.textContent = text; } }"
+      "function createElement(tag, options) {\n  const element = document.createElement(tag);\n  // Handle dataset separately\n  if (options.dataset) {\n    for (const key in options.dataset) {\n      if (options.dataset.hasOwnProperty(key)) {\n        element.dataset[key] = options.dataset[key];\n      }\n    }\n    delete options.dataset; // Remove dataset from options to prevent Object.assign error.\n  }\n    Object.assign(element, options);\n    return element;\n  }",
+      "function toggleButtonState(disabled, text) {\n  if (globals.submitButtonRef instanceof HTMLButtonElement) {\n    globals.submitButtonRef.disabled = disabled;\n    globals.submitButtonRef.textContent = text;\n  }\n}"
     ],
-    "formBuilder": "function formBuilder(formElement) { if (globals.isFormBuilt) return; if (!(formElement instanceof HTMLFormElement)) { console.warn('Invalid formElement provided. Expected an HTMLFormElement.'); return; } const heading = createElement('h1', { textContent: 'Update Sale Prices' }); globals.loadingMessage = createElement('p', { textContent: 'Updating...', style: 'display: none; color: blue;' }); globals.errorMessage = createElement('p', { textContent: '', style: 'display: none; color: red;' }); const discountPercentageContainer = createElement('div', { classList: ['supabaseUpdateSalePriceForm-input-container'] }); globals.discountPercentageField = createElement('input', { type: 'number', id: 'supabaseUpdateSalePriceForm-discountPercentage', name: 'discountPercentage', placeholder: 'Discount Percentage', classList: ['supabaseUpdateSalePriceForm-input'] }); const percentageLabel = createElement('span', { textContent: '%', classList: ['supabaseUpdateSalePriceForm-percentage-label'] }); discountPercentageContainer.appendChild(globals.discountPercentageField); discountPercentageContainer.appendChild(percentageLabel); const discountPercentageLabel = createElement('label', { htmlFor: 'supabaseUpdateSalePriceForm-discountPercentage', textContent: 'Discount Percentage:', classList: ['supabaseUpdateSalePriceForm-label'] }); globals.submitButtonRef = createElement('button', { type: 'submit', textContent: 'Update', classList: ['supabaseUpdateSalePriceForm-button'] }); formElement.appendChild(heading); formElement.appendChild(globals.loadingMessage); formElement.appendChild(globals.errorMessage); formElement.appendChild(discountPercentageLabel); formElement.appendChild(discountPercentageContainer); formElement.appendChild(globals.submitButtonRef); globals.isFormBuilt = true; }"
+    "formBuilder": "function formBuilder(formElement, args) {\n  if (globals.isFormBuilt) return;\n\n  if (!(formElement instanceof HTMLFormElement)) {\n    console.warn('Invalid formElement provided. Expected an HTMLFormElement.');\n    return;\n  }\n\n  const heading = createElement('h1', {\n    textContent: 'Update Sale Prices'\n  });\n\n  globals.loadingMessage = createElement('p', {\n    textContent: 'Updating...', style: 'display: none; color: blue;'\n  });\n\n  globals.errorMessage = createElement('p', {\n    textContent: '', style: 'display: none; color: red;'\n  });\n\n  const discountPercentageContainer = createElement('div', {\n    classList: ['supabaseUpdateSalePriceForm-input-container']\n  });\n\n  globals.discountPercentageField = createElement('input', {\n    type: 'number',\n    id: 'supabaseUpdateSalePriceForm-discountPercentage',\n    name: 'discountPercentage',\n    placeholder: 'Discount Percentage',\n    classList: ['supabaseUpdateSalePriceForm-input']\n  });\n\n  const percentageLabel = createElement('span', {\n    textContent: '%',\n    classList: ['supabaseUpdateSalePriceForm-percentage-label']\n  });\n\n  discountPercentageContainer.appendChild(globals.discountPercentageField);\n  discountPercentageContainer.appendChild(percentageLabel);\n\n  const discountPercentageLabel = createElement('label', {\n    htmlFor: 'supabaseUpdateSalePriceForm-discountPercentage',\n    textContent: 'Discount Percentage:',\n    classList: ['supabaseUpdateSalePriceForm-label']\n  });\n\n  globals.submitButtonRef = createElement('button', {\n    type: 'submit',\n    textContent: 'Update',\n    classList: ['supabaseUpdateSalePriceForm-button']\n  });\n\n  formElement.appendChild(heading);\n  formElement.appendChild(globals.loadingMessage);\n  formElement.appendChild(globals.errorMessage);\n  formElement.appendChild(discountPercentageLabel);\n  formElement.appendChild(discountPercentageContainer);\n  formElement.appendChild(globals.submitButtonRef);\n\n  globals.isFormBuilt = true;\n}"
   },
   "expect": "The user must have the Supabase package installed. Environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set. A 'products' table must exist in Supabase with 'id' and 'price' columns. The form should handle submission and update the 'salePrice' column in the Supabase table.",
   "CSS": {
-    "styles": ".supabaseUpdateSalePriceForm { max-width: 450px; margin: 50px auto; padding: 45px; background: linear-gradient(135deg, #e0f7fa, #c2e9f6); border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: transform 0.3s ease, box-shadow 0.3s ease; } .supabaseUpdateSalePriceForm:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); } .supabaseUpdateSalePriceForm h1 { text-align: center; margin-bottom: 35px; color: #2c3e50; font-size: 32px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(to right, #3498db, #2980b9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } .supabaseUpdateSalePriceForm-label { display: block; margin-bottom: 12px; color: #34495e; font-weight: 600; font-size: 18px; transition: color 0.3s ease; } .supabaseUpdateSalePriceForm-label:hover { color: #2980b9; } .supabaseUpdateSalePriceForm-input-container { display: flex; align-items: center; background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 5px; transition: box-shadow 0.3s ease; } .supabaseUpdateSalePriceForm-input-container:focus-within { box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); } .supabaseUpdateSalePriceForm-input { width: calc(100% - 45px); padding: 15px; margin-bottom: 30px; border: none; border-radius: 8px 0 0 8px; font-size: 16px; color: #333; transition: border-color 0.3s ease; outline: none; } .supabaseUpdateSalePriceForm-percentage-label { margin-left: 10px; font-size: 18px; color: #555; font-weight: 600; } .supabaseUpdateSalePriceForm-button { width: 100%; background: linear-gradient(to right, #2ecc71, #27ae60); color: white; padding: 16px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 5px 15px rgba(39, 174, 96, 0.5); } .supabaseUpdateSalePriceForm-button:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(39, 174, 96, 0.6); } .supabaseUpdateSalePriceForm-button:active { transform: translateY(1px); box-shadow: 0 3px 8px rgba(39, 174, 96, 0.5); } .supabaseUpdateSalePriceForm p[style*='color: red'] { color: #e74c3c; margin-top: -20px; margin-bottom: 25px; font-size: 16px; font-weight: 500; animation: fadeIn 0.5s ease; } .supabaseUpdateSalePriceForm p[style*='color: blue'] { color: #3498db; margin-top: -20px; margin-bottom: 25px; font-size: 16px; font-weight: 500; animation: fadeIn 0.5s ease; } @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }"
+    "styles": ".supabaseUpdateSalePriceForm {\n  max-width: 450px;\n  margin: 50px auto;\n  padding: 45px;\n  background: linear-gradient(135deg, #e0f7fa, #c2e9f6);\n  border-radius: 15px;\n  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n  transition: transform 0.3s ease, box-shadow 0.3s ease;\n}\n\n.supabaseUpdateSalePriceForm:hover {\n  transform: translateY(-5px);\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);\n}\n\n.supabaseUpdateSalePriceForm h1 {\n  text-align: center;\n  margin-bottom: 35px;\n  color: #2c3e50;\n  font-size: 32px;\n  font-weight: 700;\n  letter-spacing: 1px;\n  text-transform: uppercase;\n  background: linear-gradient(to right, #3498db, #2980b9);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n}\n\n.supabaseUpdateSalePriceForm-label {\n  display: block;\n  margin-bottom: 12px;\n  color: #34495e;\n  font-weight: 600;\n  font-size: 18px;\n  transition: color 0.3s ease;\n}\n\n.supabaseUpdateSalePriceForm-label:hover {\n  color: #2980b9;\n}\n\n.supabaseUpdateSalePriceForm-input-container {\n  display: flex;\n  align-items: center;\n  background: #fff;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  padding: 5px;\n  transition: box-shadow 0.3s ease;\n}\n\n.supabaseUpdateSalePriceForm-input-container:focus-within {\n  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);\n}\n\n.supabaseUpdateSalePriceForm-input {\n  width: calc(100% - 45px);\n  padding: 15px;\n  margin-bottom: 30px;\n  border: none;\n  border-radius: 8px 0 0 8px;\n  font-size: 16px;\n  color: #333;\n  transition: border-color 0.3s ease;\n  outline: none;\n}\n\n.supabaseUpdateSalePriceForm-percentage-label {\n  margin-left: 10px;\n  font-size: 18px;\n  color: #555;\n  font-weight: 600;\n}\n\n.supabaseUpdateSalePriceForm-button {\n  width: 100%;\n  background: linear-gradient(to right, #2ecc71, #27ae60);\n  color: white;\n  padding: 16px 20px;\n  border: none;\n  border-radius: 8px;\n  cursor: pointer;\n  font-size: 18px;\n  font-weight: 600;\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.5);\n}\n\n.supabaseUpdateSalePriceForm-button:hover {\n  transform: translateY(-3px);\n  box-shadow: 0 7px 20px rgba(39, 174, 96, 0.6);\n}\n\n.supabaseUpdateSalePriceForm-button:active {\n  transform: translateY(1px);\n  box-shadow: 0 3px 8px rgba(39, 174, 96, 0.5);\n}\n\n.supabaseUpdateSalePriceForm p[style*='color: red'] {\n  color: #e74c3c;\n  margin-top: -20px;\n  margin-bottom: 25px;\n  font-size: 16px;\n  font-weight: 500;\n  animation: fadeIn 0.5s ease;\n}\n\n.supabaseUpdateSalePriceForm p[style*='color: blue'] {\n  color: #3498db;\n  margin-top: -20px;\n  margin-bottom: 25px;\n  font-size: 16px;\n  font-weight: 500;\n  animation: fadeIn 0.5s ease;\n}\n\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-10px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}"
   }
 }
 ```

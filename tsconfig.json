@@ -9,12 +9,12 @@
     "types": ["vite/client", "vitest/globals"],
     /* Bundler mode */
     "moduleResolution": "bundler", // Specifies how modules are resolved when bundling.
-    "allowImportingTsExtensions": true, // Allows importing TypeScript files with extensions.
+    // "allowImportingTsExtensions": true, // Allows importing TypeScript files with extensions.
     "resolveJsonModule": true, // Enables importing JSON modules.
     "isolatedModules": true, // Ensures each file is treated as a separate module.
-    "noEmit": true, // Prevents TypeScript from emitting output files.
+    // "noEmit": true, // Prevents TypeScript from emitting output files.
     "jsx": "react-jsx", // Configures JSX support for React.
-
+    "outDir": "./dist" ,
     // resolve
     "baseUrl": "./",
     "paths": {
@@ -40,6 +40,7 @@
     "declaration": true, // Generates declaration files for TypeScript.
     "noImplicitThis": false
   },
-  "include": ["src", "lib", "utils", "types", "./tests/setup.ts"],
+  // "include": ["src", "lib", "utils", "types", "./tests/setup.ts"],
+  "include": ["src/**/*"],
   "exclude": ["src/**/__docs__", "src/**/__test__", "server"]
 }

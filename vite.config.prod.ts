@@ -1,53 +1,93 @@
+// import { defineConfig } from "vite";
+// import dts from "vite-plugin-dts";
+// import { resolve } from "path";
+// import tsconfigPaths from "vite-tsconfig-paths";
+// import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+
+// const DIRNAME = import.meta.dirname;
+// const PATHS = {
+//   base: resolve(DIRNAME, "../../../"),
+//   src: "./src/index.ts",
+//   outputDir: "./dist",
+//   tsconfigPath: resolve(DIRNAME, "./tsconfig.json"),
+// };
+// export default defineConfig({
+//   base: PATHS.base,
+//   build: {
+//     lib: {
+//       entry: resolve(DIRNAME, PATHS.src),
+//       name: "irc", // Sets the name of the generated library.
+//       fileName: (format) => `index.${format}.js`, // Generates the output file name based on the format.
+//       formats: ["cjs", "es"], // Specifies the output formats (CommonJS and ES modules).
+//     },
+//     outDir: resolve(DIRNAME, PATHS.outputDir),
+//     sourcemap: true,
+//     emptyOutDir: true,
+//     rollupOptions: {
+//       external: ["react"],
+//     },
+//   },
+//   plugins: [
+//     dts({
+//       rollupTypes: true,
+//       root: DIRNAME,
+//       insertTypesEntry: true,
+//       compilerOptions: {
+//         baseUrl: DIRNAME,
+//         paths: {
+//           "@types/*": [resolve(DIRNAME, "./types/*")],
+//         },
+//       },
+//     }),
+//     tsconfigPaths({
+//       root: DIRNAME,
+//     }),
+//     cssInjectedByJsPlugin(),
+//     // libInjectCss(),
+//   ], // Uses the 'vite-plugin-dts' plugin for generating TypeScript declaration files (d.ts).
+// });
+
+// !---
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { libInjectCss } from "vite-plugin-lib-inject-css";
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 const DIRNAME = import.meta.dirname;
-const PATHS = {
-  base: resolve(DIRNAME, "../../../"),
-  src: "./src/index.ts",
-  outputDir: "./dist",
-  tsconfigPath: resolve(DIRNAME, "./tsconfig.json"),
-};
+
 export default defineConfig({
-  base: PATHS.base,
+  base: process.cwd(), // Correctly point to user's project root
   build: {
     lib: {
-      entry: resolve(DIRNAME, PATHS.src),
-      name: "irc", // Sets the name of the generated library.
-      fileName: (format) => `index.${format}.js`, // Generates the output file name based on the format.
-      formats: ["cjs", "es"], // Specifies the output formats (CommonJS and ES modules).
+      entry: resolve(DIRNAME, "./src/index.ts"),
+      name: "irc",
+      fileName: (format) => `index.${format}.js`,
+      formats: ["cjs", "es"],
     },
-    outDir: resolve(DIRNAME, PATHS.outputDir),
+    outDir: resolve(process.cwd(), "./dist"), // Adjust outDir
     sourcemap: true,
     emptyOutDir: true,
     rollupOptions: {
-      external: ["react"],
+      external: ["react"], // Keep this if react is external
     },
   },
   plugins: [
     dts({
-      rollupTypes: true,
-      root: DIRNAME,
+      tsconfigPath: resolve(DIRNAME, "./tsconfig.json"), //Correct path to tsconfig
       insertTypesEntry: true,
       compilerOptions: {
         baseUrl: DIRNAME,
-        paths: {
-          "@types/*": [resolve(DIRNAME, "./types/*")],
-        },
+        outDir: resolve(process.cwd(), "./dist"), //Adjust outDir here too
       },
+      entryRoot: "src",
     }),
     tsconfigPaths({
       root: DIRNAME,
     }),
-    cssInjectedByJsPlugin()
-    // libInjectCss(),
-  ], // Uses the 'vite-plugin-dts' plugin for generating TypeScript declaration files (d.ts).
+    cssInjectedByJsPlugin(),
+  ],
 });
-
 // ! Version 2 - DO NOT DELETE
 // import { defineConfig } from "vite";
 // import dts from "vite-plugin-dts";

@@ -1,6 +1,6 @@
 {
   "name": "intelligent-react-components",
-  "version": "1.0.18",
+  "version": "1.0.23",
   "description": "",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -13,11 +13,12 @@
     "styles",
     "types",
     "utils",
+    "scripts",
     "tsconfig.json",
     "tsconfig.server.json",
     "vite.config.ts",
     "vite.config.prod.ts",
-    "vitest.config.ts",
+    "irc.config.cjs",
     "public"
   ],
   "scripts": {
@@ -28,7 +29,8 @@
     "test-watch": "vitest",
     "coverage": "vitest run --coverage",
     "build:server": "tsc -w -p tsconfig.server.json",
-    "server": "node build/server"
+    "server": "node build/server",
+    "preinstall": "node scripts/createConfig.js"
   },
   "jsdocs": "jsdoc /src -r",
   "keywords": [],

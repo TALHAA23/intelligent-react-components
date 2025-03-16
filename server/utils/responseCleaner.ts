@@ -1,12 +1,4 @@
 import { AIResponse } from "../types";
-
-/**
- * a cool function
- * @param {string} response
- * @returns {string}
- * @description
- * clear a response
- */
 export default function clearResponse(response: string): AIResponse {
   const cleanedResponse = response
     .replaceAll(/```(json|javascript)?/g, "") // Remove code block markers

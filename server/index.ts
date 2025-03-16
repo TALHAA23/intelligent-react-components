@@ -6,6 +6,7 @@ import processPromptAndCreateFile from "./routesHandler/processPromptCreateFile.
 import watcher from "./utils/watcher.js";
 import log from "./utils/cliColoredLog.js";
 import path from "path";
+import loadConfig from "./utils/loadConfig.js";
 const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -13,11 +14,33 @@ app.post("/prompt-to-code", processPromptAndCreateFile);
 
 app.get("*", catchAll);
 
-app.listen(5173, () => {
-  log("Running on: ", `http://localhost:5173/`, "\n").info();
-  // ? For development
-  // chokidar.watch("D:/nextjs-genkit/dynamic").on("all", watcher);
-  // ! For Production
-  const rootDir = process.cwd();
-  chokidar.watch(path.resolve(rootDir,"dynamic")).on("all", watcher);
+// app.listen(5173, async () => {
+//   const configs = await loadConfig();
+//   const port = configs.PORT || 5173;
+//   log("Running on: ", `http://localhost:${port}/`, "\n").info();
+//   const rootDir = process.cwd();
+//   chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
+// });
+
+app.listen(async () => {
+  // Remove the explicit port here
+  try {
+    const configs = await loadConfig();
+    const port = configs.PORT || 5173; // Use the config's PORT or default
+
+    app.listen(port, () => {
+      // Listen on the determined port
+      log("Running on: ", `http://localhost:${port}/`, "\n").info();
+      const rootDir = process.cwd();
+      chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
+    });
+  } catch (error) {
+    console.error("Error loading configuration:", error);
+    const port = 5173; //use default port
+    app.listen(port, () => {
+      log("Running on: ", `http://localhost:${port}/`, "\n").info();
+      const rootDir = process.cwd();
+      chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
+    });
+  }
 });

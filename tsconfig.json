@@ -41,6 +41,6 @@
     "noImplicitThis": false
   },
   // "include": ["src", "lib", "utils", "types", "./tests/setup.ts"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "lib/**/*","utils/**/*", "types/index.d.ts"],
   "exclude": ["src/**/__docs__", "src/**/__test__", "server"]
 }

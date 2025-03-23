@@ -27,6 +27,15 @@ The following keys are optional but may be included to provide additional contex
 - `"callbacks"`: An object containing independent and dependent callbacks. See the "Callbacks" section for details.
 
 - `"onInit"`: A string defining initialization logic for the button element, executed on the first render.
+- `"feedback"`: Use to improve response.
+
+**Feedback Usage:**
+
+- If `feedback` is present, prioritize processing it and revising the response.
+- `feedback` should describe errors, required changes, and constraints.
+- Aim to correct errors, implement changes, and maintain consistency.
+- If `feedback` is absent, process the request as new.
+- Latest coversation, both user and model response might be at last 2 indexes in `history`.
 
 **Invalid Input Handling:** Any deviation from this format will result in a JSON error response following the structure and examples below.
 
@@ -409,13 +418,7 @@ This subsection focuses on examples where event listeners directly modify the Do
   "thoughts": "The event listener will add the class 'highlight' to the button element.  The target element is implied.",
   "error": {},
   "response": {
-    "eventListener": "function main(event, args) { const target =  document.getElementById('myButton')
-    if(!taget) {
-    console.warn('Button with id myButton do no exist in DOM')
-    return
-    }
-    target.classList.add('highlight');
-    }",
+    "eventListener": "function main(event, args) {\n  const target =  document.getElementById('myButton')\n    if(!target) {\n    console.warn('Button with id myButton do no exist in DOM')\n    return\n    }\n    target.classList.add('highlight');\n    }",
     "globals": {},
     "imports": []
   },
@@ -445,28 +448,12 @@ This subsection focuses on examples where event listeners directly modify the Do
   "thoughts": "The prompt instructs to create a div and update its content on each click. A reference to the div will be stored in globals to prevent duplicate creation.",
   "error": {},
   "response": {
-    "eventListener": "function main(event, args) {
-      if (!globals.myDiv) {
-        fnCreateAndAppendElement()
-      }
-      fnShowAndUpateCount()
-    }",
-    "globals": {
-      "clickCount": 0,
-      "myDiv": null
-    },
+    "eventListener": "function main(event, args) {\n  if (!globals.myDiv) {\n    fnCreateAndAppendElement()\n  }\n  fnShowAndUpateCount()\n    }",
+    "globals": { "clickCount": 0, "myDiv": null },
     "imports": [],
     "helperFunctions": [
-      "function fnCreateAndAppendElement() {
-        globals.myDiv = document.createElement('div');
-        globals.myDiv.classList.add('myDiv');
-        document.body.appendChild(globals.myDiv);
-      }",
-      "function fnShowAndUpateCount() {
-        globals.myDiv.textContent = 'Click count: ' + (globals.clickCount || 0);
-        if (!globals.clickCount) globals.clickCount = 0;
-        globals.clickCount++;
-      }"
+      "function fnCreateAndAppendElement() {\n  globals.myDiv = document.createElement('div');\n  globals.myDiv.classList.add('myDiv');\n  document.body.appendChild(globals.myDiv);\n}",
+      "function fnShowAndUpateCount() {\n  globals.myDiv.textContent = 'Click count: ' + (globals.clickCount || 0);\n  if (!globals.clickCount) globals.clickCount = 0;\n  globals.clickCount++;\n}"
     ]
   },
   "expect": "No specific elements are required. The code will create a div with the class 'myDiv' and update its content on each click."
@@ -1220,22 +1207,12 @@ This section provides examples illustrating how to use the `globals` field for s
   "thoughts": "The prompt describes an event listener that greets the user using two separate functions. The greet count is tracked and displayed using globals. Helper functions are used to encapsulate the greetings and counting logic.",
   "error": {},
   "response": {
-    "eventListener": "function main(event, args) {
-      if (!globals.greetCount) {
-        globals.greetCount = 0;
-      }
-      globals.greetCount++;
-      fnGreetAlert();
-      fnGreetConsole();
-      alert('You have been greeted ${globals.greetCount} times');
-    }",
-    "globals": {
-      "greetCount": 0
-    },
+    "eventListener": "function main(event, args) {\n  if (!globals.greetCount) {\n    globals.greetCount = 0;\n  }\n  globals.greetCount++;\n  fnGreetAlert();\n  fnGreetConsole();\n  alert(`You have been greeted ${globals.greetCount} times`);\n}",
+    "globals": { "greetCount": 0 },
     "imports": [],
     "helperFunctions": [
-      "function fnGreetAlert() { alert('Hello from alert!'); }",
-      "function fnGreetConsole() { console.log('Hello from console!'); }"
+      "function fnGreetAlert() {\n  alert('Hello from alert!');\n}",
+      "function fnGreetConsole() {\n  console.log('Hello from console!');\n}"
     ]
   },
   "expect": "No additional elements or variables are required.  The functions will alert and log the message to the console."
@@ -1400,26 +1377,7 @@ This subsection contains examples for establishing a connection to Firebase and 
   "thoughts": "The prompt instructs to insert data into a Firestore collection. The Firebase app will be initialized, and the data will be added to the 'test' collection. Error handling is included.",
   "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {
-      try {
-        // Initialize Firebase app (assuming config is in environment variables)
-        initializeApp({
-          apiKey: process.env.NEXT_PUBLIC_API_KEY,
-          authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
-          projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
-          storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
-          messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
-          appId: process.env.NEXT_PUBLIC_APP_ID
-        });
-
-        const db = getFirestore();
-        const testCollection = collection(db, 'test');
-        const docRef = await addDoc(testCollection, args._data);
-        console.log('Document written with ID: ', docRef.id);
-      } catch (error) {
-        console.error('Error adding document: ', error);
-      }
-    }",
+    "eventListener": "async function main(event, args) {\n  try {\n    // Initialize Firebase app (assuming config is in environment variables)\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,\n      appId: process.env.NEXT_PUBLIC_APP_ID\n    });\n\n    const db = getFirestore();\n    const testCollection = collection(db, 'test');\n    const docRef = await addDoc(testCollection, args._data);\n    console.log('Document written with ID: ', docRef.id);\n  } catch (error) {\n    console.error('Error adding document: ', error);\n  }\n}",
     "globals": {},
     "imports": [
       "import { initializeApp } from 'firebase/app'",
@@ -1456,21 +1414,9 @@ This subsection contains examples for establishing a connection to Firebase and 
   "thoughts": "This prompt instructs to connect to Supabase and insert data.  Error handling is included.",
   "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {
-      try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      const supabase = createClient(supabaseUrl, supabaseKey as string);
-      const res = await supabase.from('users').insert({ name: 'Test User', age: 30, email: 'test@example.com' });
-      console.log(res);
-    } catch (err) {
-      console.log(err);
-    }
-    }",
+    "eventListener": "async function main(event, args) {\n  try {\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n    const supabase = createClient(supabaseUrl, supabaseKey as string);\n    const res = await supabase.from('users').insert({ name: 'Test User', age: 30, email: 'test@example.com' });\n    console.log(res);\n  } catch (err) {\n    console.log(err);\n  }\n}",
     "globals": {},
-    "imports": [
-      "import { createClient } from '@supabase/supabase-js'"
-    ]
+    "imports": ["import { createClient } from '@supabase/supabase-js'"]
   },
   "expect": "The user must have the Supabase JavaScript client library installed. The environment variables SUPABASE_URL and SUPABASE_ANON_KEY must be set correctly. A table named 'users' must exist in the Supabase database."
 }
@@ -1524,73 +1470,19 @@ This subsection contains examples for establishing a connection to Firebase and 
 ```json
 {
   "thoughts": "This prompt describes a complex data fetching and processing task involving a Firebase database, data transformation, and dynamic HTML generation. The solution includes robust error handling and loading state management. Helper functions are used to improve code organization and readability. The average price is calculated and displayed, and the products are sorted and displayed in a table.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {
-  try {
-    args.loading(true);
-    if (!globals.productsData) {
-      initializeApp({
-        apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,
-        authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,
-        storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,
-        messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,
-        appId: process.env.NEXT_PUBLIC_APP_ID_P2,
-      });
-      const db = getFirestore();
-      const productsRef = collection(db, 'products');
-      const q = query(
-        productsRef,
-        where('category', '==', args._selectedCategory)
-      );
-      const querySnapshot = await getDocs(q);
-      const products = querySnapshot.docs.map((doc) => doc.data());
-      globals.productsData = products;
-    }
-    const averagePrice = fnCalculateAveragePrice(globals.productsData);
-    document.getElementById(
-      'averagePrice'
-    ).textContent = `Average Price: $${averagePrice.toFixed(2)}`;
-    const sortedProducts = globals.productsData.sort(
-      (a, b) => a.price - b.price
-    );
-    const table = fnGenerateProductTable(sortedProducts);
-    document.getElementById('productList').innerHTML = table;
-  } catch (error) {
-    document.getElementById(
-      'productList'
-    ).innerHTML = `<p>Error: ${error.message}</p>`;
-    console.error('An error occurred:', error);
-  } finally {
-    args.loading(false);
-  }
-}",
+    "eventListener": "async function main(event, args) {\n  try {\n    args.loading(true);\n    if (!globals.productsData) {\n      initializeApp({\n        apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n        authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n        projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n        storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n        messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n        appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n      });\n      const db = getFirestore();\n      const productsRef = collection(db, 'products');\n      const q = query(\n        productsRef,\n        where('category', '==', args._selectedCategory)\n      );\n      const querySnapshot = await getDocs(q);\n      const products = querySnapshot.docs.map((doc) => doc.data());\n      globals.productsData = products;\n    }\n    const averagePrice = fnCalculateAveragePrice(globals.productsData);\n    document.getElementById(\n      'averagePrice'\n    ).textContent = `Average Price: $${averagePrice.toFixed(2)}`;\n    const sortedProducts = globals.productsData.sort(\n      (a, b) => a.price - b.price\n    );\n    const table = fnGenerateProductTable(sortedProducts);\n    document.getElementById('productList').innerHTML = table;\n  } catch (error) {\n    document.getElementById(\n      'productList'\n    ).innerHTML = `<p>Error: ${error.message}</p>`;\n    console.error('An error occurred:', error);\n  } finally {\n    args.loading(false);\n  }\n}",
     "globals": {},
     "imports": [
-    "import { getFirestore, collection, query, where, getDocs} from 'firebase/firestore'",
-    "import { initializeApp } from firebase/app'"
+      "import { getFirestore, collection, query, where, getDocs} from 'firebase/firestore'",
+      "import { initializeApp } from firebase/app'"
     ],
-    "helperFunctions":[
-      "function fnCalculateAveragePrice(products) {
-        if (products.length === 0) return 0;
-        const total = products.reduce((sum, product) => sum + product.price, 0);
-        return total / products.length;
-      }",
-    "function fnGenerateProductTable(products) {
-      if (products.length === 0) return '<p>No products found</p>';
-      let table =
-      '<table><thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Rating</th></tr></thead><tbody>';
-      products.forEach((product) => {
-      table += `<tr><td>${product.name}</td><td>$${product.price}</td><td>${product.category}</td><td>${product.rating}</td></tr>`;
-    });
-    table += '</tbody></table>';
-    return table;
-  }"
-  ]
+    "helperFunctions": [
+      "function fnCalculateAveragePrice(products) {\n  if (products.length === 0) return 0;\n  const total = products.reduce((sum, product) => sum + product.price, 0);\n  return total / products.length;\n}",
+      "function fnGenerateProductTable(products) {\n  if (products.length === 0) return '<p>No products found</p>';\n  let table =\n      '<table><thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Rating</th></tr></thead><tbody>';\n  products.forEach((product) => {\n    table += `<tr><td>${product.name}</td><td>$${product.price}</td><td>${product.category}</td><td>${product.rating}</td></tr>`;\n  });\n  table += '</tbody></table>';\n  return table;\n}"
+    ]
   },
-  "expect": "The user must have the Firebase package installed. The environment variables NEXT_PUBLIC_API_KEY_P2, NEXT_PUBLIC_AUTH_DOMAIN_P2, NEXT_PUBLIC_PROJECT_ID_P2, NEXT_PUBLIC_STORAGE_BUCKET_P2, NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, NEXT_PUBLIC_APP_ID_P2 must be set. A 'products' collection must exist in Firestore with documents containing 'name', 'price', 'category', and 'rating' fields.  A div with id 'averagePrice' and a div with id 'productList' must exist in the DOM. The variable '_selectedCategory' must be defined and passed in the `args` object.",
-
+  "expect": "The user must have the Firebase package installed. The environment variables NEXT_PUBLIC_API_KEY_P2, NEXT_PUBLIC_AUTH_DOMAIN_P2, NEXT_PUBLIC_PROJECT_ID_P2, NEXT_PUBLIC_STORAGE_BUCKET_P2, NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, NEXT_PUBLIC_APP_ID_P2 must be set. A 'products' collection must exist in Firestore with documents containing 'name', 'price', 'category', and 'rating' fields.  A div with id 'averagePrice' and a div with id 'productList' must exist in the DOM. The variable '_selectedCategory' must be defined and passed in the `args` object."
 }
 ```
 
@@ -1619,46 +1511,10 @@ This subsection contains examples for establishing a connection to Firebase and 
 ```json
 {
   "thoughts": "This prompt instructs to update rows in the 'products' table in Supabase, applying a discount and modifying the 'item' property based on the price. Error handling and console logging are included. The Supabase client is initialized using environment variables.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error(
-          'Supabase URL or key not found in environment variables.'
-        );
-      }
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data, error: fetchError } = await supabase
-        .from('products')
-        .select('id, price, item')
-        .gte('price', 30);
-      if (fetchError) throw fetchError;
-      if (!data.length) {
-        console.log('No record to update');
-        return;
-      }
-      const updates = data.map((product) => ({
-        id: product.id,
-        price: Math.floor(product.price * 0.6),
-        item: '*' + product.item,
-      }));
-      const { data: updatedData, error } = await supabase
-        .from('products')
-        .upsert(updates)
-        .select();
-      if (error) throw error;
-      console.log(updatedData);
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  }",
+    "eventListener": "async function main(event, args) {\n  try {\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n    if (!supabaseUrl || !supabaseKey) {\n      throw new Error(\n        'Supabase URL or key not found in environment variables.'\n      );\n    }\n    const supabase = createClient(supabaseUrl, supabaseKey);\n    const { data, error: fetchError } = await supabase\n      .from('products')\n      .select('id, price, item')\n      .gte('price', 30);\n    if (fetchError) throw fetchError;\n    if (!data.length) {\n      console.log('No record to update');\n      return;\n    }\n    const updates = data.map((product) => ({\n      id: product.id,\n      price: Math.floor(product.price * 0.6),\n      item: '*' + product.item,\n    }));\n    const { data: updatedData, error } = await supabase\n      .from('products')\n      .upsert(updates)\n      .select();\n    if (error) throw error;\n    console.log(updatedData);\n  } catch (error) {\n    console.error('An error occurred:', error);\n  }\n}",
     "globals": {},
-    "imports": [
-      "import { createClient } from '@supabase/supabase-js'"
-    ]
+    "imports": ["import { createClient } from '@supabase/supabase-js'"]
   },
   "expect": "The user must have the Supabase JavaScript client library installed. The environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set correctly. A table named 'products' with columns 'id', 'price', and 'item' must exist in the Supabase database.  The 'id' column should be the primary key."
 }
@@ -1692,38 +1548,8 @@ This subsection contains examples for establishing a connection to Firebase and 
 ```json
 {
   "thoughts": "This prompt describes a function that retrieves a file from Firebase Storage, checks if it exists, and appends an image element to the DOM if found.  Error handling and efficient code are prioritized.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {\n
-     try {
-      initializeApp({
-        apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,
-        authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,
-        storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,
-        messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,
-        appId: process.env.NEXT_PUBLIC_APP_ID_P2,
-      });
-      const storage = getStorage();
-      const storageRef = ref(storage, '/Files/Work6.jpg');
-      await getMetadata(storageRef)
-        .then(async (metadata) => {
-          const img = document.createElement('img');
-          // wait for the link to download
-          const imgSrc = await getDownloadURL(storageRef);
-          img.src = imgSrc;
-          document.body.appendChild(img);
-        })
-        .catch((error) => {
-          if (error.code === 'storage/object-not-found') {
-            console.log('File not found.');
-          } else {
-            console.error('Error checking file:', error);
-          }
-        });
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }",
+    "eventListener": "async function main(event, args) {\n  try {\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n      appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n    });\n    const storage = getStorage();\n    const storageRef = ref(storage, '/Files/Work6.jpg');\n    await getMetadata(storageRef)\n      .then(async (metadata) => {\n        const img = document.createElement('img');\n        // wait for the link to download\n        const imgSrc = await getDownloadURL(storageRef);\n        img.src = imgSrc;\n        document.body.appendChild(img);\n      })\n      .catch((error) => {\n        if (error.code === 'storage/object-not-found') {\n          console.log('File not found.');\n        } else {\n          console.error('Error checking file:', error);\n        }\n      });\n  } catch (error) {\n    console.error('An error occurred:', error);\n  }\n}",
     "globals": {},
     "imports": [
       "import { initializeApp } from 'firebase/app'",
@@ -1762,27 +1588,7 @@ This subsection contains examples for establishing a connection to Firebase and 
   "thoughts": "This prompt describes a function that deletes a specific file from a Supabase Storage bucket. Error handling and efficient code are prioritized. The function uses the specified path to delete the file from the storage bucket.",
   "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {\n  try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error(
-          'Supabase URL or key not found in environment variables.'
-        );
-      }
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data, error } = await supabase.storage
-        .from('products')
-        // folders(if any)/filename
-        .remove(['public/2.jpg']);
-      if (error) {
-        console.error('Error deleting file:', error);
-      } else {
-        console.log('File deleted successfully:', data);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }\n}",
+    "eventListener": "async function main(event, args) {\n  try {\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n    if (!supabaseUrl || !supabaseKey) {\n      throw new Error(\n        'Supabase URL or key not found in environment variables.'\n      );\n    }\n    const supabase = createClient(supabaseUrl, supabaseKey);\n    const { data, error } = await supabase.storage\n      .from('products')\n      // folders(if any)/filename\n      .remove(['public/2.jpg']);\n    if (error) {\n      console.error('Error deleting file:', error);\n    } else {\n      console.log('File deleted successfully:', data);\n    }\n  } catch (error) {\n    console.error('An error occurred:', error);\n  }\n}",
     "globals": {},
     "imports": ["import { createClient } from '@supabase/supabase-js'"]
   },
@@ -1820,46 +1626,9 @@ This subsection contains examples for establishing a connection to Firebase and 
   "thoughts": "This prompt describes a function that registers a user with Supabase Authentication using email and password, validating the password before signup. Error handling and efficient code are prioritized.",
   "error": {},
   "response": {
-    "eventListener": "const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    if (!usernameInput || !emailInput || !passwordInput) {
-      console.error('Username, email, or password input elements not found.');
-      return;
-    }
-    const username = usernameInput.value.trim();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-    if (password.length < 6 || !/[A-Z]/.test(password)) {
-      alert(
-        'Password must be at least 6 characters long and contain at least one uppercase letter.'
-      );
-      return;
-    }
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error(
-          'Supabase URL or key not found in environment variables.'
-        );
-      }
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) throw error;
-      else {
-        console.log('User created successfully:', data);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }",
+    "eventListener": "const usernameInput = document.getElementById('username');\n    const emailInput = document.getElementById('email');\n    const passwordInput = document.getElementById('password');\n\n    if (!usernameInput || !emailInput || !passwordInput) {\n      console.error('Username, email, or password input elements not found.');\n      return;\n    }\n\n    const username = usernameInput.value.trim();\n    const email = emailInput.value.trim();\n    const password = passwordInput.value.trim();\n\n    if (password.length < 6 || !/[A-Z]/.test(password)) {\n      alert(\n        'Password must be at least 6 characters long and contain at least one uppercase letter.'\n      );\n      return;\n    }\n\n    try {\n      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n\n      if (!supabaseUrl || !supabaseKey) {\n        throw new Error(\n          'Supabase URL or key not found in environment variables.'\n        );\n      }\n\n      const supabase = createClient(supabaseUrl, supabaseKey);\n\n      const { data, error } = await supabase.auth.signUp({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n      else {\n        console.log('User created successfully:', data);\n      }\n    } catch (error) {\n      console.error('An error occurred:', error);\n    }",
     "globals": {},
-    "imports": [
-     "import { createClient } from '@supabase/supabase-js';"
-    ]
+    "imports": ["import { createClient } from '@supabase/supabase-js';"]
   },
   "expect": "The user must have the Supabase JavaScript client library installed.  The environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set correctly."
 }
@@ -1893,41 +1662,8 @@ This subsection contains examples for establishing a connection to Firebase and 
 ```json
 {
   "thoughts": "This prompt describes a function that signs in a user with Supabase Authentication using email and password, handling success/failure, and storing the token in a cookie upon successful login. Error handling and efficient code are prioritized.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {\n  const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    if (!emailInput || !passwordInput) {
-      console.error('Email or password input elements not found.');
-      return;
-    }
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error(
-          'Supabase URL or key not found in environment variables.'
-        );
-      }
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      if (data) {
-        const { user } = data;
-        const accessToken = data.session.access_token;
-        document.cookie = `supabase-auth-token=${accessToken}; path=/`;
-        alert('Login successful!');
-        console.log('User logged in:', user);
-      }
-    } catch (error) {
-      console.error('Error logging in:', error);
-      alert(`Error logging in: ${error.message}`);
-    }\n}",
+    "eventListener": "async function main(event, args) {\n  const emailInput = document.getElementById('email');\n  const passwordInput = document.getElementById('password');\n\n  if (!emailInput || !passwordInput) {\n    console.error('Email or password input elements not found.');\n    return;\n  }\n\n  const email = emailInput.value.trim();\n  const password = passwordInput.value.trim();\n\n  try {\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n\n    if (!supabaseUrl || !supabaseKey) {\n      throw new Error(\n        'Supabase URL or key not found in environment variables.'\n      );\n    }\n\n    const supabase = createClient(supabaseUrl, supabaseKey);\n\n    const { data, error } = await supabase.auth.signInWithPassword({\n      email,\n      password,\n    });\n\n    if (error) throw error;\n\n    if (data) {\n      const { user } = data;\n      const accessToken = data.session.access_token;\n      document.cookie = `supabase-auth-token=${accessToken}; path=/`;\n      alert('Login successful!');\n      console.log('User logged in:', user);\n    }\n  } catch (error) {\n    console.error('Error logging in:', error);\n    alert(`Error logging in: ${error.message}`);\n  }\n}",
     "globals": {},
     "imports": ["import { createClient } from '@supabase/supabase-js'"]
   },
@@ -1963,45 +1699,9 @@ This subsection contains examples for establishing a connection to Firebase and 
 ```json
 {
   "thoughts": "This prompt describes a function that reads a message from a DOM element, adds it to a Firebase Realtime Database branch, and sets up a real-time listener to console the updated data. Error handling and efficient code are prioritized. The function uses a CSS selector (`.message`) to target the DOM element.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {\n  try {
-      initializeApp({
-        apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,
-        authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,
-        storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,
-        messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,
-        appId: process.env.NEXT_PUBLIC_APP_ID_P2,
-      });
-      const db = getDatabase();
-      const messageElement = document.querySelector('.message');
-      if (!messageElement) {
-        console.error('Element with class 'message' not found.');
-        return;
-      }
-      const message = messageElement.value;
-      if (!message) {
-        console.error('Message is empty');
-        return;
-      }
-      const newMessageRef = push(
-        child(ref(db, 'todos'), Date.now().toString())
-      );
-      set(newMessageRef, { message });
-      messageElement.value = '';
-      if (!globals.todosRealTimeListenerSetted) {
-      // create onValue once only
-        globals.todosRealTimeListenerSetted = true;
-        onValue(ref(db, 'todos'), (snapshot) => {
-          const data = snapshot.val();
-          console.log('Realtime data update:', data);
-        });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }\n}",
-    "globals": {"todosRealTimeListenerSetted":false},
+    "eventListener": "async function main(event, args) {\n  try {\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n      appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n    });\n\n    const db = getDatabase();\n    const messageElement = document.querySelector('.message');\n\n    if (!messageElement) {\n      console.error('Element with class 'message' not found.');\n      return;\n    }\n\n    const message = messageElement.value;\n    if (!message) {\n      console.error('Message is empty');\n      return;\n    }\n\n    const newMessageRef = push(\n      child(ref(db, 'todos'), Date.now().toString())\n    );\n    set(newMessageRef, { message });\n    messageElement.value = '';\n\n    if (!globals.todosRealTimeListenerSetted) {\n      // create onValue once only\n      globals.todosRealTimeListenerSetted = true;\n\n      onValue(ref(db, 'todos'), (snapshot) => {\n        const data = snapshot.val();\n        console.log('Realtime data update:', data);\n      });\n    }\n  } catch (error) {\n    console.error('Error:', error);\n  }\n}",
+    "globals": { "todosRealTimeListenerSetted": false },
     "imports": [
       "import { initializeApp } from 'firebase/app'",
       "import {getDatabase, ref, push, child, set, onValue} from 'firebase/database'"
@@ -2040,204 +1740,29 @@ This section provides examples of complex prompts to train the model on advanced
 ```json
 {
   "thoughts": "This is a complex prompt requiring a multi-step form with authentication, data persistence, and dynamic UI updates. The solution utilizes helper functions defined in 'helperFunctions' for better organization.  Error handling, input validation, and user feedback mechanisms (toasters) are included.  Firebase Authentication and Firestore are used for user management and data persistence.",
-  "error": {},
   "response": {
     "eventListener": "async function main(event, args) {\n  fnCreateForm();\n  fnAddFormEventlisteners();\n}",
-    "globals": {
-      "isSignUp": false,
-      "isFormCreated": false
-    },
+    "globals": { "isSignUp": false, "isFormCreated": false },
     "helperFunctions": [
-  "function fnInitializeApp() {
-    initializeApp({
-      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,
-      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,
-      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,
-      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,
-      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,
-      appId: process.env.NEXT_PUBLIC_APP_ID_P2,
-    });
-  }",
-  "function fnCreateForm() {
-    if (globals.isFormCreated) {
-      globals.dialogBoxRef.showModal();
-      return;
-    }
-    const dialog = document.createElement('dialog');
-    // save the reference to use in other functionsfn
-    globals.dialogBoxRef = dialog;
-    dialog.style.cssText = `border: 1px solid #ccc;padding: 20px;border-radius: 5px;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);/*center dialog assuming it looks better in center*/position: absoulte;  top: 50%; left: 50%; transform: translate(-50%, -50%); width:100%; max-width:500px /* For positioning the toaster */        `;
-    const form = document.createElement('form');
-    const errorContainer = document.createElement('div');
-    errorContainer.id = 'error-container';
-    errorContainer.style.cssText =
-      'color: red; margin-bottom: 11px; font-size:smaller';
-    form.appendChild(errorContainer);
-    const usernameInput = document.createElement('input');
-    usernameInput.type = 'text';
-    usernameInput.id = 'username';
-    usernameInput.placeholder = 'Username';
-    usernameInput.style.cssText =
-      'width: 100%; padding: 8px; margin-bottom: 10px;';
-    form.appendChild(usernameInput);
-    const emailInput = document.createElement('input');
-    emailInput.type = 'email';
-    emailInput.id = 'email';
-    emailInput.placeholder = 'Email';
-    emailInput.style.cssText =
-      'width: 100%; padding: 8px; margin-bottom: 10px;';
-    form.appendChild(emailInput);
-    const passwordInput = document.createElement('input');
-    passwordInput.type = 'password';
-    passwordInput.id = 'password';
-    passwordInput.placeholder = 'Password';
-    passwordInput.style.cssText =
-      'width: 100%; padding: 8px; margin-bottom: 10px;';
-    form.appendChild(passwordInput);
-    const switchText = document.createElement('p');
-    switchText.id = 'switch-text';
-    switchText.style.cssText =
-      'text-align: center; margin-bottom: 10px; cursor: pointer;';
-    // as globals.isSignUp is false by default, text content of switchText will be for sign-in
-    switchText.textContent =  'Don\\'t have an account? Sign-up'
-    form.appendChild(switchText);
-    const submitButton = document.createElement('button');
-    // save the reference to use in other functionsfn
-    globals.submitButtonRef = submitButton;
-    submitButton.type = 'submit';
-    submitButton.textContent = 'Submit';
-    submitButton.style.cssText =
-      'width: 100%; padding: 8px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;';
-    form.appendChild(submitButton);
-    dialog.appendChild(form);
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    globals.isFormCreated = true;
-  }",
-  "function fnAddFormEventListeners() { // Corrected function name for consistency
-    const form = document.querySelector('dialog form');
-    const errorContainer = document.getElementById('error-container');
-    const switchText = document.getElementById('switch-text');
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    switchText.addEventListener('click', () => {
-      globals.isSignUp = !globals.isSignUp;
-      fnUpdateSwitchText();
-      usernameInput.style.display = globals.isSignUp ? 'block' : 'none';
-    });
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      fnUpdateButtonState(true);
-      errorContainer.textContent = '';
-      fnShowToaster('Processing...');
-      try {
-        if (globals.isSignUp) {
-          await fnSignUp(usernameInput.value, emailInput.value, passwordInput.value);
-        } else {
-          await fnSignIn(emailInput.value, passwordInput.value);
-        }
-        fnShowToaster('Success!', 'success');
-        form.reset();
-      } catch (error) {
-        errorContainer.textContent = error.message;
-        fnShowToaster(error.message, 'error');
-      } finally {
-        fnHideToaster();
-        fnUpdateButtonState(false);
-      }
-    });
-  }",
-  "function fnUpdateSwitchText() {
-    const switchText = document.getElementById('switch-text');
-    switchText.textContent = globals.isSignUp ? 'Already have an account? Sign-in' : 'Don't have an account? Sign-up';
-  }",
-  "function fnShowToaster(message, type = 'info') {
-    const toaster = document.createElement('div');
-    toaster.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      z-index: 1000;
-    `;
-    toaster.textContent = message;
-    document.body.appendChild(toaster);
-    setTimeout(() => toaster.remove(), 3000);
-  }",
-  "function fnHideToaster() {
-    const toaster = document.querySelector(`div[style*='position: fixed']`);
-    if (toaster) toaster.remove();
-  }",
-   "async function fnSignUp(username, email, password) {
-    if (!fnValidateInput(username, email, password)) return;
-    fnInitializeApp();
-    const auth = getAuth();
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    const db = getFirestore();
-    const docRef = doc(db, 'users', user.uid);
-    await setDoc(docRef, { username }); // Added username to user document
-    console.log('User created:', user);
-    globals.dialogBoxRef.close();
-  }",
-  "async function fnSignIn(email, password) {
-    if (!fnValidatePassword(email, password)) return;
-    fnInitializeApp();
-    const auth = getAuth();
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    const db = getFirestore();
-    const userDoc = doc(db, 'users', user.uid);
-    const userSnapshot = await getDoc(userDoc);
-    console.log('User data:', userSnapshot.data());
-    globals.dialogBoxRef.close();
-  }",
-  "function fnValidateInput(username, email, password) {
-    if (!username || !email || !password) {
-      throw new Error('All fields are required.');
-    }
-    if (!fnIsValidEmail(email)) {
-      throw new Error('Invalid email address.');
-    }
-    if (!fnIsValidPassword(password)) {
-      throw new Error('Password must be at least 6 characters long and contain at least one uppercase letter.');
-    }
-    if (!fnIsValidUsername(username)) {
-      throw new Error('Username cannot contain special characters.');
-    }
-    return true;
-  }",
-  "function fnValidatePassword(email, password) {
-    if (!email || !password) {
-      throw new Error('Email and password are required.');
-    }
-    if (!fnIsValidPassword(password)) {
-      throw new Error('Password must be at least 6 characters long and contain at least one uppercase letter.');
-    }
-    return true;
-  }",
-  "function fnIsValidPassword(password) {
-    return password.length >= 6 && /[A-Z]/.test(password);
-  }",
-  "function fnIsValidUsername(username) {
-    return /^[a-zA-Z0-9_]+$/.test(username);
-  }",
- "function fnIsValidEmail(email) {
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
-}"
-  "function fnUpdateButtonState(isSubmitting) {
-    globals.submitButtonRef.textContent = isSubmitting ? 'Submitting...' : 'Submit'; //Improved text
-    globals.submitButtonRef.disabled = isSubmitting; //Simplified disabling
-  }",
-],
+      "function fnInitializeApp() {\n    initializeApp({\n      apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n      authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n      projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n      storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n      messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n      appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n    });\n  }",
+      "function fnCreateForm() {\n    if (globals.isFormCreated) {\n      globals.dialogBoxRef.showModal();\n      return;\n    }\n\n    const dialog = document.createElement('dialog');\n    // save the reference to use in other functionsfn\n    globals.dialogBoxRef = dialog;\n\n    dialog.style.cssText = `border: 1px solid #ccc;padding: 20px;border-radius: 5px;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);/*center dialog assuming it looks better in center*/position: absoulte;  top: 50%; left: 50%; transform: translate(-50%, -50%); width:100%; max-width:500px /* For positioning the toaster */        `;\n\n    const form = document.createElement('form');\n\n    const errorContainer = document.createElement('div');\n    errorContainer.id = 'error-container';\n    errorContainer.style.cssText =\n      'color: red; margin-bottom: 11px; font-size:smaller';\n    form.appendChild(errorContainer);\n\n    const usernameInput = document.createElement('input');\n    usernameInput.type = 'text';\n    usernameInput.id = 'username';\n    usernameInput.placeholder = 'Username';\n    usernameInput.style.cssText =\n      'width: 100%; padding: 8px; margin-bottom: 10px;';\n    form.appendChild(usernameInput);\n\n    const emailInput = document.createElement('input');\n    emailInput.type = 'email';\n    emailInput.id = 'email';\n    emailInput.placeholder = 'Email';\n    emailInput.style.cssText =\n      'width: 100%; padding: 8px; margin-bottom: 10px;';\n    form.appendChild(emailInput);\n\n    const passwordInput = document.createElement('input');\n    passwordInput.type = 'password';\n    passwordInput.id = 'password';\n    passwordInput.placeholder = 'Password';\n    passwordInput.style.cssText =\n      'width: 100%; padding: 8px; margin-bottom: 10px;';\n    form.appendChild(passwordInput);\n\n    const switchText = document.createElement('p');\n    switchText.id = 'switch-text';\n    switchText.style.cssText =\n      'text-align: center; margin-bottom: 10px; cursor: pointer;';\n    // as globals.isSignUp is false by default, text content of switchText will be for sign-in\n    switchText.textContent =  'Don\\'t have an account? Sign-up'\n    form.appendChild(switchText);\n\n    const submitButton = document.createElement('button');\n    // save the reference to use in other functionsfn\n    globals.submitButtonRef = submitButton;\n    submitButton.type = 'submit';\n    submitButton.textContent = 'Submit';\n    submitButton.style.cssText =\n      'width: 100%; padding: 8px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;';\n    form.appendChild(submitButton);\n\n    dialog.appendChild(form);\n    document.body.appendChild(dialog);\n    dialog.showModal();\n    globals.isFormCreated = true;\n  }",
+      "function fnAddFormEventListeners() { // Corrected function name for consistency\n    const form = document.querySelector('dialog form');\n    const errorContainer = document.getElementById('error-container');\n    const switchText = document.getElementById('switch-text');\n    const usernameInput = document.getElementById('username');\n    const emailInput = document.getElementById('email');\n    const passwordInput = document.getElementById('password');\n\n    switchText.addEventListener('click', () => {\n      globals.isSignUp = !globals.isSignUp;\n      fnUpdateSwitchText();\n      usernameInput.style.display = globals.isSignUp ? 'block' : 'none';\n    });\n\n    form.addEventListener('submit', async (e) => {\n      e.preventDefault();\n      fnUpdateButtonState(true);\n      errorContainer.textContent = '';\n      fnShowToaster('Processing...');\n\n      try {\n        if (globals.isSignUp) {\n          await fnSignUp(usernameInput.value, emailInput.value, passwordInput.value);\n        } else {\n          await fnSignIn(emailInput.value, passwordInput.value);\n        }\n        fnShowToaster('Success!', 'success');\n        form.reset();\n      } catch (error) {\n        errorContainer.textContent = error.message;\n        fnShowToaster(error.message, 'error');\n      } finally {\n        fnHideToaster();\n        fnUpdateButtonState(false);\n      }\n    });\n  }",
+      "function fnUpdateSwitchText() {\n    const switchText = document.getElementById('switch-text');\n    switchText.textContent = globals.isSignUp ? 'Already have an account? Sign-in' : 'Don\\'t have an account? Sign-up';\n  }",
+      "function fnShowToaster(message, type = 'info') {\n    const toaster = document.createElement('div');\n    toaster.style.cssText = `\n      position: fixed;\n      bottom: 20px;\n      right: 20px;\n      background-color: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};\n      color: white;\n      padding: 10px;\n      border-radius: 5px;\n      z-index: 1000;\n    `;\n    toaster.textContent = message;\n    document.body.appendChild(toaster);\n    setTimeout(() => toaster.remove(), 3000);\n  }",
+      "function fnHideToaster() {\n    const toaster = document.querySelector(`div[style*='position: fixed']`);\n    if (toaster) toaster.remove();\n  }",
+      "async function fnSignUp(username, email, password) {\n    if (!fnValidateInput(username, email, password)) return;\n    fnInitializeApp();\n    const auth = getAuth();\n    const userCredential = await createUserWithEmailAndPassword(auth, email, password);\n    const user = userCredential.user;\n    const db = getFirestore();\n    const docRef = doc(db, 'users', user.uid);\n    await setDoc(docRef, { username }); // Added username to user document\n    console.log('User created:', user);\n    globals.dialogBoxRef.close();\n  }",
+      "async function fnSignIn(email, password) {\n    if (!fnValidatePassword(email, password)) return;\n    fnInitializeApp();\n    const auth = getAuth();\n    const userCredential = await signInWithEmailAndPassword(auth, email, password);\n    const user = userCredential.user;\n    const db = getFirestore();\n    const userDoc = doc(db, 'users', user.uid);\n    const userSnapshot = await getDoc(userDoc);\n    console.log('User data:', userSnapshot.data());\n    globals.dialogBoxRef.close();\n  }",
+      "function fnValidateInput(username, email, password) {\n    if (!username || !email || !password) {\n      throw new Error('All fields are required.');\n    }\n    if (!fnIsValidEmail(email)) {\n      throw new Error('Invalid email address.');\n    }\n    if (!fnIsValidPassword(password)) {\n      throw new Error('Password must be at least 6 characters long and contain at least one uppercase letter.');\n    }\n    if (!fnIsValidUsername(username)) {\n      throw new Error('Username cannot contain special characters.');\n    }\n    return true;\n  }",
+      "function fnValidatePassword(email, password) {\n    if (!email || !password) {\n      throw new Error('Email and password are required.');\n    }\n    if (!fnIsValidPassword(password)) {\n      throw new Error('Password must be at least 6 characters long and contain at least one uppercase letter.');\n    }\n    return true;\n  }",
+      "function fnIsValidPassword(password) {\n    return password.length >= 6 && /[A-Z]/.test(password);\n  }",
+      "function fnIsValidUsername(username) {\n    return /^[a-zA-Z0-9_]+$/.test(username);\n  }",
+      "function fnIsValidEmail(email) {\n  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);\n}",
+      "function fnUpdateButtonState(isSubmitting) {\n    globals.submitButtonRef.textContent = isSubmitting ? 'Submitting...' : 'Submit'; //Improved text\n    globals.submitButtonRef.disabled = isSubmitting; //Simplified disabling\n  }"
+    ],
     "imports": [
       "import { initializeApp } from 'firebase/app'",
       "import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'",
-      "import { getFirestore, collection, addDoc, doc, getDoc } from 'firebase/firestore';"
+      "import { getFirestore, collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';"
     ]
   },
   "expect": "The user must have the Firebase package installed and have the necessary environment variables set (NEXT_PUBLIC_API_KEY_P2, NEXT_PUBLIC_AUTH_DOMAIN_P2, NEXT_PUBLIC_PROJECT_ID_P2, NEXT_PUBLIC_STORAGE_BUCKET_P2, NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, NEXT_PUBLIC_APP_ID_P2). A 'users' collection must exist in Firestore."

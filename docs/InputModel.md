@@ -29,6 +29,15 @@ The following keys are optional but may be included to provide additional contex
 - `"callbacks"`: An object containing independent and dependent callbacks. See the "Callbacks" section for details.
 
 - `"onInit"`: A string defining initialization logic for the input element, executed on the first render.
+- `"feedback"`: Use to improve response.
+
+**Feedback Usage:**
+
+- If `feedback` is present, prioritize processing it and revising the response.
+- `feedback` should describe errors, required changes, and constraints.
+- Aim to correct errors, implement changes, and maintain consistency.
+- If `feedback` is absent, process the request as new.
+- Latest coversation, both user and model response will be at last 2 indexes in `history`.
 
 **Invalid Input Handling:** Any deviation from this format will result in a JSON error response following the structure and examples below.
 
@@ -1496,82 +1505,21 @@ This section demonstrates how to establish a connection to Firebase or Supabase 
 ```json
 {
   "thoughts": "This prompt describes a task where the user inputs a category to filter products from a Firebase Firestore collection with debounce logic to prevent unnecessary queries. The code includes caching, data filtering, and dynamic HTML generation. If data is cached, it avoids querying Firebase repeatedly, making the app more efficient.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {
-  try {
-    args.loading(true);
-    const category = event.target.value;
-    if (!category) {
-      document.getElementById('productList').innerHTML = '<p>Please enter a category to filter products.</p>';
-      return;
-    }
-
-    // Check if the debounce timer exists in globals
-    if (globals.debounceTimer) {
-      clearTimeout(globals.debounceTimer);
-    }
-
-    // Debounce logic to prevent too frequent API calls
-    globals.debounceTimer = setTimeout(async () => {
-      // Check if the products data is already cached
-      if (!globals.productsData) {
-        // Initialize Firebase if not already done
-        initializeApp({
-          apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,
-          authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,
-          projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,
-          storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,
-          messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,
-          appId: process.env.NEXT_PUBLIC_APP_ID_P2,
-        });
-
-        const db = getFirestore();
-        const productsRef = collection(db, 'products');
-        const q = query(productsRef, where('category', '==', category));
-        const querySnapshot = await getDocs(q);
-        const products = querySnapshot.docs.map((doc) => doc.data());
-        globals.productsData = products;
-      }
-
-      const filteredProducts = globals.productsData.filter(product => product.category === category);
-
-      if (filteredProducts.length === 0) {
-        document.getElementById('productList').innerHTML = '<p>No products found for this category.</p>';
-        return;
-      }
-
-      const table = fnGenerateProductTable(filteredProducts);
-      document.getElementById('productList').innerHTML = table;
-    }, 300); // Set debounce delay of 300ms
-  } catch (error) {
-    document.getElementById('productList').innerHTML = `<p>Error: ${error.message}</p>`;
-    console.error('An error occurred:', error);
-  } finally {
-    args.loading(false);
-  }
-}",
+    "eventListener": "async function main(event, args) {\n  try {\n    args.loading(true);\n    const category = event.target.value;\n\n    if (!category) {\n      document.getElementById('productList').innerHTML = '<p>Please enter a category to filter products.</p>';\n      return;\n    }\n\n    // Check if the debounce timer exists in globals\n    if (globals.debounceTimer) {\n      clearTimeout(globals.debounceTimer);\n    }\n\n    // Debounce logic to prevent too frequent API calls\n    globals.debounceTimer = setTimeout(async () => {\n      // Check if the products data is already cached\n      if (!globals.productsData) {\n        // Initialize Firebase if not already done\n        initializeApp({\n          apiKey: process.env.NEXT_PUBLIC_API_KEY_P2,\n          authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN_P2,\n          projectId: process.env.NEXT_PUBLIC_PROJECT_ID_P2,\n          storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET_P2,\n          messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID_P2,\n          appId: process.env.NEXT_PUBLIC_APP_ID_P2,\n        });\n\n        const db = getFirestore();\n        const productsRef = collection(db, 'products');\n        const q = query(productsRef, where('category', '==', category));\n        const querySnapshot = await getDocs(q);\n        const products = querySnapshot.docs.map((doc) => doc.data());\n        globals.productsData = products;\n      }\n\n      const filteredProducts = globals.productsData.filter(product => product.category === category);\n\n      if (filteredProducts.length === 0) {\n        document.getElementById('productList').innerHTML = '<p>No products found for this category.</p>';\n        return;\n      }\n\n      const table = fnGenerateProductTable(filteredProducts);\n      document.getElementById('productList').innerHTML = table;\n    }, 300); // Set debounce delay of 300ms\n  } catch (error) {\n    document.getElementById('productList').innerHTML = `<p>Error: ${error.message}</p>`;\n    console.error('An error occurred:', error);\n  } finally {\n    args.loading(false);\n  }\n}",
     "globals": {
-      "debounceTimer": null
+      "debounceTimer": null,
+      "productsData": null //Caching products data for better performance
     },
     "imports": [
       "import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore'",
       "import { initializeApp } from 'firebase/app'"
     ],
     "helperFunctions": [
-      "function fnGenerateProductTable(products) {
-        if (products.length === 0) return '<p>No products found</p>';
-        let table =
-        '<table><thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Rating</th></tr></thead><tbody>';
-        products.forEach((product) => {
-        table += `<tr><td>${product.name}</td><td>$${product.price}</td><td>${product.category}</td><td>${product.rating}</td></tr>`;
-      });
-      table += '</tbody></table>';
-      return table;
-    }"
-  ],
+      "function fnGenerateProductTable(products) {\n        if (products.length === 0) return '<p>No products found</p>';\n        let table =\n        '<table><thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Rating</th></tr></thead><tbody>';\n        products.forEach((product) => {\n        table += `<tr><td>${product.name}</td><td>$${product.price}</td><td>${product.category}</td><td>${product.rating}</td></tr>`;\n      });\n      table += '</tbody></table>';\n      return table;\n    }"
+    ]
+  },
   "expect": "The user must have the Firebase package installed. The environment variables NEXT_PUBLIC_API_KEY_P2, NEXT_PUBLIC_AUTH_DOMAIN_P2, NEXT_PUBLIC_PROJECT_ID_P2, NEXT_PUBLIC_STORAGE_BUCKET_P2, NEXT_PUBLIC_MESSAGING_SENDER_ID_P2, NEXT_PUBLIC_APP_ID_P2 must be set. A 'products' collection must exist in Firestore with documents containing 'name', 'price', 'category', and 'rating' fields. A div with id 'productList' must exist in the DOM. The input field should trigger the query based on the category typed by the user, and the input must be debounced to prevent frequent API calls."
-}
 }
 ```
 
@@ -1599,78 +1547,15 @@ This section demonstrates how to establish a connection to Firebase or Supabase 
 ```json
 {
   "thoughts": "This prompt describes a function that filters products by name, applies a discount to the price, and prepends an asterisk to the product name. It uses Supabase's `upsert` method to update multiple rows in the `products` table. Environment variables are used to initialize the Supabase client.",
-  "error": {},
   "response": {
-    "eventListener": "async function main(event, args) {
-      try {
-        const searchQuery = event.target.value.trim().toLowerCase();
-        if (!searchQuery) {
-          document.getElementById('productList').innerHTML = '<p>Please enter a product name to filter.</p>';
-          return;
-        }
-
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        if (!supabaseUrl || !supabaseKey) {
-          throw new Error('Supabase URL or key not found in environment variables.');
-        }
-
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
-        // Fetching products where the name matches the search query
-        const { data, error: fetchError } = await supabase
-          .from('products')
-          .select('id, price, item')
-          .ilike('item', `%${searchQuery}%`);  // Using ilike for case-insensitive search
-
-        if (fetchError) throw fetchError;
-
-        if (!data.length) {
-          document.getElementById('productList').innerHTML = '<p>No products found for the search query.</p>';
-          return;
-        }
-
-        // Preparing the update data
-        const updates = data.map((product) => ({
-          id: product.id,
-          price: product.price > 30 ? Math.floor(product.price * 0.6) : product.price, // Apply 40% discount if price > 30
-          item: '*' + product.item, // Prepend * to item name
-        }));
-
-        // Performing upsert operation
-        const { data: updatedData, error } = await supabase
-          .from('products')
-          .upsert(updates)
-          .select();
-
-        if (error) throw error;
-
-        // Displaying updated products in the DOM
-        document.getElementById('productList').innerHTML = fnGenerateProductTable(updatedData);
-
-      } catch (error) {
-        document.getElementById('productList').innerHTML = `<p>Error: ${error.message}</p>`;
-        console.error('An error occurred:', error);
-      }
-    }",
+    "eventListener": "async function main(event, args) {\n  try {\n    const searchQuery = event.target.value.trim().toLowerCase();\n\n    if (!searchQuery) {\n      document.getElementById('productList').innerHTML = '<p>Please enter a product name to filter.</p>';\n      return;\n    }\n\n    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;\n    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;\n\n    if (!supabaseUrl || !supabaseKey) {\n      throw new Error('Supabase URL or key not found in environment variables.');\n    }\n\n    const supabase = createClient(supabaseUrl, supabaseKey);\n\n    // Fetching products where the name matches the search query\n    const { data, error: fetchError } = await supabase\n      .from('products')\n      .select('id, price, item, category, rating')\n      .ilike('item', `%${searchQuery}%`);  // Using ilike for case-insensitive search\n\n    if (fetchError) throw fetchError;\n\n    if (!data.length) {\n      document.getElementById('productList').innerHTML = '<p>No products found for the search query.</p>';\n      return;\n    }\n\n    // Preparing the update data\n    const updates = data.map((product) => ({\n      id: product.id,\n      price: product.price > 30 ? Math.floor(product.price * 0.6) : product.price, // Apply 40% discount if price > 30\n      item: '*' + product.item, // Prepend * to item name\n    }));\n\n    // Performing upsert operation\n    const { data: updatedData, error } = await supabase\n      .from('products')\n      .upsert(updates)\n      .select();\n\n    if (error) throw error;\n\n    // Displaying updated products in the DOM\n    document.getElementById('productList').innerHTML = fnGenerateProductTable(updatedData);\n\n  } catch (error) {\n    document.getElementById('productList').innerHTML = `<p>Error: ${error.message}</p>`;\n    console.error('An error occurred:', error);\n  }\n}",
     "globals": {},
-    "imports": [
-      "import { createClient } from '@supabase/supabase-js'"
-    ],
+    "imports": ["import { createClient } from '@supabase/supabase-js'"],
     "helperFunctions": [
-      "function fnGenerateProductTable(products) {
-        if (products.length === 0) return '<p>No products found</p>';
-        let table =
-        '<table><thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Rating</th></tr></thead><tbody>';
-        products.forEach((product) => {
-        table += `<tr><td>${product.item}</td><td>$${product.price}</td><td>${product.category}</td><td>${product.rating}</td></tr>`;
-      });
-      table += '</tbody></table>';
-      return table;
-    }"
-  ],
+      "function fnGenerateProductTable(products) {\n        if (products.length === 0) return '<p>No products found</p>';\n        let table =\n        '<table><thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Rating</th></tr></thead><tbody>';\n        products.forEach((product) => {\n        table += `<tr><td>${product.item}</td><td>$${product.price}</td><td>${product.category}</td><td>${product.rating}</td></tr>`;\n      });\n      table += '</tbody></table>';\n      return table;\n    }"
+    ]
+  },
   "expect": "The user must have the Supabase JavaScript client library installed. The environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set correctly. A table named 'products' with columns 'id', 'price', 'item', and 'category' must exist in the Supabase database. The 'id' column should be the primary key. A div with id 'productList' must exist in the DOM."
-}
 }
 ```
 

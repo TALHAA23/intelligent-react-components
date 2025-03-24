@@ -182,11 +182,11 @@ const enhanceWithAI = <T extends Common>(
     }, [props.filename]);
     React.useEffect(() => {
       console.log("From factroy", targetRef);
-      if (formBuilder && targetRef.current instanceof HTMLFormElement) {
-        formBuilder(targetRef.current, args);
+      if (formBuilder && targetRef?.current instanceof HTMLFormElement) {
+        formBuilder(targetRef?.current, args);
       }
-      if (typeof onInitialRender === "function" && targetRef.current) {
-        onInitialRender(targetRef.current, args); // Pass args to onInitialRender
+      if (typeof onInitialRender === "function" && targetRef?.current) {
+        onInitialRender(targetRef?.current, args); // Pass args to onInitialRender
       }
     }, [onInitialRender, formBuilder]);
 
@@ -195,7 +195,7 @@ const enhanceWithAI = <T extends Common>(
     const ircRegisteryAndRegister = useIrcRegistriesAndRegister(); // Assuming this hook is available
 
     React.useEffect(() => {
-      ircRegisteryAndRegister.register(IRC_ACTIONS.new, {
+      ircRegisteryAndRegister.register(IRC_ACTIONS?.new, {
         filename: props.filename,
         props, // Now includes the element prop
         refreshResponse: () => generateResponse(setState, enhancedProps),
@@ -203,7 +203,7 @@ const enhanceWithAI = <T extends Common>(
     }, []);
 
     React.useEffect(() => {
-      ircRegisteryAndRegister.register(IRC_ACTIONS.updateStatus, {
+      ircRegisteryAndRegister.register(IRC_ACTIONS?.updateStatus, {
         filename: props.filename,
         props,
         status: state.loading
@@ -216,7 +216,7 @@ const enhanceWithAI = <T extends Common>(
     }, [state.loading, state.event]); // Use state.loading and state.event
 
     React.useEffect(() => {
-      ircRegisteryAndRegister.register(IRC_ACTIONS.updateErrorAndResponse, {
+      ircRegisteryAndRegister.register(IRC_ACTIONS?.updateErrorAndResponse, {
         filename: props.filename,
         props,
         error: state.error, // Use state.error

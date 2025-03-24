@@ -52,12 +52,12 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+// import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 const DIRNAME = import.meta.dirname;
 
 export default defineConfig({
-  base: process.cwd(), // Correctly point to user's project root
+  base: process.cwd(),
   build: {
     lib: {
       entry: resolve(DIRNAME, "./src/index.ts"),
@@ -65,27 +65,29 @@ export default defineConfig({
       fileName: (format) => `index.${format}.js`,
       formats: ["cjs", "es"],
     },
-    outDir: resolve(process.cwd(), "./dist"), // Adjust outDir
+    outDir: resolve(DIRNAME, "./dist"),
     sourcemap: true,
     emptyOutDir: true,
     rollupOptions: {
-      external: ["react"], // Keep this if react is external
+      external: ["react"],
+    },
+  },
+  css: {
+    postcss: {
+      from: "./postcss.config.js",
     },
   },
   plugins: [
     dts({
-      tsconfigPath: resolve(DIRNAME, "./tsconfig.json"), //Correct path to tsconfig
+      tsconfigPath: resolve(DIRNAME, "./tsconfig.json"),
       insertTypesEntry: true,
-      compilerOptions: {
-        baseUrl: DIRNAME,
-        outDir: resolve(process.cwd(), "./dist"), //Adjust outDir here too
-      },
-      entryRoot: "src",
+      entryRoot: resolve(DIRNAME, "./src"),
+      rollupTypes: false, // Add this line
     }),
     tsconfigPaths({
       root: DIRNAME,
     }),
-    cssInjectedByJsPlugin(),
+    // cssInjectedByJsPlugin(),
   ],
 });
 // ! Version 2 - DO NOT DELETE

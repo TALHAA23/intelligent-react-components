@@ -1,6 +1,6 @@
 import { AIFormProps, AIResponse, Common } from "@types";
 import { IRC_ACTIONS, postMethod, urls } from "@utils/utils";
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import { useIrcRegistriesAndRegister } from "../hooks/ircRegisteryProvider";
 
 interface BaseComponentState {
@@ -135,14 +135,14 @@ const enhanceWithAI = <T extends Common>(
       () => typeof props.onInit === "function",
       [props.onInit]
     );
-    const targetRef = useRef<HTMLElement>(null);
-    const [onInitialRender, setOnInitialRender] = useState<
+    const targetRef = React.useRef<HTMLElement>(null);
+    const [onInitialRender, setOnInitialRender] = React.useState<
       undefined | string | ((event: HTMLElement, ...args: unknown[]) => void)
     >(isOnInitCallback ? () => props.onInit : undefined);
     const [formBuilder, setFormBuilder] = React.useState<undefined | Function>(
       undefined
     );
-    const [state, setState] = useState<BaseComponentState>({
+    const [state, setState] = React.useState<BaseComponentState>({
       loading: true,
       error: undefined,
       event: undefined,
@@ -159,7 +159,7 @@ const enhanceWithAI = <T extends Common>(
       }
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
       const getEvent = async () => {
         try {
           setState((prev) => ({ ...prev, loading: true }));
@@ -180,7 +180,8 @@ const enhanceWithAI = <T extends Common>(
       };
       getEvent();
     }, [props.filename]);
-    useEffect(() => {
+    React.useEffect(() => {
+      console.log("From factroy", targetRef);
       if (formBuilder && targetRef.current instanceof HTMLFormElement) {
         formBuilder(targetRef.current, args);
       }
@@ -193,7 +194,7 @@ const enhanceWithAI = <T extends Common>(
 
     const ircRegisteryAndRegister = useIrcRegistriesAndRegister(); // Assuming this hook is available
 
-    useEffect(() => {
+    React.useEffect(() => {
       ircRegisteryAndRegister.register(IRC_ACTIONS.new, {
         filename: props.filename,
         props, // Now includes the element prop
@@ -201,7 +202,7 @@ const enhanceWithAI = <T extends Common>(
       });
     }, []);
 
-    useEffect(() => {
+    React.useEffect(() => {
       ircRegisteryAndRegister.register(IRC_ACTIONS.updateStatus, {
         filename: props.filename,
         props,
@@ -214,7 +215,7 @@ const enhanceWithAI = <T extends Common>(
       });
     }, [state.loading, state.event]); // Use state.loading and state.event
 
-    useEffect(() => {
+    React.useEffect(() => {
       ircRegisteryAndRegister.register(IRC_ACTIONS.updateErrorAndResponse, {
         filename: props.filename,
         props,

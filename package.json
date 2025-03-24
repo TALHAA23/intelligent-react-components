@@ -1,6 +1,6 @@
 {
   "name": "intelligent-react-components",
-  "version": "1.0.26",
+  "version": "1.0.31",
   "description": "",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -19,6 +19,7 @@
     "vite.config.ts",
     "vite.config.prod.ts",
     "irc.config.cjs",
+    "postcss.config.js",
     "public"
   ],
   "scripts": {
@@ -49,7 +50,7 @@
     "jsdom": "^25.0.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.4.0",
-    "vite-plugin-eslint": "^1.8.1",
+  "vite-plugin-eslint": "^1.8.1",
     "vitest": "^2.0.5"
   },
   "peerDependencies": {

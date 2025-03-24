@@ -49,7 +49,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { peerDependencies } from "./package.json";
 import tsconfigPaths from "vite-tsconfig-paths";
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+// import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 export default defineConfig({
   build: {
@@ -68,6 +68,11 @@ export default defineConfig({
       include: ["**/*"],
     },
   },
+  css: {
+    postcss: {
+      from: "./postcss.config.js",
+    },
+  },
   plugins: [
     dts({
       tsconfigPath: "./tsconfig.json",
@@ -78,6 +83,6 @@ export default defineConfig({
       entryRoot: "src", // Add this line
     }),
     tsconfigPaths(),
-    cssInjectedByJsPlugin(),
+    // cssInjectedByJsPlugin(),
   ],
 });

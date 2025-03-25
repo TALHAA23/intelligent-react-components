@@ -153,6 +153,7 @@ const AIButton = enhanceWithAI(AIButtonBase, "button");
 
 export default AIButton;
 
+// ? LOGIC TO BE DELTED
 // export const AIButton: React.FC<AIButtonProps> = enhanceWithAI(
 //   (props: AIButtonProps) => {
 //     const { handleEvent, loading, event, refreshResponse, targetRef, ...rest } =

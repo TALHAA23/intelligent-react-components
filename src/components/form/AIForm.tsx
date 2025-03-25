@@ -5,7 +5,8 @@ import enhanceWithAI from "../enhanceWithAI";
 import Loader from "../loader/Loader";
 import { StyledNoStyleButton } from "@styles/StylesCommon";
 import { StyledRegenerateIcon } from "@styles/StylesAIButton";
-const AIForm: React.FC<AIFormProps> = enhanceWithAI((props: AIFormProps) => {
+
+const AIFormBase = (props: AIFormProps) => {
   const {
     event,
     handleEvent,
@@ -18,6 +19,7 @@ const AIForm: React.FC<AIFormProps> = enhanceWithAI((props: AIFormProps) => {
   const eventListener: React.DOMAttributes<HTMLFormElement> = {
     [props?.listener || "onSubmit"]: event ? handleEvent : undefined,
   };
+
   return (
     <form
       ref={targetRef}
@@ -26,7 +28,7 @@ const AIForm: React.FC<AIFormProps> = enhanceWithAI((props: AIFormProps) => {
       {...attributes}
     >
       {loading && <Loader />}
-      {props.cacheResponse == false && (
+      {props.cacheResponse === false && (
         <StyledNoStyleButton disabled={loading}>
           <StyledRegenerateIcon
             src={stars}
@@ -39,6 +41,45 @@ const AIForm: React.FC<AIFormProps> = enhanceWithAI((props: AIFormProps) => {
       {props.children}
     </form>
   );
-}, "form");
+};
+
+const AIForm = enhanceWithAI(AIFormBase, "form");
 
 export default AIForm;
+
+// ? LOGIC TO BE DELETE
+// const AIForm: React.FC<AIFormProps> = enhanceWithAI((props: AIFormProps) => {
+//   const {
+//     event,
+//     handleEvent,
+//     targetRef,
+//     attributes,
+//     loading,
+//     refreshResponse,
+//   } = props as EnhancedComponentProps<AIFormProps, HTMLFormElement>;
+
+//   const eventListener: React.DOMAttributes<HTMLFormElement> = {
+//     [props?.listener || "onSubmit"]: event ? handleEvent : undefined,
+//   };
+//   return (
+//     <form
+//       ref={targetRef}
+//       className={props.filename}
+//       {...eventListener}
+//       {...attributes}
+//     >
+//       {loading && <Loader />}
+//       {props.cacheResponse == false && (
+//         <StyledNoStyleButton disabled={loading}>
+//           <StyledRegenerateIcon
+//             src={stars}
+//             alt="re-generate"
+//             title="Re-generate"
+//             onClick={refreshResponse}
+//           />
+//         </StyledNoStyleButton>
+//       )}
+//       {props.children}
+//     </form>
+//   );
+// }, "form");

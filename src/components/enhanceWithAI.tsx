@@ -241,8 +241,6 @@ const enhanceWithAI = <T extends Common>(
     );
   };
 
-  // EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
-
   return EnhancedComponent;
 };
 

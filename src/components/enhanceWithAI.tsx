@@ -128,7 +128,7 @@ function extractInfoFromProps(props: Common): Result {
 const enhanceWithAI = <T extends Common>(
   WrappedComponent: React.FC<T>,
   element: "button" | "input" | "form"
-): React.FC<T> => {
+) => {
   const EnhancedComponent = (props: T) => {
     const enhancedProps = { ...props, element };
     const isOnInitCallback = React.useMemo(
@@ -241,7 +241,7 @@ const enhanceWithAI = <T extends Common>(
     );
   };
 
-  EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
+  // EnhancedComponent.displayName = `WithAIEvents(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return EnhancedComponent;
 };

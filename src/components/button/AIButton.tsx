@@ -9,6 +9,42 @@ import {
 } from "@styles/StylesCommon";
 import enhanceWithAI from "../enhanceWithAI";
 
+const AIButtonBase = (props: AIButtonProps) => {
+  const { handleEvent, loading, event, refreshResponse, targetRef, ...rest } =
+    props as EnhancedComponentProps<AIButtonProps, HTMLButtonElement>;
+
+  const eventListener: React.DOMAttributes<HTMLButtonElement> = {
+    [props?.listener || "onClick"]: event ? handleEvent : undefined,
+  };
+
+  return (
+    <StyledComponentsWrapper>
+      <StyledAIButton
+        ref={targetRef}
+        {...eventListener}
+        {...rest.attributes}
+        disabled={loading}
+      >
+        {loading ? (
+          <Loader />
+        ) : (
+          <span className="text">{props.label || "AIButton"}</span>
+        )}
+      </StyledAIButton>
+      {props.cacheResponse === false && (
+        <StyledNoStyleButton disabled={loading}>
+          <StyledRegenerateIcon
+            src={stars}
+            alt="re-generate"
+            title="Re-generate"
+            onClick={refreshResponse}
+          />
+        </StyledNoStyleButton>
+      )}
+    </StyledComponentsWrapper>
+  );
+};
+
 /**
  * AIButton is a React functional component that renders a button with AI-enhanced capabilities.
  * It leverages the `enhanceWithAI` Higher-Order Component (HOC) to manage state, handle events,
@@ -113,43 +149,47 @@ import enhanceWithAI from "../enhanceWithAI";
  *   }}
  * />
  */
-export const AIButton: React.FC<AIButtonProps> = enhanceWithAI(
-  (props: AIButtonProps) => {
-    const { handleEvent, loading, event, refreshResponse, targetRef, ...rest } =
-      props as EnhancedComponentProps<AIButtonProps, HTMLButtonElement>;
-
-    const eventListener: React.DOMAttributes<HTMLButtonElement> = {
-      [props?.listener || "onClick"]: event ? handleEvent : undefined,
-    };
-
-    return (
-      <StyledComponentsWrapper>
-        <StyledAIButton
-          ref={targetRef}
-          {...eventListener}
-          {...rest.attributes}
-          disabled={loading}
-        >
-          {loading ? (
-            <Loader />
-          ) : (
-            <span className="text">{props.label || "AIButton"}</span>
-          )}
-        </StyledAIButton>
-        {props.cacheResponse == false && (
-          <StyledNoStyleButton disabled={loading}>
-            <StyledRegenerateIcon
-              src={stars}
-              alt="re-generate"
-              title="Re-generate"
-              onClick={refreshResponse}
-            />
-          </StyledNoStyleButton>
-        )}
-      </StyledComponentsWrapper>
-    );
-  },
-  "button"
-);
+const AIButton = enhanceWithAI(AIButtonBase, "button");
 
 export default AIButton;
+
+// export const AIButton: React.FC<AIButtonProps> = enhanceWithAI(
+//   (props: AIButtonProps) => {
+//     const { handleEvent, loading, event, refreshResponse, targetRef, ...rest } =
+//       props as EnhancedComponentProps<AIButtonProps, HTMLButtonElement>;
+
+//     const eventListener: React.DOMAttributes<HTMLButtonElement> = {
+//       [props?.listener || "onClick"]: event ? handleEvent : undefined,
+//     };
+
+//     return (
+//       <StyledComponentsWrapper>
+//         <StyledAIButton
+//           ref={targetRef}
+//           {...eventListener}
+//           {...rest.attributes}
+//           disabled={loading}
+//         >
+//           {loading ? (
+//             <Loader />
+//           ) : (
+//             <span className="text">{props.label || "AIButton"}</span>
+//           )}
+//         </StyledAIButton>
+//         {props.cacheResponse == false && (
+//           <StyledNoStyleButton disabled={loading}>
+//             <StyledRegenerateIcon
+//               src={stars}
+//               alt="re-generate"
+//               title="Re-generate"
+//               onClick={refreshResponse}
+//             />
+//           </StyledNoStyleButton>
+//         )}
+//       </StyledComponentsWrapper>
+//     );
+//   },
+//   "button"
+// );
+
+// export default AIButton;

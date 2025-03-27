@@ -26,7 +26,7 @@ app.listen(async () => {
   // Remove the explicit port here
   try {
     const configs = await loadConfig();
-    const port = configs.PORT || 5173; // Use the config's PORT or default
+    const port = configs.PORT || 7070; // Use the config's PORT or default
 
     app.listen(port, () => {
       // Listen on the determined port

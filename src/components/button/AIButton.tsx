@@ -4,8 +4,11 @@ import Loader from "@components/loader/Loader";
 import stars from "@public/re-generate.svg";
 import { StyledAIButton, StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
-  StyledNoStyleButton,
+  FileNameTag,
   StyledComponentsWrapper,
+  StyledNoStyleButton,
+  // StyledComponentsWrapper,
+  // FileNameTag,
 } from "@styles/StylesCommon";
 import enhanceWithAI from "../enhanceWithAI";
 
@@ -18,30 +21,29 @@ const AIButtonBase = (props: AIButtonProps) => {
   };
 
   return (
-    <StyledComponentsWrapper>
+    <>
       <StyledAIButton
         ref={targetRef}
         {...eventListener}
         {...rest.attributes}
         disabled={loading}
       >
-        {loading ? (
-          <Loader />
-        ) : (
-          <span className="text">{props.label || "AIButton"}</span>
-        )}
+        {loading ? <Loader /> : props?.label || "AIButton"}
       </StyledAIButton>
-      {props.cacheResponse === false && (
-        <StyledNoStyleButton disabled={loading}>
-          <StyledRegenerateIcon
-            src={stars}
-            alt="re-generate"
-            title="Re-generate"
-            onClick={refreshResponse}
-          />
-        </StyledNoStyleButton>
+      {props.cacheResponse == false && (
+        <StyledComponentsWrapper>
+          <FileNameTag>{props?.filename + ".js"}</FileNameTag>
+          <StyledNoStyleButton disabled={loading}>
+            <StyledRegenerateIcon
+              src={stars}
+              alt="re-generate"
+              title="Re-generate"
+              onClick={refreshResponse}
+            />
+          </StyledNoStyleButton>
+        </StyledComponentsWrapper>
       )}
-    </StyledComponentsWrapper>
+    </>
   );
 };
 
@@ -153,7 +155,7 @@ const AIButton = enhanceWithAI(AIButtonBase, "button");
 
 export default AIButton;
 
-// ? LOGIC TO BE DELTED
+// TODO: LOGIC TO BE DELTED
 // export const AIButton: React.FC<AIButtonProps> = enhanceWithAI(
 //   (props: AIButtonProps) => {
 //     const { handleEvent, loading, event, refreshResponse, targetRef, ...rest } =

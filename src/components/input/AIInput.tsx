@@ -2,6 +2,7 @@ import React from "react";
 import stars from "@public/re-generate.svg";
 import { StyledRegenerateIcon } from "@styles/StylesAIButton";
 import {
+  FileNameTag,
   StyledComponentsWrapper,
   StyledNoStyleButton,
 } from "@styles/StylesCommon";
@@ -95,29 +96,32 @@ const AIInputBase = (props: AIInputProps) => {
   }, [props.listener, event]);
 
   return (
-    <StyledComponentsWrapper>
-      <span>
-        <input
-          onBlur={storeInputValue}
-          ref={targetRef}
-          type={props.type || "text"}
-          {...eventListener}
-          {...attributes}
-          disabled={loading}
-        />
-      </span>
-      {loading && <Loader />}
-      {props.cacheResponse === false && (
-        <StyledNoStyleButton disabled={loading}>
-          <StyledRegenerateIcon
-            src={stars}
-            alt="re-generate"
-            title="Re-generate"
-            onClick={refreshResponse}
-          />
-        </StyledNoStyleButton>
-      )}
-    </StyledComponentsWrapper>
+    <>
+      <input
+        onBlur={storeInputValue}
+        ref={targetRef}
+        type={props.type || "text"}
+        {...eventListener}
+        {...attributes}
+        disabled={loading}
+      />
+      <StyledComponentsWrapper>
+        {(props.cacheResponse == false || loading) && (
+          <FileNameTag>{props.filename + ".js"}: </FileNameTag>
+        )}
+        {props.cacheResponse === false && (
+          <StyledNoStyleButton disabled={loading}>
+            <StyledRegenerateIcon
+              src={stars}
+              alt="re-generate"
+              title="Re-generate"
+              onClick={refreshResponse}
+            />
+          </StyledNoStyleButton>
+        )}
+        {loading && <Loader />}
+      </StyledComponentsWrapper>
+    </>
   );
 };
 

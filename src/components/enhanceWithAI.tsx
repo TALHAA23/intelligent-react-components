@@ -93,10 +93,11 @@ interface Result {
 }
 
 function extractInfoFromProps(props: Common): Result {
-  const result: Result = { ...props };
+  const result: Result = {};
 
   if (props.supportingProps) {
     const { utils = {}, variables = {} } = props.supportingProps;
+
     Object.keys(utils).forEach((key) => {
       result[`${key}`] = utils[key];
     });
@@ -148,16 +149,35 @@ const enhanceWithAI = <T extends Common>(
       event: undefined,
       responseMeta: undefined,
     });
-    const args = React.useMemo(
-      () => extractInfoFromProps(props),
-      [props, state]
-    );
+    // TODO: LOGIC TO DELETE
+    // const args = React.useMemo(
+    //   () => extractInfoFromProps(props),
+    //   [props, state]
+    // );
 
-    const handleEvent = (e: any) => {
-      if (state.event && state.event.default) {
-        state.event.default(e, args); // Use memoized args
-      }
-    };
+    const args = React.useRef<Result | null>(null);
+
+    // Update the ref whenever `args` changes
+    React.useEffect(() => {
+      args.current = extractInfoFromProps(props);
+    }, [props, state]);
+
+    const handleEvent = React.useCallback(
+      (e: any) => {
+        if (state.event && state.event.default) {
+          const currentArgs = args?.current; // Use the latest args from the ref
+          state.event.default(e, currentArgs); // Use the latest args
+        }
+      },
+      [state.event, props] // No need to include `args` here
+    );
+    // TODO: LOGIC TO DELETE
+    // const handleEvent = (e: any) => {
+    //   if (state.event && state.event.default) {
+    //     if (props.filename == "filterTodos") console.log("setting event", args);
+    //     state.event.default(e, args); // Use memoized args
+    //   }
+    // };
 
     React.useEffect(() => {
       const getEvent = async () => {
@@ -181,12 +201,11 @@ const enhanceWithAI = <T extends Common>(
       getEvent();
     }, [props.filename]);
     React.useEffect(() => {
-      console.log("From factroy", targetRef);
       if (formBuilder && targetRef?.current instanceof HTMLFormElement) {
-        formBuilder(targetRef?.current, args);
+        formBuilder(targetRef?.current, args?.current);
       }
       if (typeof onInitialRender === "function" && targetRef?.current) {
-        onInitialRender(targetRef?.current, args); // Pass args to onInitialRender
+        onInitialRender(targetRef?.current, args?.current);
       }
     }, [onInitialRender, formBuilder]);
 

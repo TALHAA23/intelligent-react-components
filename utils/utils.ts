@@ -1,7 +1,7 @@
 import { ACTIONS } from "@types";
 
 export const urls = {
-  generativeAi: "http://localhost:5173/prompt-to-code",
+  generativeAi: "http://localhost:7070/prompt-to-code",
 };
 
 export const postMethod: RequestInit = {
@@ -11,8 +11,8 @@ export const postMethod: RequestInit = {
   },
 };
 
-export const IRC_ACTIONS: {[key:string]:ACTIONS} = {
-  new:"new",
-  updateStatus:"update-status",
-  updateErrorAndResponse:"update-error-or-response",
-}
+export const IRC_ACTIONS: { [key: string]: ACTIONS } = {
+  new: "new",
+  updateStatus: "update-status",
+  updateErrorAndResponse: "update-error-or-response",
+};

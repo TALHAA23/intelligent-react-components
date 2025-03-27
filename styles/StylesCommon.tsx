@@ -96,6 +96,7 @@ interface NoStyleButtonProps {
   isSpinning?: boolean;
 }
 export const StyledNoStyleButton = styled.button<NoStyleButtonProps>`
+  display: inline;
   color: #333;
   font-size: 16px;
   cursor: pointer;
@@ -130,4 +131,11 @@ export const StyledXSLightText = styled.p`
   font-size: 0.75rem;
   line-height: 1rem;
   font-weight: 300;
+`;
+
+export const FileNameTag = styled.small`
+  background-color: #6cb4ee;
+  color: black;
+  border-radius: 3px;
+  padding: 1px 5px;
 `;

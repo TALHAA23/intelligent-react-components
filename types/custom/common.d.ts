@@ -2,7 +2,13 @@ import React from "react";
 
 // type Element = "input" | "button" | "form";
 
-interface Common<Target = React.ReactHTMLElement, T = Function> {
+interface Common<Target = React.HTMLAttributes> {
+  /**
+   * Any valid event handler .i.e onClick, onHover etc.
+   *
+   * @type {?React.DOMAttributes<HTMLElement>}
+   */
+  on?: React.DOMAttributes<HTMLElement>;
   /**
    * Indicates whether to cache the response from the AI.
    * If set to `false`, it creates a button beside the element which, when clicked, sends another request to generate code (a refresh button).
@@ -123,7 +129,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
       /**
        * The independent callback function.
        */
-      callback: T;
+      callback: Function;
     }[];
 
     /**
@@ -144,7 +150,7 @@ interface Common<Target = React.ReactHTMLElement, T = Function> {
       /**
        * The dependent callback function.
        */
-      callback: T;
+      callback: Function;
     }[];
 
     [key: string]: any;

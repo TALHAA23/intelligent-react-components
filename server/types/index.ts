@@ -1,7 +1,7 @@
 import { DOMAttributes, HTMLAttributes } from "react";
 import { Request, Response } from "express";
 type RouteHandler = (req: Request, res: Response) => void;
-type Element = "input" | "button";
+type Element = "input" | "button" | "form";
 
 interface Common<T = Function> {
   cacheResponse?: boolean;
@@ -63,4 +63,4 @@ interface AIResponse {
   expect?: string;
 }
 
-export type { RouteHandler, Common, AIResponse };
+export type { RouteHandler, Common, AIResponse, Element };

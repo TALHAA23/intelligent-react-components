@@ -8,6 +8,7 @@ import { StyledRegenerateIcon } from "@styles/StylesAIButton";
 
 const AIFormBase = (props: AIFormProps) => {
   const {
+    on,
     event,
     handleEvent,
     targetRef,
@@ -24,6 +25,7 @@ const AIFormBase = (props: AIFormProps) => {
     <form
       ref={targetRef}
       className={props.filename}
+      {...on}
       {...eventListener}
       {...attributes}
     >

@@ -12,6 +12,7 @@ import enhanceWithAI from "../enhanceWithAI";
 
 const AIInputBase = (props: AIInputProps) => {
   const {
+    on,
     handleEvent,
     loading,
     event,
@@ -101,6 +102,7 @@ const AIInputBase = (props: AIInputProps) => {
         onBlur={storeInputValue}
         ref={targetRef}
         type={props.type || "text"}
+        {...on}
         {...eventListener}
         {...attributes}
         disabled={loading}

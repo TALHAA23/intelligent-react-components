@@ -7,6 +7,7 @@ import watcher from "./utils/watcher.js";
 import log from "./utils/cliColoredLog.js";
 import path from "path";
 import loadConfig from "./utils/loadConfig.js";
+import instructionHandler from "./lib/instructionSelector.js";
 const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -28,9 +29,17 @@ app.listen(async () => {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
 
+    const i = instructionHandler("input", [
+      // "supportingProps.database",
+      "formDefinations",
+      // "mutation",
+    ]);
+    console.log(i);
+
     app.listen(port, () => {
       // Listen on the determined port
       log("Running on: ", `http://localhost:${port}/`, "\n").info();
+      return;
       const rootDir = process.cwd();
       chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
     });

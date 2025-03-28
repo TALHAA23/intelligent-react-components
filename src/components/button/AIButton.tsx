@@ -13,8 +13,15 @@ import {
 import enhanceWithAI from "../enhanceWithAI";
 
 const AIButtonBase = (props: AIButtonProps) => {
-  const { handleEvent, loading, event, refreshResponse, targetRef, ...rest } =
-    props as EnhancedComponentProps<AIButtonProps, HTMLButtonElement>;
+  const {
+    handleEvent,
+    loading,
+    event,
+    refreshResponse,
+    targetRef,
+    on,
+    ...rest
+  } = props as EnhancedComponentProps<AIButtonProps, HTMLButtonElement>;
 
   const eventListener: React.DOMAttributes<HTMLButtonElement> = {
     [props?.listener || "onClick"]: event ? handleEvent : undefined,
@@ -24,6 +31,7 @@ const AIButtonBase = (props: AIButtonProps) => {
     <>
       <StyledAIButton
         ref={targetRef}
+        {...on}
         {...eventListener}
         {...rest.attributes}
         disabled={loading}

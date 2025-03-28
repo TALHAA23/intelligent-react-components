@@ -115,7 +115,7 @@ fnDisplayMessage("Hello!");
 
 When defining helper functions in the `helperFunctions` array, correctly define parameters. If a helper function uses parameters passed from the `main` function, these parameters must be defined in the helper function's signature. If a helper function needs to use the `event` object or the `args` object, these must be explicitly defined as parameters in the helper function's signature.
 
-## Use Cases:
+### Use Cases:
 
 **Code Modularity:** Break down complex logic into smaller, reusable functions.
 

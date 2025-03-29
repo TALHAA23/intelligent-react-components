@@ -4,8 +4,8 @@ The generated JavaScript function will receive user-defined elements (variables,
 
 ### Guidelines for Accessing User-Defined Elements:
 
-**[SUPPORTING_PROPS_ACCESS]**
+_SUPPORTING_PROPS_ACCESS_
 
-**[MUTATION_ACCESS]**
+_MUTATION_ACCESS_
 
-**[CALLBACKS_ACCESS]**
+_CALLBACKS_ACCESS_

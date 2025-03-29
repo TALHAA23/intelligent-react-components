@@ -1,16 +1,14 @@
 import fs from "fs";
 import path from "path";
-import type { Element } from "../types";
+import { type Element } from "../types";
+import { InputKeys } from "../types/enum.js";
 import dynamicInstructions from "./dynamicInstructions.js";
+import { format } from "prettier";
 
-enum Keys {
-  "supportingProps" = "supportingProps",
-  "database" = "supportingProps.database",
-  "mutation" = "mutation",
-  "formDefination" = "formDefination",
-}
-
-export default function instructionHandler(target: Element, keys: string[]) {
+export default async function instructionHandler(
+  target: Element,
+  keys: string[]
+) {
   const root = path.resolve(
     import.meta.dirname,
     "../../../public/instructions"
@@ -46,7 +44,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
   if (expectedInputInstruction) {
     const replacement = {
       ELEMENT_TYPE: target.toUpperCase(),
-      ELEMENT_SPECIFIC_REQUIRED_KEYS: selectInsturction(
+      ELEMENT_SPECIFIC_REQUIRED_KEYS: selectInstruction(
         {
           button: "",
           input:
@@ -55,7 +53,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
         },
         target
       ),
-      ELEMENT_SPECIFIC_OPTIONAL_KEYS: selectInsturction(
+      ELEMENT_SPECIFIC_OPTIONAL_KEYS: selectInstruction(
         {
           button: "",
           input: "",
@@ -86,16 +84,16 @@ export default function instructionHandler(target: Element, keys: string[]) {
           ? "**Always call the `event.preventDefaults()` method to disable the form default behaviour**"
           : "",
       FORM_BUILDER_PLACEHOLDER: target == "form" ? "`formBuilder`, " : "",
-      _PROCCESSING_DATABASE_KEYWORDS_: keysIncludes(Keys.database)
+      _PROCCESSING_DATABASE_KEYWORDS_: keysIncludes(InputKeys.database)
         ? "Identify keywords indicating database operations (e.g., fetch, insert, update, delete)"
         : "",
-      _MUTATION_HANDLING_: keysIncludes(Keys.mutation)
+      _MUTATION_HANDLING_: keysIncludes(InputKeys.mutation)
         ? dynamicInstructions.mutationHandlingProccessingSteps
         : "",
-      _DATABASE_CONFIGURATION_: keysIncludes(Keys.database)
+      _DATABASE_CONFIGURATION_: keysIncludes(InputKeys.database)
         ? dynamicInstructions.databaseConfigProccessingSteps
         : "",
-      _ELEMENT_SPECIFIC_PROCESSING_: keysIncludes(Keys.supportingProps)
+      _ELEMENT_SPECIFIC_PROCESSING_: keysIncludes(InputKeys.supportingProps)
         ? dynamicInstructions.formDefinationProccessingSteps
         : "",
     };
@@ -106,6 +104,40 @@ export default function instructionHandler(target: Element, keys: string[]) {
     context.push(proccessingInstructions);
   }
 
+  // ** collect thought process instructions ** //
+  let thoughtProccessInstruction = importMarkdown(
+    `${root}/thoughtProcess/thought_process_instructions.md`
+  );
+  if (thoughtProccessInstruction) {
+    const replacement = {
+      _INPUT_VALIDATION_PROCESS_:
+        dynamicInstructions.thoughtProccessInstructions.inputValidationProcces(
+          target,
+          keys
+        ),
+      _PROMPT_INTERPRETATION_PROCESS_:
+        dynamicInstructions.thoughtProccessInstructions.promptInterpretationProccess(
+          target,
+          keys
+        ),
+      _THOUGHT_PROCESS_BOTH_CALLBACKS_:
+        keysIncludes(InputKeys.independentCallbacks) &&
+        keysIncludes(InputKeys.dependentCallbacks)
+          ? "(both independent and dependent callbacks)"
+          : "",
+      _THOUGTH_PROCESS_INSUFFIENT_PARAMTER_FOR_DEPENDENT_: keys.includes(
+        InputKeys.dependentCallbacks
+      )
+        ? ", or insufficient parameters for dependent callbacks,"
+        : "",
+    };
+    thoughtProccessInstruction = replacePlaceholders(
+      thoughtProccessInstruction,
+      replacement
+    );
+    context.push(thoughtProccessInstruction);
+  }
+
   // ** collect globals object instruction ** //
   let globalsObjInstruction = importMarkdown(
     `${root}/globals/globals_instructions.md`
@@ -113,7 +145,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
 
   if (globalsObjInstruction) {
     const replacements = {
-      GLOBAL_VARIABLE_EXAMPLE_KEY: selectInsturction(
+      GLOBAL_VARIABLE_EXAMPLE_KEY: selectInstruction(
         {
           input: "isValid",
           button: "numberofClick",
@@ -121,7 +153,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
         },
         target
       ),
-      GLOBAL_VARIABLE_EXAMPLE_VALUE: selectInsturction(
+      GLOBAL_VARIABLE_EXAMPLE_VALUE: selectInstruction(
         {
           input: "Storing the rules for change input state such as disable",
           button: "Store the number of clicks to presist for subsequent clicks",
@@ -175,7 +207,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
   if (preventDuplicateDomElementInstructions) {
     const replacement = {
       ELEMENT_TYPE: target.toUpperCase(),
-      INTERACTION_TYPE: selectInsturction(
+      INTERACTION_TYPE: selectInstruction(
         {
           button: "click, or any mouse event",
           input: "input, change or any input related event",
@@ -183,7 +215,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
         },
         target
       ),
-      ELEMENT_SPECIFIC_INSTRUCTIONS: selectInsturction(
+      ELEMENT_SPECIFIC_INSTRUCTIONS: selectInstruction(
         {
           button: "",
           input: "",
@@ -206,7 +238,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
   if (handleInvalidIrrelevantInstruction) {
     const replacement = {
       ELEMENT_TYPE: target.toUpperCase(),
-      MISSING_KEYS_DETAILS: selectInsturction(
+      MISSING_KEYS_DETAILS: selectInstruction(
         {
           button: "The following keys are missing: listener, prompt.",
           input: "The following keys are missing: listener, prompt, or type.",
@@ -214,7 +246,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
         },
         target
       ),
-      INVALID_DATA_TYPE_DETAILS: selectInsturction(
+      INVALID_DATA_TYPE_DETAILS: selectInstruction(
         {
           button:
             "The 'prompt' field should be a string, but a number was provided.",
@@ -224,7 +256,7 @@ export default function instructionHandler(target: Element, keys: string[]) {
         },
         target
       ),
-      IRRELEVANT_REQUEST_DETAILS: selectInsturction(
+      IRRELEVANT_REQUEST_DETAILS: selectInstruction(
         {
           button:
             "The request is not related to generating a JavaScript event listener function. Please provide a valid JSON input.",
@@ -248,7 +280,18 @@ export default function instructionHandler(target: Element, keys: string[]) {
   );
 
   if (accessArgsInstructions) {
-    const replacement = {};
+    const replacement = {
+      _SUPPORTING_PROPS_ACCESS_: keysIncludes(InputKeys.supportingProps)
+        ? dynamicInstructions.supportingPropsInstruction(keys)
+        : "",
+      _MUTATION_ACCESS_: keysIncludes(InputKeys.mutation)
+        ? dynamicInstructions.mutatationPropInstruction
+        : "",
+      _CALLBACKS_ACCESS_: keysIncludes(InputKeys.callbacks)
+        ? dynamicInstructions.callbacksPropInstruction(keys)
+        : "",
+    };
+
     accessArgsInstructions = replacePlaceholders(
       accessArgsInstructions,
       replacement
@@ -258,14 +301,14 @@ export default function instructionHandler(target: Element, keys: string[]) {
 
   //   ** Database interaction keywords ** //
 
-  if (keysIncludes(Keys.database)) {
+  if (keysIncludes(InputKeys.database)) {
     let databaseInteractionInstruction = importMarkdown(
       `${root}/databaseInteractionKeywords/database_interaction_keywords_instructions.md`
     );
 
     if (databaseInteractionInstruction) {
       const replacement = {
-        ELEMENT_SPECIFIC_DATABASE_INSTRUCTIONS: selectInsturction(
+        ELEMENT_SPECIFIC_DATABASE_INSTRUCTIONS: selectInstruction(
           {
             button: "",
             form: "",
@@ -288,9 +331,15 @@ export default function instructionHandler(target: Element, keys: string[]) {
   //     const updated = content?.replace(/button/gi, "Form") || null;
   //     context.push(updated);
   //   });
+  const formatInstruction = await format(
+    context.toString().replace(/,#/g, "\n#"),
+    {
+      parser: "markdown",
+    }
+  );
   fs.writeFile(
     `${process.cwd()}/instructions.md`,
-    context.toString().replace(/,#/g, "\n#"),
+    formatInstruction,
     { encoding: "utf-8" },
     (err) => {
       if (err) {
@@ -325,9 +374,9 @@ function replacePlaceholders(
   return modifiedText;
 }
 
-const selectInsturction = (
-  options: { [key: string]: any },
-  selectedKey: string
+const selectInstruction = (
+  options: Record<Element, any>,
+  selectedKey: Element
 ) => options[selectedKey];
 
 function importMarkdown(filePath: string) {

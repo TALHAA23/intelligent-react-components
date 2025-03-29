@@ -29,9 +29,16 @@ app.listen(async () => {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
 
-    const i = instructionHandler("input", [
-      // "supportingProps.database",
+    const i = await instructionHandler("input", [
+      "supportingProps",
+      "supportingProps.database",
+      // "supportingProps.utils",
+      "supportingProps.variables",
       "formDefinations",
+      "mutation",
+      // "callbacks",
+      "callbacks.independent",
+      // "callbacks.dependent",
       // "mutation",
     ]);
     console.log(i);

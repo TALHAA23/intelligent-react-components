@@ -1,0 +1,11 @@
+export enum InputKeys {
+  "supportingProps" = "supportingProps",
+  "utils" = "supportingProps.utils",
+  "variables" = "supportingProps.variables",
+  "database" = "supportingProps.database",
+  "mutation" = "mutation",
+  "formDefination" = "formDefination",
+  "callbacks" = "callbacks",
+  "independentCallbacks" = "callbacks.independent",
+  "dependentCallbacks" = "callbacks.dependent",
+}

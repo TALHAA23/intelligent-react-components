@@ -108,6 +108,7 @@ interface Common<Target = React.HTMLAttributes> {
      * The type of mutation:
      * - `"callback"`: `mutation[].mutate` is called as a function.
      * - `"assignment"`: `mutation[].mutate` is assigned using `=`.
+     * @default callback
      */
     mutationType?: "callback" | "assignment";
   }[];

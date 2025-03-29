@@ -7,13 +7,15 @@ import { format } from "prettier";
 
 export default async function instructionHandler(
   target: Element,
-  keys: string[]
+  keys: string[],
+  prompt: string
 ) {
   const root = path.resolve(
     import.meta.dirname,
     "../../../public/instructions"
   );
   const context: (string | null)[] = [];
+  const haveDatabaseInteraction = detectsFirebaseSupabaseInteraction(prompt);
   const keysIncludes = (key: string) => keys.includes(key);
 
   // **  collect general instrucitions ** //
@@ -120,22 +122,70 @@ export default async function instructionHandler(
           target,
           keys
         ),
-      _THOUGHT_PROCESS_BOTH_CALLBACKS_:
-        keysIncludes(InputKeys.independentCallbacks) &&
-        keysIncludes(InputKeys.dependentCallbacks)
-          ? "(both independent and dependent callbacks)"
-          : "",
-      _THOUGTH_PROCESS_INSUFFIENT_PARAMTER_FOR_DEPENDENT_: keys.includes(
-        InputKeys.dependentCallbacks
-      )
-        ? ", or insufficient parameters for dependent callbacks,"
+      _CALLBACK_HANDLING_: keysIncludes(InputKeys.callbacks)
+        ? dynamicInstructions.thoughtProccessInstructions.callbacks(keys)
         : "",
+      _MUTATION_HANDLING_: keysIncludes(InputKeys.mutation)
+        ? dynamicInstructions.thoughtProccessInstructions.mutationInstruction
+        : "",
+      _CODE_GENERATION_LOGIC_:
+        dynamicInstructions.thoughtProccessInstructions.codeGeneration(target),
+      _ON_INIT_PROCESSING_: keysIncludes(InputKeys.onInitialRender)
+        ? dynamicInstructions.thoughtProccessInstructions.onInitialRender
+        : "",
+      _DATABASE_INTERACTION_:
+        haveDatabaseInteraction || keysIncludes(InputKeys.database)
+          ? dynamicInstructions.thoughtProccessInstructions.databaseInteraction
+          : "",
+      _CSS_CONSIDERATIONS_:
+        target == "form"
+          ? dynamicInstructions.thoughtProccessInstructions.cssRules
+          : "",
+      _FIELD_DEFINITION_PROCESSING_:
+        target == "form"
+          ? dynamicInstructions.thoughtProccessInstructions.fieldDefination
+          : "",
+      _FORM_BUILDER_FUNCTION_:
+        target == "form"
+          ? dynamicInstructions.thoughtProccessInstructions.formBuilder
+          : "",
+      _RESPONSIVENESS_CONSIDERATIONS_:
+        target == "form"
+          ? dynamicInstructions.thoughtProccessInstructions.responsivness
+          : "",
+      _ACCESSIBILITY_CONSIDERATIONS_:
+        target == "form"
+          ? dynamicInstructions.thoughtProccessInstructions.accessibility
+          : "",
     };
     thoughtProccessInstruction = replacePlaceholders(
       thoughtProccessInstruction,
       replacement
     );
     context.push(thoughtProccessInstruction);
+  }
+
+  // ** Response Format Instruction **//
+  let responseFormatInstruction = importMarkdown(
+    `${root}/responseFormat/response_format_instruction.md`
+  );
+
+  if (responseFormatInstruction) {
+    const replacement = {
+      _ELEMENT_SPECIFIC_RESPONSE_FIELDS_:
+        target == "form"
+          ? '"formBuilder": "This function contains the logic to create the form structure, including all fields, labels, and buttons. Always use globals field keep reference of field created so that the eventListener function can always refer to the field require in handler. To generate a function for this field analyze the prompt, layout, styleHint, fieldDefinitions and multiStep field to understand what need to be created"'
+          : "",
+      _CSS_FIELD_:
+        target == "form"
+          ? ',"CSS": "This field holds CSS styling for the generated form elements. **Always prefix CSS classes and IDs with the `filename` provided in the input JSON.** This prevents style conflicts and improves maintainability. Nevr use element name to style to avoid global styling."'
+          : "",
+    };
+    responseFormatInstruction = replacePlaceholders(
+      responseFormatInstruction,
+      replacement
+    );
+    context.push(responseFormatInstruction);
   }
 
   // ** collect globals object instruction ** //
@@ -325,6 +375,25 @@ export default async function instructionHandler(
       context.push(databaseInteractionInstruction);
     }
   }
+
+  // ** Additionals ** //
+  const additionalInstructions = importMarkdown(
+    `${root}/additionals/${target}.md`
+  );
+  if (additionalInstructions) {
+    context.push(additionalInstructions);
+  }
+
+  // ** Collect Example Data ** //
+  // example desc
+
+  const examplesDescription = importMarkdown(
+    `${root}/examples/examples_description.md`
+  );
+  if (examplesDescription) {
+    context.push(examplesDescription);
+  }
+
   //   keys.forEach((key) => {
   //     const filePath = `${root}/${target}/${key}`;
   //     const content = importMarkdown(filePath);
@@ -378,6 +447,23 @@ const selectInstruction = (
   options: Record<Element, any>,
   selectedKey: Element
 ) => options[selectedKey];
+
+const detectsFirebaseSupabaseInteraction = (text: string) => {
+  // Regular expressions to detect Firebase and Supabase interaction keywords and patterns.
+  const firebaseSupabaseRegex =
+    /(firebase|supabase|firestore|realtime database|auth|storage|functions|collections|documents|tables|rows|columns|queries|insert|update|delete|select|from|where|order by|limit|onSnapshot|getDocs|addDoc|setDoc|updateDoc|deleteDoc|from|to|eq|gt|lt|gte|lte|in|not|is|isNot|like|rpc|storage.from|storage.upload|storage.download)/i;
+
+  return firebaseSupabaseRegex.test(text);
+};
+
+function detectsDOMManipulationPrompt(text: string) {
+  // Regular expressions to detect DOM manipulation keywords and patterns in a prompt context.
+  const domPromptRegex =
+    /(modify the DOM|change the DOM|update the DOM|add element|remove element|create element|manipulate element|access element|get element|set attribute|get attribute|remove attribute|event listener|event handler|append child|remove child|insert before|replace child|style element|class list|query selector|get element by id|element|node|DOM|HTML element|HTML node|javascript element|javascript node|dynamic element|dynamic node|visual element|visual node|web element|web node|\.innerHTML|\.textContent|\.style|\.classList|\.setAttribute|\.getAttribute|\.removeAttribute|\.value|\.src|\.href|dynamic content|interactive element|interactive component|web interaction|user interface element|UI element)/i;
+
+  // Check if the text matches any of the DOM manipulation patterns.
+  return domPromptRegex.test(text);
+}
 
 function importMarkdown(filePath: string) {
   try {

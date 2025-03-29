@@ -28,19 +28,23 @@ app.listen(async () => {
   try {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
-
-    const i = await instructionHandler("input", [
-      "supportingProps",
-      "supportingProps.database",
-      // "supportingProps.utils",
-      "supportingProps.variables",
-      "formDefinations",
-      "mutation",
-      // "callbacks",
-      "callbacks.independent",
-      // "callbacks.dependent",
-      // "mutation",
-    ]);
+    const i = await instructionHandler(
+      "input",
+      [
+        "supportingProps",
+        "supportingProps.database",
+        "supportingProps.utils",
+        "supportingProps.variables",
+        "formDefinations",
+        "mutation",
+        "callbacks",
+        "callbacks.independent",
+        "callbacks.dependent",
+        "mutation",
+        "onInit",
+      ],
+      "add data to xyz table"
+    );
     console.log(i);
 
     app.listen(port, () => {

@@ -8,4 +8,5 @@ export enum InputKeys {
   "callbacks" = "callbacks",
   "independentCallbacks" = "callbacks.independent",
   "dependentCallbacks" = "callbacks.dependent",
+  "onInitialRender" = "onInit",
 }

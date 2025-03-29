@@ -114,6 +114,39 @@ const dynamicInstructions = {
         target
       );
     },
+    mutationInstruction: `- **Mutation:** I process mutations from the \`mutation\` array. I handle different mutation types as follows:
+
+  - **\`assignment\`:** If \`mutationType\` is "assignment," I directly assign the value to the corresponding variable in the \`args\` object using the assignment operator (\`=\`).
+
+  - **\`callback\`:** If \`mutationType\` is "callback" (or omitted), I invoke the corresponding function in the \`args\` object, passing the appropriate value as the argument. If \`mutationType\` is missing, I assume it is a callback.
+
+  - **\`React State Setter\`:** If the mutation \`id\` starts with "set" (e.g., "setValue", "setCount"), I treat it as a React state setter function. If the prompt indicates a need to update the state based on its previous value, I use the \`prevValue\` parameter within the state setter function when calling \`args.[mutationId]\`.
+    `,
+    codeGeneration: (target: Element) => {
+      const commenInstruction = `I generate the \`main\` function, ensuring that it includes appropriate error handling for potential runtime issues. The function arguments (\`event\`, \`args\`) are strictly enforced.`;
+      return selectInstruction(
+        {
+          button: commenInstruction,
+          input: commenInstruction,
+          form:
+            commenInstruction +
+            ` Additionally, I generate the \`formBuilder\` function when the prompt requires creating form fields or when the \`fieldDefinitions\` array is defined. The \`formBuilder\` function takes \`target\` (the form element) and \`args\` as parameters. I will create form fields and append them to the \`target\` form element, rather than creating a new form.`,
+        },
+        target
+      );
+    },
+    callbacks: (keys: string[]) => {
+      const having = have(keys);
+      const haveBoth = having.dependentCallbacks && having.independentCallbacks;
+      return `- **Callbacks:** I process callbacks ${haveBoth ? "(both independent and dependent callbacks)" : ""} from the \`callbacks\` field. Missing or invalid callback names ${having.dependentCallbacks ? ", or insufficient parameters for dependent callbacks," : ""} will result in specific error messages.`;
+    },
+    onInitialRender: `- If the onInit field is defined as a string, I generate an onInitialRender function containing the initialization logic described by the \`onInit\`. This function is executed during the first render and the function arguments (\`target\`, \`args\`) are strictly enforced. If the description in \`onInit\` is unclear or ambiguous, I request clarifications. If \`onInit\` is a function or undefined, I ignore it entirely, as the user will handle initialization logic manually.`,
+    databaseInteraction: `- If the prompt contains keywords indicating database operations (fetch, insert, update, delete), I will generate the necessary database interaction code based on these keywords and the provided context (database name, connection details, etc.). I will handle potential errors appropriately. **If the prompt indicates a database operation but the \`supportingProps.database.name\` field is missing or empty, I will return an error indicating that the database type must be specified.** I will, by default, cache the response from \`fetch\` operations using the \`globals\` object and use this cached data in subsequent calls to avoid redundant database queries. **The cached data will be used until the user explicitly tells me not to use the cached response by adding a phrase like "Do not cache the response" in the prompt.**`,
+    cssRules: `- I do not generate inline CSS styles within the code. I provide a CSS code in the \`"CSS"\` section of the response. I emphasize the use of class-based styling and proper ID usage to avoid style conflicts and improve maintainability. I always prefix classes and id with filename of the input JSON to avoid conflict. If the user want to use styling library like tailwind CSS I use that over traditional CSS.`,
+    accessibility: `- I strive to generate forms that are accessible to users with disabilities. This includes ensuring proper ARIA attributes are applied to form elements (e.g., \`aria-label\`, \`aria-describedby\`). I consider color contrast and other accessibility guidelines when determining appropriate styling.`,
+    responsivness: `- I consider how the generated form will adapt to different screen sizes. I will use CSS media queries to adjust the layout and styling for different screen widths.`,
+    formBuilder: `- The \`formBuilder\` function is responsible for dynamically creating the HTML structure of the form. I analyze the \`prompt\`, \`layout\`, \`styleHint\`, and \`fieldDefinitions\` to determine: The number and types of input fields required. The arrangement of fields within the form (e.g., one column, two columns, grid). The labels for each input field. The HTML attributes for each input field (type, placeholder, required, etc.). I create the necessary HTML elements (input fields, labels, buttons, containers) and assign them appropriate IDs and classes (following the naming conventions). I apply the specified \`styleHint\` to the form elements by adding CSS classes and generating the style in the CSS field of the Output JSON. I append the created elements to the appropriate parent elements within the form structure. I ensure that the generated form structure adheres to the specified \`layout\` and \`styleHint\`. I handle conditional logic within the form (if specified in the \`prompt\` or \`fieldDefinitions\`).`,
+    fieldDefination: `- I iterate through each object in the \`fieldDefinitions\` array. I extract the \`id\`, \`fieldDefination\`, \`styleHint\`, \`layout\`, \`type\`, and \`validate\` properties for each field. I analyze the \`fieldDefination\` string to determine the field nature and need. I check \`type\` to know the type of input (e.g., "text", "number", "textarea", "select", "checkbox", "file"). I identify any validation rules specified in the \`validate\` property (e.g., "required", "email format", "number range") or create any validation function in the \`helperFunctions\`. I handle field references (e.g., "The value should be same as @password") by storing the \`id\` of the referenced field and using it during code generation.`,
   },
 };
 

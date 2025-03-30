@@ -8,14 +8,16 @@ import { format } from "prettier";
 export default async function instructionHandler(
   target: Element,
   keys: string[],
-  prompt: string
+  props: { prompt: string; onInit?: string | Function; databaseName?: string }
 ) {
   const root = path.resolve(
     import.meta.dirname,
     "../../../public/instructions"
   );
   const context: (string | null)[] = [];
-  const haveDatabaseInteraction = detectsFirebaseSupabaseInteraction(prompt);
+  const haveDatabaseInteraction = detectsFirebaseSupabaseInteraction(
+    props.prompt
+  );
   const keysIncludes = (key: string) => keys.includes(key);
 
   // **  collect general instrucitions ** //
@@ -393,6 +395,31 @@ export default async function instructionHandler(
   if (examplesDescription) {
     context.push(examplesDescription);
   }
+  // adding additional examples key
+  const isThereDomManipulation = detectsDOMManipulationPrompt(props.prompt);
+  if (isThereDomManipulation) keys.push(InputKeys.domManipulatiion);
+  if (props.databaseName) {
+    const extractedName = /firebase/i.test(props.databaseName)
+      ? ".firebase"
+      : /supabase/i.test(props.databaseName)
+        ? ".supabase"
+        : null;
+
+    extractedName &&
+      keys.push(
+        InputKeys.database.concat(props.databaseName.concat(extractedName))
+      );
+  }
+
+  // Collecting examples
+  keys.forEach((key) => {
+    if (key == "onInit" && typeof props.onInit !== "string") return;
+    const examplePath = `${root}/examples/${target}/${key}.md`;
+    const content = importMarkdown(examplePath);
+    if (typeof content !== "undefined" && content !== null) {
+      context.push(content);
+    }
+  });
 
   //   keys.forEach((key) => {
   //     const filePath = `${root}/${target}/${key}`;
@@ -459,7 +486,7 @@ const detectsFirebaseSupabaseInteraction = (text: string) => {
 function detectsDOMManipulationPrompt(text: string) {
   // Regular expressions to detect DOM manipulation keywords and patterns in a prompt context.
   const domPromptRegex =
-    /(modify the DOM|change the DOM|update the DOM|add element|remove element|create element|manipulate element|access element|get element|set attribute|get attribute|remove attribute|event listener|event handler|append child|remove child|insert before|replace child|style element|class list|query selector|get element by id|element|node|DOM|HTML element|HTML node|javascript element|javascript node|dynamic element|dynamic node|visual element|visual node|web element|web node|\.innerHTML|\.textContent|\.style|\.classList|\.setAttribute|\.getAttribute|\.removeAttribute|\.value|\.src|\.href|dynamic content|interactive element|interactive component|web interaction|user interface element|UI element)/i;
+    /(DOM|modify the DOM|change the DOM|update the DOM|add element|remove element|create element|manipulate element|access element|get element|set attribute|get attribute|remove attribute|event listener|event handler|append child|remove child|insert before|replace child|style element|class list|query selector|get element by id|element|node|DOM|HTML element|HTML node|javascript element|javascript node|dynamic element|dynamic node|visual element|visual node|web element|web node|\.innerHTML|\.textContent|\.style|\.classList|\.setAttribute|\.getAttribute|\.removeAttribute|\.value|\.src|\.href|dynamic content|interactive element|interactive component|web interaction|user interface element|UI element)/i;
 
   // Check if the text matches any of the DOM manipulation patterns.
   return domPromptRegex.test(text);
@@ -470,7 +497,9 @@ function importMarkdown(filePath: string) {
     const markdownContent = fs.readFileSync(filePath, "utf8");
     return markdownContent;
   } catch (error) {
-    console.error("Error importing Markdown:", error);
+    // console.error("Error importing Markdown:", error);
+    error;
+    console.error("File:", filePath.split("/").pop(), " do not exist");
     return null;
   }
 }

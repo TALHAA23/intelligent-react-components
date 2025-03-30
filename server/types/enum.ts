@@ -9,4 +9,5 @@ export enum InputKeys {
   "independentCallbacks" = "callbacks.independent",
   "dependentCallbacks" = "callbacks.dependent",
   "onInitialRender" = "onInit",
+  "domManipulatiion" = "dom_manipulation",
 }

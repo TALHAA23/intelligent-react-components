@@ -29,7 +29,7 @@ app.listen(async () => {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
     const i = await instructionHandler(
-      "input",
+      "button",
       [
         "supportingProps",
         "supportingProps.database",
@@ -43,7 +43,7 @@ app.listen(async () => {
         "mutation",
         "onInit",
       ],
-      "add data to xyz table"
+      { prompt: "add data to xyz table, update the dom", onInit: () => {} }
     );
     console.log(i);
 

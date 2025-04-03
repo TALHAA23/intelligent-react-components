@@ -396,25 +396,32 @@ export default async function instructionHandler(
     context.push(examplesDescription);
   }
   // adding additional examples key
-  const isThereDomManipulation = detectsDOMManipulationPrompt(props.prompt);
-  if (isThereDomManipulation) keys.push(InputKeys.domManipulatiion);
-  if (props.databaseName) {
-    const extractedName = /firebase/i.test(props.databaseName)
-      ? ".firebase"
-      : /supabase/i.test(props.databaseName)
-        ? ".supabase"
-        : null;
-
-    extractedName &&
-      keys.push(
-        InputKeys.database.concat(props.databaseName.concat(extractedName))
-      );
-  }
+  // const isThereDomManipulation = detectsDOMManipulationPrompt(props.prompt);
+  // if (isThereDomManipulation) keys.push(InputKeys.domManipulatiion);
+  [
+    detectsDOMManipulationPrompt(props.prompt),
+    extractDatabaseName(props.databaseName),
+    extractFirebaseSupabaseCRUD(props.prompt),
+    extractFirebaseSupabaseStorage(props.prompt),
+    extractFirebaseSupabaseAuth(props.prompt),
+  ].forEach((item) => {
+    if (item) {
+      keys.push(item);
+    }
+  });
+  // if (props.databaseName) {
+  //   const extractedName = extractedDatabaseName(props.databaseName);
+  //   extractedName && keys.push(InputKeys.database.concat(extractedName));
+  // }
 
   // Collecting examples
+  console.log(keys);
   keys.forEach((key) => {
     if (key == "onInit" && typeof props.onInit !== "string") return;
-    const examplePath = `${root}/examples/${target}/${key}.md`;
+    const examplePath = key.startsWith("common_")
+      ? `${root}/examples/common/${key}.md`
+      : `${root}/examples/${target}/${key}.md`;
+    console.log(examplePath);
     const content = importMarkdown(examplePath);
     if (typeof content !== "undefined" && content !== null) {
       context.push(content);
@@ -475,21 +482,75 @@ const selectInstruction = (
   selectedKey: Element
 ) => options[selectedKey];
 
-const detectsFirebaseSupabaseInteraction = (text: string) => {
-  // Regular expressions to detect Firebase and Supabase interaction keywords and patterns.
+function detectsFirebaseSupabaseInteraction(text: string) {
   const firebaseSupabaseRegex =
     /(firebase|supabase|firestore|realtime database|auth|storage|functions|collections|documents|tables|rows|columns|queries|insert|update|delete|select|from|where|order by|limit|onSnapshot|getDocs|addDoc|setDoc|updateDoc|deleteDoc|from|to|eq|gt|lt|gte|lte|in|not|is|isNot|like|rpc|storage.from|storage.upload|storage.download)/i;
-
   return firebaseSupabaseRegex.test(text);
-};
+}
+function extractFirebaseSupabaseCRUD(text: string) {
+  const firebaseRegex = /firebase/i;
+  const supabaseRegex = /supabase/i;
+  const crudRegex =
+    /(create|read|update|delete|insert|select|modify|remove|add|get|put|patch|del|fetch|retrieve|persist|store|save|change|alter|form|submit|post|patch|delete|put)/i;
 
+  if (crudRegex.test(text)) {
+    if (firebaseRegex.test(text)) {
+      return "common_crud.firebase";
+    } else if (supabaseRegex.test(text)) {
+      return "common_crud.supabase";
+    }
+  }
+}
+function extractFirebaseSupabaseStorage(text: string) {
+  const firebaseStorageRegex = /firebase storage/i;
+  const supabaseStorageRegex = /supabase storage/i;
+  const storageOperationRegex =
+    /(storage\.from|storage\.upload|storage\.download|upload file|download file|store file|retrieve file|file storage|cloud storage|object storage|bucket|file path|storage url|storage location|storage service|store data|retrieve data|blob)/i;
+
+  if (storageOperationRegex.test(text)) {
+    if (firebaseStorageRegex.test(text)) {
+      return "common_storage.firebase";
+    } else if (supabaseStorageRegex.test(text)) {
+      return "common_storage.supabase";
+    }
+  }
+
+  return null;
+}
+function extractFirebaseSupabaseAuth(text: string) {
+  const firebaseRegex = /firebase/i;
+  const supabaseRegex = /supabase/i;
+  const authRegex =
+    /(auth|authentication|login|signup|register|sign in|sign up|create user|get user|verify user|reset password|forgot password|user management|access control|authorization|jwt|token|session|user authentication|user authorization|sign out|logout|password reset|email verification|user credentials)/i;
+
+  if (authRegex.test(text)) {
+    if (firebaseRegex.test(text)) {
+      return "common_auth.firebase";
+    } else if (supabaseRegex.test(text)) {
+      return "common_auth.supabase";
+    }
+  }
+
+  return null;
+}
+
+function extractDatabaseName(text: string = "") {
+  const firebaseRegex = /firebase/i;
+  const supabaseRegex = /supabase/i;
+  if (firebaseRegex.test(text)) {
+    return "common_databaseOperation.firebase";
+  } else if (supabaseRegex.test(text)) {
+    return "common_databaseOperation.supabase";
+  }
+  return null;
+}
 function detectsDOMManipulationPrompt(text: string) {
   // Regular expressions to detect DOM manipulation keywords and patterns in a prompt context.
   const domPromptRegex =
     /(DOM|modify the DOM|change the DOM|update the DOM|add element|remove element|create element|manipulate element|access element|get element|set attribute|get attribute|remove attribute|event listener|event handler|append child|remove child|insert before|replace child|style element|class list|query selector|get element by id|element|node|DOM|HTML element|HTML node|javascript element|javascript node|dynamic element|dynamic node|visual element|visual node|web element|web node|\.innerHTML|\.textContent|\.style|\.classList|\.setAttribute|\.getAttribute|\.removeAttribute|\.value|\.src|\.href|dynamic content|interactive element|interactive component|web interaction|user interface element|UI element)/i;
 
   // Check if the text matches any of the DOM manipulation patterns.
-  return domPromptRegex.test(text);
+  return domPromptRegex.test(text) ? InputKeys.domManipulatiion : "";
 }
 
 function importMarkdown(filePath: string) {

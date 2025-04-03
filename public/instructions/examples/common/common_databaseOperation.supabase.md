@@ -1,6 +1,6 @@
-### Database Operations Training Data
+### How to handle Database operation
 
-This section provides training examples for various database operations. Each example demonstrates a specific operation for a specific database type (Firebase or Supabase), handling potential errors, and ensuring the operation's success. The model should generate the code based on the database type specified in the `supportingProps.database.name` field and the prompt. The actual connection details (e.g., API keys) are assumed to be set as environment variables. The model should use the `process.env` object to access the environment variables, following the instructions provided in the `supportingProps.database.envGuide` field. The generated code should include robust error handling for various scenarios, logging appropriate messages to the console to indicate success or failure.
+This section provides training examples for various database operations. Each example demonstrates a specific operation for Supabase, handling potential errors, and ensuring the operation's success. The model should generate the code based on the database type specified in the `supportingProps.database.name` field and the prompt. The actual connection details (e.g., API keys) are assumed to be set as environment variables. The model should use the `process.env` object to access the environment variables, following the instructions provided in the `supportingProps.database.envGuide` field. The generated code should include robust error handling for various scenarios, logging appropriate messages to the console to indicate success or failure.
 
 **Accessing Environment Variables:**
 
@@ -8,9 +8,7 @@ The model should access environment variables using the `process.env` object. If
 
 #### Connection
 
-This subsection contains examples for establishing a connection to Firebase and Supabase databases. Error handling and console logging are expected. Connection details are accessed via environment variables, following the instructions in `supportingProps.database.envGuide`.
-
-#### Database Type: Supabase
+This subsection contains examples for establishing a connection to Supabase. Error handling and console logging are expected. Connection details are accessed via environment variables, following the instructions in `supportingProps.database.envGuide`.
 
 **Description:** This example demonstrates establishing a connection to Supabase and inserting data into a table.
 
@@ -18,7 +16,7 @@ This subsection contains examples for establishing a connection to Firebase and 
 
 ```json
 {
-  "listener": "click",
+  "listener": "onBlur",
   "prompt": "Connect to Supabase and insert { name: 'Test User', age: 30, email: 'test@example.com' } into the users table",
   "supportingProps": {
     "database": {

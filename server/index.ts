@@ -43,7 +43,12 @@ app.listen(async () => {
         "mutation",
         "onInit",
       ],
-      { prompt: "add data to xyz table, update the dom", onInit: () => {} }
+      {
+        prompt:
+          "update firebase data to xyz table, update the dom, upload to ijk firebase storage bucket. signup to account",
+        onInit: () => {},
+        databaseName: "firebase",
+      }
     );
     console.log(i);
 

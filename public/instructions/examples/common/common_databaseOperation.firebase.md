@@ -1,16 +1,14 @@
-### Database Operations Training Data
+### How to handle Database operation
 
-This section provides training examples for various database operations. Each example demonstrates a specific operation for a specific database type (Firebase or Supabase), handling potential errors, and ensuring the operation's success. The model should generate the code based on the database type specified in the `supportingProps.database.name` field and the prompt. The actual connection details (e.g., API keys) are assumed to be set as environment variables. The model should use the `process.env` object to access the environment variables, following the instructions provided in the `supportingProps.database.envGuide` field. The generated code should include robust error handling for various scenarios, logging appropriate messages to the console to indicate success or failure.
+This section provides training examples for various database operations. Each example demonstrates a specific operation for Firebase, handling potential errors, and ensuring the operation's success. The model should generate the code based on the database type specified in the `supportingProps.database.name` field and the prompt. The actual connection details (e.g., API keys) are assumed to be set as environment variables. The model should use the `process.env` object to access the environment variables, following the instructions provided in the `supportingProps.database.envGuide` field. The generated code should include robust error handling for various scenarios, logging appropriate messages to the console to indicate success or failure.
 
 **Accessing Environment Variables:**
 
 The model should access environment variables using the `process.env` object. If the `supportingProps.database.envGuide` field is provided, follow the instructions in this field to access environment variables; otherwise, use `process.env` directly. For example, if `envGuide` is "Use NEXT_PUBLIC before any env variable", to access a variable named `DATABASE_URL`, you should use `process.env.NEXT_PUBLIC_DATABASE_URL`. Omitting the `envGuide` field will result in direct access using `process.env.DATABASE_URL`. Always include appropriate error handling for cases where environment variables are not defined.
 
-#### Connection
+#### How to connect to Firebase
 
-This subsection contains examples for establishing a connection to Firebase and Supabase databases. Error handling and console logging are expected. Connection details are accessed via environment variables, following the instructions in `supportingProps.database.envGuide`.
-
-**Database Type: Firebase**
+This subsection contains examples for establishing a connection to Firebase. Error handling and console logging are expected. Connection details are accessed via environment variables, following the instructions in `supportingProps.database.envGuide`.
 
 **Description:** Before any Firebase Firestore operation, you must initialize the Firebase app. This example demonstrates initializing the app and then inserting data into a Firestore collection.
 
@@ -18,7 +16,7 @@ This subsection contains examples for establishing a connection to Firebase and 
 
 ```json
 {
-  "listener": "click",
+  "listener": "[EVENT_NAME]",
   "prompt": "a function that inserts _data into the 'test' collection",
   "supportingProps": {
     "database": {

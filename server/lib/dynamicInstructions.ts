@@ -14,6 +14,28 @@ const dynamicInstructions = {
     - Field definitions: Type, labels, placeholders, validation rules.
     - Styling: CSS classes or inline styles to achieve the desired visual appearance.
     `,
+  expectedInputInstruction: (keys: string[]) => {
+    const having = have(keys);
+    if (keys.length <= 4) return "";
+    return `**Optional Keys:** The following keys are optional but may be included to provide additional context:
+    ${having.supportingProps ? '- \`"supportingProps"\`: An object containing \`variables\`, \`utils\`, and \`database\` accessible within the \`prompt\`.' : ""}
+    ${having.mutation ? '- \`"mutations"\`: An array of objects, each describing a mutation operation to be performed within the generated functions. Each mutation object should have an \`id\`, \`returnFormat\`, and \`mutate\` field.' : ""}
+    ${having.callbacks ? '- \`"callbacks"\`: An object containing independent and dependent callbacks. See the "Callbacks" section for details.' : ""}
+    ${having.onInit ? '- \`"onInit"\`: A string defining initialization logic for the **ELEMENT_TYPE** element, executed on the first render.' : ""}
+    ${having.layout ? '- \`"layout"\`: Hints for the desired form layout (e.g., \`"one-column"\`, \`"two-column"\`, \`"grid"\`).\n' : ""}
+    ${having.styleHint ? '- \`"styleHint"\`: Guidelines for the visual style of the form (e.g., \`"Material Design"\`, \`"Bootstrap"\`). \n' : ""}
+    ${having.validate ? '- \`"validate"\`: Instructions for form validation.\n' : ""}
+    ${having.fieldDefinations ? '- \`"fieldDefinitions"\`: An array of objects defining individual form fields.\n' : ""}
+    ${having.multiStep ? '- \`"multiStep"\`: Configuration for multi-step forms.' : ""}
+    `;
+  },
+  feedbackInstruction: `**Feedback Usage:**
+  - If \`feedback\` is present, prioritize processing it and revising the response.
+  - \`feedback\` should describe errors, required changes, and constraints.
+  - Aim to correct errors, implement changes, and maintain consistency.
+  - If \`feedback\` is absent, process the request as new.
+  - Latest conversation will most probably present at last 2 indexes in \`history\` of model but it is not promised.
+  `,
   databaseInteractionInputSpecificInstructions: `
     The following keywords in the prompt indicate database operations triggered by input elements and must be processed accordingly:
     
@@ -159,6 +181,12 @@ const have = (keys: string[]) => ({
   callbacks: keys.includes(InputKeys.callbacks),
   dependentCallbacks: keys.includes(InputKeys.dependentCallbacks),
   independentCallbacks: keys.includes(InputKeys.independentCallbacks),
+  onInit: keys.includes(InputKeys.onInitialRender),
+  layout: keys.includes(InputKeys.layout),
+  styleHint: keys.includes(InputKeys.styleHint),
+  validate: keys.includes(InputKeys.validate),
+  multiStep: keys.includes(InputKeys.multiStep),
+  fieldDefinations: keys.includes(InputKeys.fieldDefinations),
 });
 
 export default dynamicInstructions;

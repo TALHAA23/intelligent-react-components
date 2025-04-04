@@ -15,7 +15,7 @@ Define variables, references, or functions in the `globals` field by assigning a
 }
 ```
 
-## Use Cases:
+### Use Cases:
 
 - Maintaining State: Track a variable's value across multiple calls to the main function. For example, GLOBALS_USECASE_EXAMPLE.
 

@@ -1,15 +1,21 @@
 import fs from "fs";
 import path from "path";
-import { type Element } from "../types";
+import { Common, type Element } from "../types";
 import { InputKeys } from "../types/enum.js";
 import dynamicInstructions from "./dynamicInstructions.js";
 import { format } from "prettier";
 
 export default async function instructionHandler(
-  target: Element,
-  keys: string[],
-  props: { prompt: string; onInit?: string | Function; databaseName?: string }
+  props: Common
+  // target: Element,
+  // keys: string[],
+  // props: { prompt: string; onInit?: string | Function; databaseName?: string }
 ) {
+  const { element: target } = props;
+  if (!target) {
+    throw new Error(target + "is not a valid element.");
+  }
+  const keys = Object.keys(props);
   const root = path.resolve(
     import.meta.dirname,
     "../../../public/instructions"
@@ -48,23 +54,21 @@ export default async function instructionHandler(
   if (expectedInputInstruction) {
     const replacement = {
       ELEMENT_TYPE: target.toUpperCase(),
-      ELEMENT_SPECIFIC_REQUIRED_KEYS: selectInstruction(
-        {
-          button: "",
-          input:
-            '- `"type"`: A string representing the input type (e.g., `"text"`, `"password"`, `"email"`, etc.). This key helps the model generate code tailored to the specific input type',
-          form: "",
-        },
-        target
-      ),
-      ELEMENT_SPECIFIC_OPTIONAL_KEYS: selectInstruction(
-        {
-          button: "",
-          input: "",
-          form: '- `"layout"`: Hints for the desired form layout (e.g., `"one-column"`, `"two-column"`, `"grid"`).\n- `"styleHint"`: Guidelines for the visual style of the form (e.g., `"Material Design"`, `"Bootstrap"`). \n- `"validate"`: Instructions for form validation.\n- `"fieldDefinitions"`: An array of objects defining individual form fields.\n- `"multiStep"`: Configuration for multi-step forms.',
-        },
-        target
-      ),
+      ELEMENT_SPECIFIC_REQUIRED_KEYS: keys.includes(InputKeys.type)
+        ? '- `"type"`: A string representing the input type (e.g., `"text"`, `"password"`, `"email"`, etc.). This key helps the model generate code tailored to the specific input type'
+        : "",
+      // ELEMENT_SPECIFIC_OPTIONAL_KEYS: selectInstruction(
+      //   {
+      //     button: "",
+      //     input: "",
+      //     form: '- `"layout"`: Hints for the desired form layout (e.g., `"one-column"`, `"two-column"`, `"grid"`).\n- `"styleHint"`: Guidelines for the visual style of the form (e.g., `"Material Design"`, `"Bootstrap"`). \n- `"validate"`: Instructions for form validation.\n- `"fieldDefinitions"`: An array of objects defining individual form fields.\n- `"multiStep"`: Configuration for multi-step forms.',
+      //   },
+      //   target
+      // ),
+      _OPTIONAL_KEYS_: dynamicInstructions.expectedInputInstruction(keys),
+      _FEEDBACK_FIELD_USEAGE_: keysIncludes(InputKeys.feedback)
+        ? dynamicInstructions.feedbackInstruction
+        : "",
     };
     expectedInputInstruction = replacePlaceholders(
       expectedInputInstruction,
@@ -267,14 +271,10 @@ export default async function instructionHandler(
         },
         target
       ),
-      ELEMENT_SPECIFIC_INSTRUCTIONS: selectInstruction(
-        {
-          button: "",
-          input: "",
-          form: "7. **Handle Dynamic Content:**\n If the form needs to dynamically add or remove elements (e.g., adding new fields based on user input), the model should implement this logic carefully to avoid creating duplicate elements.",
-        },
-        target
-      ),
+      ELEMENT_SPECIFIC_INSTRUCTIONS:
+        target == "form"
+          ? "7. **Handle Dynamic Content:** If the form needs to dynamically add or remove elements (e.g., adding new fields based on user input), the model should implement this logic carefully to avoid creating duplicate elements."
+          : "",
     };
     preventDuplicateDomElementInstructions = replacePlaceholders(
       preventDuplicateDomElementInstructions,
@@ -400,7 +400,7 @@ export default async function instructionHandler(
   // if (isThereDomManipulation) keys.push(InputKeys.domManipulatiion);
   [
     detectsDOMManipulationPrompt(props.prompt),
-    extractDatabaseName(props.databaseName),
+    extractDatabaseName(props.supportingProps?.database?.name),
     extractFirebaseSupabaseCRUD(props.prompt),
     extractFirebaseSupabaseStorage(props.prompt),
     extractFirebaseSupabaseAuth(props.prompt),

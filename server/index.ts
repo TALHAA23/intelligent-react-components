@@ -8,6 +8,7 @@ import log from "./utils/cliColoredLog.js";
 import path from "path";
 import loadConfig from "./utils/loadConfig.js";
 import instructionHandler from "./lib/instructionSelector.js";
+import { Common } from "./types/index.js";
 const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -23,33 +24,20 @@ app.get("*", catchAll);
 //   chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
 // });
 
+const prompt: Common = {
+  filename: "",
+  prompt: "",
+  listener: "onClick",
+  element: "form",
+  feedback: "",
+};
+
 app.listen(async () => {
   // Remove the explicit port here
   try {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
-    const i = await instructionHandler(
-      "button",
-      [
-        "supportingProps",
-        "supportingProps.database",
-        "supportingProps.utils",
-        "supportingProps.variables",
-        "formDefinations",
-        "mutation",
-        "callbacks",
-        "callbacks.independent",
-        "callbacks.dependent",
-        "mutation",
-        "onInit",
-      ],
-      {
-        prompt:
-          "update firebase data to xyz table, update the dom, upload to ijk firebase storage bucket. signup to account",
-        onInit: () => {},
-        databaseName: "firebase",
-      }
-    );
+    const i = await instructionHandler(prompt);
     console.log(i);
 
     app.listen(port, () => {

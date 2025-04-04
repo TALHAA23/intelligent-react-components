@@ -10,4 +10,11 @@ export enum InputKeys {
   "dependentCallbacks" = "callbacks.dependent",
   "onInitialRender" = "onInit",
   "domManipulatiion" = "dom_manipulation",
+  "feedback" = "feedback",
+  "layout" = "layout",
+  "styleHint" = "styleHint",
+  "validate" = "validate",
+  "fieldDefinations" = "fieldDefinations",
+  "multiStep" = "multiStep",
+  "type" = "type",
 }

@@ -4,18 +4,14 @@ import { Common, type Element } from "../types";
 import { InputKeys } from "../types/enum.js";
 import dynamicInstructions from "./dynamicInstructions.js";
 import { format } from "prettier";
+import getAllKeys from "../utils/getObjectKeys.js";
 
-export default async function instructionHandler(
-  props: Common
-  // target: Element,
-  // keys: string[],
-  // props: { prompt: string; onInit?: string | Function; databaseName?: string }
-) {
+export default async function instructionHandler(props: Common) {
   const { element: target } = props;
   if (!target) {
     throw new Error(target + "is not a valid element.");
   }
-  const keys = Object.keys(props);
+  const keys = getAllKeys(props);
   const root = path.resolve(
     import.meta.dirname,
     "../../../public/instructions"
@@ -27,25 +23,21 @@ export default async function instructionHandler(
   const keysIncludes = (key: string) => keys.includes(key);
 
   // **  collect general instrucitions ** //
-  const generalInstructions = importMarkdown(`${root}/general_instruction.md`);
+  let generalInstructions = importMarkdown(`${root}/general_instruction.md`);
 
   if (generalInstructions) {
     const replacements: { [key: string]: string } = {
       ELEMENT_TYPE: target.toUpperCase(),
+      _FORM_SPECEFIC_INSTRUCTION_:
+        target == "form" ? dynamicInstructions.formSpecficInstruction : "",
     };
 
-    let updatedGeneralInstruction = replacePlaceholders(
+    generalInstructions = replacePlaceholders(
       generalInstructions,
       replacements
     );
 
-    if (target === "form") {
-      updatedGeneralInstruction = updatedGeneralInstruction.concat(
-        dynamicInstructions.formSpecficInstruction
-      );
-    }
-
-    context.push(updatedGeneralInstruction);
+    context.push(generalInstructions);
   }
   // ** Collect expected Input instructions ** //
   let expectedInputInstruction = importMarkdown(
@@ -54,17 +46,10 @@ export default async function instructionHandler(
   if (expectedInputInstruction) {
     const replacement = {
       ELEMENT_TYPE: target.toUpperCase(),
-      ELEMENT_SPECIFIC_REQUIRED_KEYS: keys.includes(InputKeys.type)
-        ? '- `"type"`: A string representing the input type (e.g., `"text"`, `"password"`, `"email"`, etc.). This key helps the model generate code tailored to the specific input type'
-        : "",
-      // ELEMENT_SPECIFIC_OPTIONAL_KEYS: selectInstruction(
-      //   {
-      //     button: "",
-      //     input: "",
-      //     form: '- `"layout"`: Hints for the desired form layout (e.g., `"one-column"`, `"two-column"`, `"grid"`).\n- `"styleHint"`: Guidelines for the visual style of the form (e.g., `"Material Design"`, `"Bootstrap"`). \n- `"validate"`: Instructions for form validation.\n- `"fieldDefinitions"`: An array of objects defining individual form fields.\n- `"multiStep"`: Configuration for multi-step forms.',
-      //   },
-      //   target
-      // ),
+      ELEMENT_SPECIFIC_REQUIRED_KEYS:
+        target == "input"
+          ? '- `"type"`: A string representing the input type (e.g., `"text"`, `"password"`, `"email"`, etc.). This key helps the model generate code tailored to the specific input type'
+          : "",
       _OPTIONAL_KEYS_: dynamicInstructions.expectedInputInstruction(keys),
       _FEEDBACK_FIELD_USEAGE_: keysIncludes(InputKeys.feedback)
         ? dynamicInstructions.feedbackInstruction
@@ -101,9 +86,10 @@ export default async function instructionHandler(
       _DATABASE_CONFIGURATION_: keysIncludes(InputKeys.database)
         ? dynamicInstructions.databaseConfigProccessingSteps
         : "",
-      _ELEMENT_SPECIFIC_PROCESSING_: keysIncludes(InputKeys.supportingProps)
-        ? dynamicInstructions.formDefinationProccessingSteps
-        : "",
+      _ELEMENT_SPECIFIC_PROCESSING_:
+        target == "form"
+          ? dynamicInstructions.formDefinationProccessingSteps
+          : "",
     };
     proccessingInstructions = replacePlaceholders(
       proccessingInstructions,
@@ -395,9 +381,6 @@ export default async function instructionHandler(
   if (examplesDescription) {
     context.push(examplesDescription);
   }
-  // adding additional examples key
-  // const isThereDomManipulation = detectsDOMManipulationPrompt(props.prompt);
-  // if (isThereDomManipulation) keys.push(InputKeys.domManipulatiion);
   [
     detectsDOMManipulationPrompt(props.prompt),
     extractDatabaseName(props.supportingProps?.database?.name),
@@ -409,31 +392,17 @@ export default async function instructionHandler(
       keys.push(item);
     }
   });
-  // if (props.databaseName) {
-  //   const extractedName = extractedDatabaseName(props.databaseName);
-  //   extractedName && keys.push(InputKeys.database.concat(extractedName));
-  // }
-
   // Collecting examples
-  console.log(keys);
   keys.forEach((key) => {
     if (key == "onInit" && typeof props.onInit !== "string") return;
     const examplePath = key.startsWith("common_")
       ? `${root}/examples/common/${key}.md`
       : `${root}/examples/${target}/${key}.md`;
-    console.log(examplePath);
     const content = importMarkdown(examplePath);
     if (typeof content !== "undefined" && content !== null) {
       context.push(content);
     }
   });
-
-  //   keys.forEach((key) => {
-  //     const filePath = `${root}/${target}/${key}`;
-  //     const content = importMarkdown(filePath);
-  //     const updated = content?.replace(/button/gi, "Form") || null;
-  //     context.push(updated);
-  //   });
   const formatInstruction = await format(
     context.toString().replace(/,#/g, "\n#"),
     {
@@ -452,6 +421,7 @@ export default async function instructionHandler(
       }
     }
   );
+  return formatInstruction;
 }
 
 const replaceText = (
@@ -505,7 +475,7 @@ function extractFirebaseSupabaseStorage(text: string) {
   const firebaseStorageRegex = /firebase storage/i;
   const supabaseStorageRegex = /supabase storage/i;
   const storageOperationRegex =
-    /(storage\.from|storage\.upload|storage\.download|upload file|download file|store file|retrieve file|file storage|cloud storage|object storage|bucket|file path|storage url|storage location|storage service|store data|retrieve data|blob)/i;
+    /(download|upload|download|store|retrieve|file|cloud|object|bucket|path|url|location|service|store data|retrieve data|blob)/i;
 
   if (storageOperationRegex.test(text)) {
     if (firebaseStorageRegex.test(text)) {

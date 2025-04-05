@@ -26,10 +26,22 @@ app.get("*", catchAll);
 
 const prompt: Common = {
   filename: "",
-  prompt: "",
+  prompt: "firebase storage upload file",
   listener: "onClick",
-  element: "form",
+  element: "input",
   feedback: "",
+  supportingProps: {
+    // utils: {},
+    // variables: {},
+    database: {
+      name: "that's cool called firebase",
+    },
+  },
+  // mutation: [],
+  // callbacks: {
+  //   dependent: [],
+  //   independent: [],
+  // },
 };
 
 app.listen(async () => {

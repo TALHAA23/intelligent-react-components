@@ -18,3 +18,23 @@ export enum InputKeys {
   "multiStep" = "multiStep",
   "type" = "type",
 }
+// export enum InputKeys {
+//   "supportingProps" = "supportingProps",
+//   "utils" = "utils",
+//   "variables" = "variables",
+//   "database" = "database",
+//   "mutation" = "mutation",
+//   "formDefination" = "formDefination",
+//   "callbacks" = "callbacks",
+//   "independentCallbacks" = "independent",
+//   "dependentCallbacks" = "dependent",
+//   "onInitialRender" = "onInit",
+//   "domManipulatiion" = "dom_manipulation",
+//   "feedback" = "feedback",
+//   "layout" = "layout",
+//   "styleHint" = "styleHint",
+//   "validate" = "validate",
+//   "fieldDefinations" = "fieldDefinations",
+//   "multiStep" = "multiStep",
+//   "type" = "type",
+// }

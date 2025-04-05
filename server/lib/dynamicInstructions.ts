@@ -7,13 +7,10 @@ const selectInstruction = (
 ) => options[selectedKey];
 
 const dynamicInstructions = {
-  formSpecficInstruction: `
-    Given a natural language description of the desired form, You can generate:
-    
-    - Form structures: Number of fields, arrangement, and overall layout.
-    - Field definitions: Type, labels, placeholders, validation rules.
-    - Styling: CSS classes or inline styles to achieve the desired visual appearance.
-    `,
+  formSpecficInstruction: `Given a natural language description of the desired form, You can generate:
+  - Form structures: Number of fields, arrangement, and overall layout.
+  - Field definitions: Type, labels, placeholders, validation rules.
+  - Styling: CSS classes or inline styles to achieve the desired visual appearance.`,
   expectedInputInstruction: (keys: string[]) => {
     const having = have(keys);
     if (keys.length <= 4) return "";
@@ -88,13 +85,13 @@ const dynamicInstructions = {
 
     return `- **\`supportingProps\`:**
   - Access ${haveUtils ? "utils, " : ""}${haveVariables ? "variables, " : ""}${haveUtils && haveVariables ? "and " : ""}${haveDatabase ? "database " : ""}info defined in ${haveUtils ? "\`supportingProps.utils\`, " : ""}${haveVariables ? "\`supportingProps.variables\`, " : ""}${haveUtils && haveVariables ? "and" : ""}${haveDatabase ? "\`supportingProps.database\`" : ""} using the \`args\` object.
-  ${haveUtils ? "- utils is referenced in the \`prompt\` using \`$_Dollor Sign\` prefix like \`$API\`, look up its value in \`supportingProps.utils\` and use \`args.$myVariable\` in the generated code. If reference is wrong or missing, response with error." : ""}
-  ${haveVariables ? "- Variables is referenced in the \`prompt\` using \`_\` prefix like \`_myVariable\`, look up its value in \`supportingProps.variables\` and use \`args._myVariable\` in the generated code. If reference is wrong or missing, response with error." : ""}
+  ${haveUtils ? "- utils is referenced in the \`prompt\` using \`$_Dollor Sign\` prefix like \`$API\`, look up its value in \`supportingProps.utils\` and use \`args.$[KEY]\` in the generated code. If reference is wrong or missing, response with error." : ""}
+  ${haveVariables ? "- Variables is referenced in the \`prompt\` using \`_\` prefix like \`_myVariable\`, look up its value in \`supportingProps.variables\` and use \`args._[KEY]\` in the generated code. If reference is wrong or missing, response with error." : ""}
   ${haveDatabase ? "- Database related info can be find in \`supportingProps.database\`, If the prompt require database operation this field must be defined. It must have a 'name' property with values like 'firebase database' to know what database to use and an optional 'envGuide' which tells how to access secrets. if envGuide is not provide use proccess.env to access variables." : ""}
-  - If a variables is reference using the defined prefixes .i.e ${haveUtils ? "$" : ""} ${haveVariables ? "_" : ""} but the supportingProps have not prefix them that's ok accesss them without prefix using args like \`args.$var\` or \`args.var\` depends on how its defined in supportingProps
+  - If a variables is reference using the defined prefixes .i.e ${haveUtils ? "$" : ""} ${haveVariables ? "_" : ""} but the supportingProps have not prefix then that's ok accesss them without prefix using args like \`args.$[KEY]\` or \`args.[KEY]\` depends on how its defined in supportingProps
   `;
   },
-  mutatationPropInstruction: `- **\`mutation\`:** The \`mutation\` field is an array of objects. Each object represents a mutation operation and includes an \`id\` field. The \`prompt\` might refer to these mutations using an \`&\` prefix followed by the \`id\` of the mutation. In the generated code, access the mutation using \`args.[mutationId]\`. Ensure that any needed parameters are passed correctly. The \`returnFormat\` indicates how the updated value should be used.\n  - If the \`mutation.mutationType\` field is omitted, or explicitly set to \`callback\`, assume the \`mutation.mutate\` property is a function that needs to be called.\n  - In most cases, mutations with an \`id\` that starts with "set" (e.g., "setValue", "setCount") are React state setter functions. If the prompt indicates a need to update the state based on its previous value, use the \`prevValue\` parameter within the state setter function when calling \`args.[mutationId]\`.
+  mutatationPropInstruction: `- **\`mutation\`:** The \`mutation\` field is an array of objects. Each object represents a mutation operation and includes an \`id\` field. The \`prompt\` might refer to these mutations using an \`&\` prefix followed by the \`id\` of the mutation. In the generated code, access the mutation using \`args.[mutationId]\`. Ensure that any needed parameters are passed correctly. The \`returnFormat\` tell in which format the value should be structured before mutation.\n  - If the \`mutation.mutationType\` field is omitted, or explicitly set to \`callback\`, assume the \`mutation.mutate\` property is a function that needs to be called.\n  - In most cases, mutations with an \`id\` that starts with "set" (e.g., "setValue", "setCount") are React state setter functions. If the prompt indicates a need to update the state based on its previous value, use the \`prevValue\` parameter within the state setter function when calling \`args.[mutationId]\`.
   `,
   callbacksPropInstruction: function (keys: string[]) {
     const haveInpendendentCallbacks = keys.includes(

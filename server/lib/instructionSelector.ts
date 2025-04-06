@@ -383,21 +383,30 @@ export default async function instructionHandler(props: Common) {
   }
   [
     detectsDOMManipulationPrompt(props.prompt),
-    extractDatabaseName(props.supportingProps?.database?.name),
-    extractFirebaseSupabaseCRUD(props.prompt),
+    extractDatabaseName(
+      props.supportingProps?.database?.name,
+      "common_databaseOperation"
+    ),
+    extractFirebaseSupabaseCRUD(props.prompt, "common_crud"),
     extractFirebaseSupabaseStorage(props.prompt),
-    extractFirebaseSupabaseAuth(props.prompt),
+    extractFirebaseSupabaseAuth(props.prompt, "common_auth"),
+    "usage_general_example",
+    extractFirebaseSupabaseCRUD(props.prompt, "usage.example"),
+    extractFirebaseSupabaseAuth(props.prompt, "usage.auth"),
   ].forEach((item) => {
     if (item) {
       keys.push(item);
     }
   });
+  console.log(keys);
   // Collecting examples
   keys.forEach((key) => {
     if (key == "onInit" && typeof props.onInit !== "string") return;
     const examplePath = key.startsWith("common_")
       ? `${root}/examples/common/${key}.md`
-      : `${root}/examples/${target}/${key}.md`;
+      : key.startsWith("usage")
+        ? `${root}/examples/${target}/usage/${key}.md`
+        : `${root}/examples/${target}/${key}.md`;
     const content = importMarkdown(examplePath);
     if (typeof content !== "undefined" && content !== null) {
       context.push(content);
@@ -457,7 +466,7 @@ function detectsFirebaseSupabaseInteraction(text: string) {
     /(firebase|supabase|firestore|realtime database|auth|storage|functions|collections|documents|tables|rows|columns|queries|insert|update|delete|select|from|where|order by|limit|onSnapshot|getDocs|addDoc|setDoc|updateDoc|deleteDoc|from|to|eq|gt|lt|gte|lte|in|not|is|isNot|like|rpc|storage.from|storage.upload|storage.download)/i;
   return firebaseSupabaseRegex.test(text);
 }
-function extractFirebaseSupabaseCRUD(text: string) {
+function extractFirebaseSupabaseCRUD(text: string, prefix: string) {
   const firebaseRegex = /firebase/i;
   const supabaseRegex = /supabase/i;
   const crudRegex =
@@ -465,9 +474,9 @@ function extractFirebaseSupabaseCRUD(text: string) {
 
   if (crudRegex.test(text)) {
     if (firebaseRegex.test(text)) {
-      return "common_crud.firebase";
+      return `${prefix}.firebase`;
     } else if (supabaseRegex.test(text)) {
-      return "common_crud.supabase";
+      return `${prefix}.supabase`;
     }
   }
 }
@@ -487,7 +496,7 @@ function extractFirebaseSupabaseStorage(text: string) {
 
   return null;
 }
-function extractFirebaseSupabaseAuth(text: string) {
+function extractFirebaseSupabaseAuth(text: string, prefix: string) {
   const firebaseRegex = /firebase/i;
   const supabaseRegex = /supabase/i;
   const authRegex =
@@ -495,22 +504,22 @@ function extractFirebaseSupabaseAuth(text: string) {
 
   if (authRegex.test(text)) {
     if (firebaseRegex.test(text)) {
-      return "common_auth.firebase";
+      return `${prefix}.firebase`;
     } else if (supabaseRegex.test(text)) {
-      return "common_auth.supabase";
+      return `${prefix}.supabase`;
     }
   }
 
   return null;
 }
 
-function extractDatabaseName(text: string = "") {
+function extractDatabaseName(text: string = "", prefix: string) {
   const firebaseRegex = /firebase/i;
   const supabaseRegex = /supabase/i;
   if (firebaseRegex.test(text)) {
-    return "common_databaseOperation.firebase";
+    return `${prefix}.firebase"`;
   } else if (supabaseRegex.test(text)) {
-    return "common_databaseOperation.supabase";
+    return `${prefix}.supabase`;
   }
   return null;
 }

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import chokidar from "chokidar";
 import catchAll from "./routesHandler/catchall.js";
@@ -8,54 +8,33 @@ import log from "./utils/cliColoredLog.js";
 import path from "path";
 import loadConfig from "./utils/loadConfig.js";
 import instructionHandler from "./lib/instructionSelector.js";
-import { Common } from "./types/index.js";
+
+const setCookies = (req: Request, res: Response, next: NextFunction) => {
+  res.cookie("port", "3000", { httpOnly: true });
+  next();
+};
+
 const app = express();
+app.use(setCookies);
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.post("/prompt-to-code", processPromptAndCreateFile);
-
 app.get("*", catchAll);
 
-// app.listen(5173, async () => {
-//   const configs = await loadConfig();
-//   const port = configs.PORT || 5173;
-//   log("Running on: ", `http://localhost:${port}/`, "\n").info();
-//   const rootDir = process.cwd();
-//   chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
-// });
-
-const prompt: Common = {
-  filename: "",
-  prompt: "firebase storage upload file",
-  listener: "onClick",
-  element: "input",
-  feedback: "",
-  supportingProps: {
-    // utils: {},
-    // variables: {},
-    database: {
-      name: "that's cool called firebase",
-    },
-  },
-  // mutation: [],
-  // callbacks: {
-  //   dependent: [],
-  //   independent: [],
-  // },
-};
-
 app.listen(async () => {
-  // Remove the explicit port here
   try {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
-    const i = await instructionHandler(prompt);
-    console.log(i);
-
+    await instructionHandler({
+      prompt: "supabase auth insert",
+      filename: "",
+      listener: "onSubmit",
+      element: "form",
+    });
+    return;
     app.listen(port, () => {
       // Listen on the determined port
       log("Running on: ", `http://localhost:${port}/`, "\n").info();
-      return;
       const rootDir = process.cwd();
       chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
     });

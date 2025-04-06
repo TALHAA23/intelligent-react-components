@@ -22,7 +22,7 @@ type Models = {
   };
 };
 
-let latestConv: StartChatParams["history"] = [];
+// let latestConv: StartChatParams["history"] = [];
 
 const models: Models = {
   button: {
@@ -199,7 +199,6 @@ const models: Models = {
         role: "model",
         parts: [{ text: "Got it. I will follow these instructions.\n" }],
       },
-      ...latestConv,
     ],
   },
   form: {
@@ -580,6 +579,8 @@ async function run(prompt: Common) {
     generationConfig,
     history: models[prompt.element]?.history,
   });
+  const h = await chatSession.getHistory();
+  console.log(h.pop());
 
   log(`"${inUseModel}" will be used for this request \n`).info();
 
@@ -589,24 +590,24 @@ async function run(prompt: Common) {
 
   log("2.2: Successfully received response from the model").subStep();
 
-  latestConv = [
-    {
-      role: "user",
-      parts: [
-        {
-          text: JSON.stringify(prompt),
-        },
-      ],
-    },
-    {
-      role: "model",
-      parts: [
-        {
-          text: resultText,
-        },
-      ],
-    },
-  ];
+  // latestConv = [
+  //   {
+  //     role: "user",
+  //     parts: [
+  //       {
+  //         text: JSON.stringify(prompt),
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     role: "model",
+  //     parts: [
+  //       {
+  //         text: resultText,
+  //       },
+  //     ],
+  //   },
+  // ];
 
   return resultText;
 }

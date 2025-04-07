@@ -7,7 +7,7 @@ import watcher from "./utils/watcher.js";
 import log from "./utils/cliColoredLog.js";
 import path from "path";
 import loadConfig from "./utils/loadConfig.js";
-import instructionHandler from "./lib/instructionSelector.js";
+// import instructionHandler from "./lib/instructionSelector.js";
 
 const setCookies = (req: Request, res: Response, next: NextFunction) => {
   res.cookie("port", "3000", { httpOnly: true });
@@ -18,20 +18,20 @@ const app = express();
 app.use(setCookies);
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.post("/prompt-to-code", processPromptAndCreateFile);
+app.post("/prompt-to-code", setCookies, processPromptAndCreateFile);
 app.get("*", catchAll);
 
 app.listen(async () => {
   try {
     const configs = await loadConfig();
     const port = configs.PORT || 7070; // Use the config's PORT or default
-    await instructionHandler({
-      prompt: "supabase auth insert",
-      filename: "",
-      listener: "onSubmit",
-      element: "form",
-    });
-    return;
+    // await instructionHandler({
+    //   prompt: "supabase auth insert",
+    //   filename: "",
+    //   listener: "onSubmit",
+    //   element: "form",
+    // });
+    // return;
     app.listen(port, () => {
       // Listen on the determined port
       log("Running on: ", `http://localhost:${port}/`, "\n").info();

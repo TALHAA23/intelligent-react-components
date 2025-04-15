@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import { build } from "vite";
-import log from "./cliColoredLog.js";
+import CLI from "./chalk.js";
 let TIMEOUT_ID: undefined | NodeJS.Timeout = undefined;
 const BUILD_CONFIG_FILE = resolve(
   import.meta.dirname,
@@ -19,11 +19,11 @@ function debounce<T extends (eventName: string, currentPath: string) => void>(
 }
 
 export default function watcher(eventName: string, currentPath: string) {
-  log("Watching for file changes. \n").sucess();
-
   debounce(
     (eventName, currentPath) => {
-      log(`${eventName} event captured, rebuilding... \n`).info();
+      CLI.print(
+        CLI.format(`\n${eventName} event captured, rebuilding...`, "bgMagenta")
+      );
       if (currentPath.includes("dynamic")) {
         build({
           configFile: BUILD_CONFIG_FILE,
@@ -33,6 +33,3 @@ export default function watcher(eventName: string, currentPath: string) {
     eventName == "change" ? 10000 : 100
   )(eventName, currentPath);
 }
-
-// !path.relative("src", currentPath).startsWith(".") &&
-// (FIRST_BUILD || eventName !== "change")

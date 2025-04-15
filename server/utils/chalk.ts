@@ -80,12 +80,16 @@ export default class CLI {
   }
 
   /**
-   * Format text as bold
-   * @param text - The text to make bold
-   * @returns Bold text
+   * Format text as bold and print it
+   * @param text - The text to make bold and print
+   * @param color - Optional color to apply along with bold
    */
-  static bold(text: string): string {
-    return this.format(text, "bold");
+  static bold(text: string, color?: ColorName): string {
+    if (color) {
+      return `${this.formats.bold}${this.formats[color]}${text}${this.formats.reset}`;
+    } else {
+      return `${this.formats.bold}${text}${this.formats.reset}`;
+    }
   }
 
   /**
@@ -220,7 +224,13 @@ export default class CLI {
       },
 
       update: (newText: string) => {
+        // Update the text
         text = newText;
+
+        // Print the update message with an arrow icon
+        console.log(
+          `${this.formats.bold}${this.formats.blue}➤ ${newText}${this.formats.reset}`
+        );
       },
     };
   }

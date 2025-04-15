@@ -9,7 +9,6 @@
 function stringToFunctionDefination(fnStr: undefined | string) {
   if (!fnStr) return false;
   // Remove leading/trailing whitespace
-  console.log(fnStr);
   fnStr = fnStr.trim();
 
   // Detect if it's an async function

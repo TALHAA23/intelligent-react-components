@@ -54,7 +54,7 @@ The following are examples of invalid or irrelevant requests and how the model s
 }
 ```
 
-4. **Irrelevant Requests: If the request is unrelated to generating JavaScript event listener/ELEMENT_TYPE:**
+4. **Irrelevant Requests: If the request is unrelated to generating JavaScript event handler/ELEMENT_TYPE:**
 
 ```json
 {

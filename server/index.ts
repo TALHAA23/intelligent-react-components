@@ -4,10 +4,9 @@ import chokidar from "chokidar";
 import catchAll from "./routesHandler/catchall.js";
 import processPromptAndCreateFile from "./routesHandler/processPromptCreateFile.js";
 import watcher from "./utils/watcher.js";
-import log from "./utils/cliColoredLog.js";
 import path from "path";
 import loadConfig from "./utils/loadConfig.js";
-// import instructionHandler from "./lib/instructionSelector.js";
+import CLI from "./utils/chalk.js";
 
 const setCookies = (req: Request, res: Response, next: NextFunction) => {
   res.cookie("port", "3000", { httpOnly: true });
@@ -34,7 +33,7 @@ app.listen(async () => {
     // return;
     app.listen(port, () => {
       // Listen on the determined port
-      log("Running on: ", `http://localhost:${port}/`, "\n").info();
+      CLI.print(CLI.bold(`Running on: http://localhost:${port}/`, "green"));
       const rootDir = process.cwd();
       chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
     });
@@ -42,7 +41,7 @@ app.listen(async () => {
     console.error("Error loading configuration:", error);
     const port = 5173; //use default port
     app.listen(port, () => {
-      log("Running on: ", `http://localhost:${port}/`, "\n").info();
+      CLI.print(CLI.bold(`Running on: http://localhost:${port}/`, "green"));
       const rootDir = process.cwd();
       chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
     });

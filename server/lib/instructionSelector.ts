@@ -269,48 +269,48 @@ export default async function instructionHandler(props: Common) {
     context.push(preventDuplicateDomElementInstructions);
   }
   //   ** Collect instruction to handle invalid-irrelevant requests ** //
-  let handleInvalidIrrelevantInstruction = importMarkdown(
-    `${root}/handleInvalidIrrelevantRequests/handle_invalid_irrelevant_requests_instruction.md`
-  );
+  // let handleInvalidIrrelevantInstruction = importMarkdown(
+  //   `${root}/handleInvalidIrrelevantRequests/handle_invalid_irrelevant_requests_instruction.md`
+  // );
 
-  if (handleInvalidIrrelevantInstruction) {
-    const replacement = {
-      ELEMENT_TYPE: target.toUpperCase(),
-      MISSING_KEYS_DETAILS: selectInstruction(
-        {
-          button: "The following keys are missing: listener, prompt.",
-          input: "The following keys are missing: listener, prompt, or type.",
-          form: "The input is not valid JSON or does not conform to the expected AIFormProps interface. Please refer to the documentation for the correct input format.",
-        },
-        target
-      ),
-      INVALID_DATA_TYPE_DETAILS: selectInstruction(
-        {
-          button:
-            "The 'prompt' field should be a string, but a number was provided.",
-          input:
-            "The request is not related to generating a JavaScript event listener function for a DOM element (such as 'input' or 'button'). Please provide a valid JSON input.",
-          form: "The input is not valid JSON or does not conform to the expected AIFormProps interface. Please refer to the documentation for the correct input format.",
-        },
-        target
-      ),
-      IRRELEVANT_REQUEST_DETAILS: selectInstruction(
-        {
-          button:
-            "The request is not related to generating a JavaScript event listener function. Please provide a valid JSON input.",
-          input:
-            "The request is not related to generating a JavaScript event listener function for a DOM element (such as 'input' or 'button'). Please provide a valid JSON input.",
-          form: "The provided prompt is not suitable for generating form elements. Please provide a prompt that describes the desired form structure and fields.",
-        },
-        target
-      ),
-    };
-    handleInvalidIrrelevantInstruction = replacePlaceholders(
-      handleInvalidIrrelevantInstruction,
-      replacement
-    );
-    context.push(handleInvalidIrrelevantInstruction);
-  }
+  // if (handleInvalidIrrelevantInstruction) {
+  //   const replacement = {
+  //     ELEMENT_TYPE: target.toUpperCase(),
+  //     MISSING_KEYS_DETAILS: selectInstruction(
+  //       {
+  //         button: "The following keys are missing: listener, prompt.",
+  //         input: "The following keys are missing: listener, prompt, or type.",
+  //         form: "The input is not valid JSON or does not conform to the expected AIFormProps interface. Please refer to the documentation for the correct input format.",
+  //       },
+  //       target
+  //     ),
+  //     INVALID_DATA_TYPE_DETAILS: selectInstruction(
+  //       {
+  //         button:
+  //           "The 'prompt' field should be a string, but a number was provided.",
+  //         input:
+  //           "The request is not related to generating a JavaScript event listener function for a DOM element (such as 'input' or 'button'). Please provide a valid JSON input.",
+  //         form: "The input is not valid JSON or does not conform to the expected AIFormProps interface. Please refer to the documentation for the correct input format.",
+  //       },
+  //       target
+  //     ),
+  //     IRRELEVANT_REQUEST_DETAILS: selectInstruction(
+  //       {
+  //         button:
+  //           "The request is not related to generating a JavaScript event listener function. Please provide a valid JSON input.",
+  //         input:
+  //           "The request is not related to generating a JavaScript event listener function for a DOM element (such as 'input' or 'button'). Please provide a valid JSON input.",
+  //         form: "The provided prompt is not suitable for generating form elements. Please provide a prompt that describes the desired form structure and fields.",
+  //       },
+  //       target
+  //     ),
+  //   };
+  //   handleInvalidIrrelevantInstruction = replacePlaceholders(
+  //     handleInvalidIrrelevantInstruction,
+  //     replacement
+  //   );
+  //   context.push(handleInvalidIrrelevantInstruction);
+  // }
 
   //   ** Args **//
   let accessArgsInstructions = importMarkdown(
@@ -398,7 +398,6 @@ export default async function instructionHandler(props: Common) {
       keys.push(item);
     }
   });
-  console.log(keys);
   // Collecting examples
   keys.forEach((key) => {
     if (key == "onInit" && typeof props.onInit !== "string") return;
@@ -537,9 +536,7 @@ function importMarkdown(filePath: string) {
     const markdownContent = fs.readFileSync(filePath, "utf8");
     return markdownContent;
   } catch (error) {
-    // console.error("Error importing Markdown:", error);
     error;
-    console.error("File:", filePath.split("/").pop(), " do not exist");
     return null;
   }
 }

@@ -6,7 +6,7 @@
     "module": "ESNext", // Defines the module system to use for code generation.
     "skipLibCheck": true, // Skips type checking of declaration files.
     "allowJs": true,
-    "types": ["vite/client", "vitest/globals"],
+    "types": ["vite/client"],
     /* Bundler mode */
     "moduleResolution": "bundler", // Specifies how modules are resolved when bundling.
     // "allowImportingTsExtensions": true, // Allows importing TypeScript files with extensions.

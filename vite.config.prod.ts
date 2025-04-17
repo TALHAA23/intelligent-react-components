@@ -52,6 +52,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
+import react from "@vitejs/plugin-react";
 // import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 const DIRNAME = import.meta.dirname;
@@ -90,6 +91,7 @@ export default defineConfig({
       entryRoot: resolve(DIRNAME, "./src"),
       rollupTypes: false, // Add this line
     }),
+    react(),
     tsconfigPaths({
       root: DIRNAME,
     }),

@@ -49,6 +49,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { peerDependencies } from "./package.json";
 import tsconfigPaths from "vite-tsconfig-paths";
+import react from "@vitejs/plugin-react";
 // import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 export default defineConfig({
@@ -83,6 +84,7 @@ export default defineConfig({
       entryRoot: "src", // Add this line
     }),
     tsconfigPaths(),
+    react(),
     // cssInjectedByJsPlugin(),
   ],
 });

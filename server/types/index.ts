@@ -181,7 +181,7 @@ interface Common<Target = React.HTMLAttributes<any>> {
 interface AIResponse {
   thoughts?: string;
   response?: {
-    eventlistener: string;
+    eventListener: string;
     globals?: {
       [key: string]: any;
     };

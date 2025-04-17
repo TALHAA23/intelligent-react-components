@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import {
   StyledObjectEntryBoolean,
   // StyledObjectEntryKey,
@@ -24,7 +24,7 @@ const ObjectEntry = ({
   isLast = false,
   indentLevel = 0,
 }: ObjectEntryProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const indent = "  ".repeat(indentLevel);
 
   if (value === null)

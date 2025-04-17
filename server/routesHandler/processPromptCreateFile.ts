@@ -23,7 +23,9 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
       Object.entries(cleanedResponse.error).forEach(([key, value]) => {
         CLI.subsection(`${key}: ${value}`);
       });
-      return res.json(cleanedResponse);
+      // when response is not OK
+      if (/^(?!2\d{2}$).*/.test(cleanedResponse.error.status.toString()))
+        return res.json(cleanedResponse);
     }
 
     CLI.subsection("5. Generating file with the provided content");

@@ -1,6 +1,6 @@
 import { Action, IRCRegisteryProviderState } from "@/types/custom/IRCProvider";
 import { IRC_ACTIONS } from "@utils/utils";
-import { createContext, ReactNode, useContext, useReducer } from "react";
+import React from "react";
 const initialValue: IRCRegisteryProviderState = {
   registerButtons: [],
   register(type, payload) {
@@ -8,7 +8,7 @@ const initialValue: IRCRegisteryProviderState = {
     payload;
   },
 };
-const IrcRegisteryContext = createContext(initialValue);
+const IrcRegisteryContext = React.createContext(initialValue);
 
 const reducer = (prevState: IRCRegisteryProviderState, action: Action) => {
   const { type, payload } = action;
@@ -54,14 +54,14 @@ const reducer = (prevState: IRCRegisteryProviderState, action: Action) => {
 };
 
 export const useIrcRegistriesAndRegister = () =>
-  useContext(IrcRegisteryContext);
+  React.useContext(IrcRegisteryContext);
 
 export default function IRCRegisteryProvider({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
-  const [state, dispatch] = useReducer(reducer, initialValue);
+  const [state, dispatch] = React.useReducer(reducer, initialValue);
   const updateState: IRCRegisteryProviderState["register"] = (
     type,
     payload

@@ -66,3 +66,29 @@ The following are examples of invalid or irrelevant requests and how the model s
   }
 }
 ```
+
+## Handle Tolerable Errors with Correction and Reporting (Status 200)
+
+When encountering a potentially tolerable error due to minor variations or common misspellings (e.g., in property names) and you are highly confident in the user's intended meaning, proceed as follows:
+
+1.  **Return a successful HTTP status code (200). in error field**
+    - **"status"**: Set this to `200` to indicate a successful response despite the minor issue.
+    - **"details or message"**: Explain the problem and the assumption made for correction, using a more conversational tone as requested. For example: "The listener should likely be 'onInput', not 'onClick', for real-time input transformation. I am changing the listener to 'onInput' and continuing with the response."
+    - **"code"**: A unique error code for this type of correction (e.g., "PROPERTY_MISSPELLED_CORRECTED").
+2.  **Include a "response" field as usual** Include the response as we do for valid request.
+
+**Example of a successful response with a corrected error:**
+
+```json
+{
+  "error": {
+    "message": "Minor misspelling in property name corrected.",
+    "status": 200,
+    "details": "The property 'onclk' was used instead of the expected 'onClick'. Assuming you intended to use the 'onClick' event handler. Please use 'onClick' in future requests.",
+    "code": "PROPERTY_MISSPELLED_CORRECTED"
+  },
+  "response": {
+    // complete response
+  }
+}
+```

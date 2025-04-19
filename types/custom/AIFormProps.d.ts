@@ -14,7 +14,12 @@ interface FormField {
   /**
    * The type of input .i.e text, email, password etc.
    */
-  type: React.HTMLInputTypeAttribute;
+  type:
+    | React.HTMLInputTypeAttribute
+    | "radio-group" // Represents a group of radio buttons
+    | "drop-down" // Represents a <select> element
+    | "textarea" // Represents a <textarea> element (though <input type="textarea"> doesn't exist)
+    | "checkbox-group"; // Represents a group of checkboxes
 
   /**
    * A concise description of the desired field.

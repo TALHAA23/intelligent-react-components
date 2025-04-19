@@ -6,7 +6,7 @@ const selectInstruction = (
   selectedKey: Element
 ) => options[selectedKey];
 
-const dynamicInstructions = {
+const dynamicInstructions: { [key: string]: any } = {
   formSpecficInstruction: `Given a natural language description of the desired form, You can generate:
   - Form structures: Number of fields, arrangement, and overall layout.
   - Field definitions: Type, labels, placeholders, validation rules.
@@ -26,6 +26,20 @@ const dynamicInstructions = {
     ${having.multiStep ? '- \`"multiStep"\`: Configuration for multi-step forms.' : ""}
     `;
   },
+  formFieldDefinationTypePropertyInstruction: `- Within each object in the \`"fieldDefinitions"\` array, the \`type\` property specifies the kind of form element. The model should interpret the \`type\` property as follows:
+  - **Standard HTML Input Types:** If \`type\` is a standard HTML input type (e.g., \`"text"\`, \`"password"\`, \`"email"\`, \`"number"\`), generate a corresponding \`<input>\` element with that \`type\`.
+
+  - **Custom Type: \`"radio-group"\`:** If \`type\` is \`"radio-group"\`, generate radio buttons using the \`options\` array for labels/values. \`name\` is shared.
+    "type": "radio-group"
+    <div><label>Choose</label><div><input type="radio" id="CONTEXTED_BASED" name="NAME_BASED_ON_CONTEXT" value="Yes"><label for="CONTEXTED_BASED">Yes</label></div><div><input type="radio" id="CONTEXTED_BASED" name="NAME_BASED_ON_CONTEXT" value="No"><label for="CONTEXTED_BASED">No</label></div></div>
+    
+  - **Custom Type: \`"drop-down"\` (Select Element):** If \`type\` is \`"drop-down"\`, generate a \`<select>\` with \`<option>\` from the \`options\` array.
+    "type": "drop-down"
+    <label for="selection">Pick</label><select id="selection" name="selection"><option value="">Select...</option><option value="a">Alpha</option></select>
+  - So on for type \`checkbox-group\` and \`textarea\`
+  
+  *Each element in fieldDefinations have "fieldDefination" which is like a desc of the element use it to understand about the element.*
+  `,
   feedbackInstruction: `**Feedback Usage:**
   - If \`feedback\` is present, prioritize processing it and revising the response.
   - \`feedback\` should describe errors, required changes, and constraints.
@@ -166,6 +180,21 @@ const dynamicInstructions = {
     responsivness: `- I consider how the generated form will adapt to different screen sizes. I will use CSS media queries to adjust the layout and styling for different screen widths.`,
     formBuilder: `- The \`formBuilder\` function is responsible for dynamically creating the HTML structure of the form. I analyze the \`prompt\`, \`layout\`, \`styleHint\`, and \`fieldDefinitions\` to determine: The number and types of input fields required. The arrangement of fields within the form (e.g., one column, two columns, grid). The labels for each input field. The HTML attributes for each input field (type, placeholder, required, etc.). I create the necessary HTML elements (input fields, labels, buttons, containers) and assign them appropriate IDs and classes (following the naming conventions). I apply the specified \`styleHint\` to the form elements by adding CSS classes and generating the style in the CSS field of the Output JSON. I append the created elements to the appropriate parent elements within the form structure. I ensure that the generated form structure adheres to the specified \`layout\` and \`styleHint\`. I handle conditional logic within the form (if specified in the \`prompt\` or \`fieldDefinitions\`).`,
     fieldDefination: `- I iterate through each object in the \`fieldDefinitions\` array. I extract the \`id\`, \`fieldDefination\`, \`styleHint\`, \`layout\`, \`type\`, and \`validate\` properties for each field. I analyze the \`fieldDefination\` string to determine the field nature and need. I check \`type\` to know the type of input (e.g., "text", "number", "textarea", "select", "checkbox", "file"). I identify any validation rules specified in the \`validate\` property (e.g., "required", "email format", "number range") or create any validation function in the \`helperFunctions\`. I handle field references (e.g., "The value should be same as @password") by storing the \`id\` of the referenced field and using it during code generation.`,
+  },
+  formAdditionalInstructions: (keys: string[]) => {
+    const having = have(keys);
+    const multiStepFormInstruction = `## MultiStep Form Suggestions
+    - Do Not Use addEventListener .i.e addEventlistener element.addEventlistener("click", () =>{}) instead pass onClick property within createElement to attached handler .i.e createElement("element", { onClick:()=> {} } )
+    - For a multiStep form with Prev, Next, Submit (more than one button) I create a wrapper with flex property and use flex-grow:1 on each button. For samller screen I use columns diraction while for bigger I use row.
+    - As The navigation button require a listener I always add a listner using createElement helperFunction, for example:
+      globals.nextButton = createElement("button", {
+        type: "button",
+        textContent: "Next",
+        className: \`FILENAME-button FILENAME-next-button [DOLLORS_IGN]{globals.currentStep === stepsData.length ? "FILENAME-hidden" : ""}\`,
+        onclick: () => showStep(globals.currentStep + 1),
+      });
+    `;
+    return `${having.multiStep && multiStepFormInstruction}`;
   },
 };
 

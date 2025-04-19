@@ -20,9 +20,11 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
     CLI.subsection("4. Sanitizing and validating the response");
     if (cleanedResponse?.error && Object.keys(cleanedResponse?.error).length) {
       CLI.section("Error Details");
-      Object.entries(cleanedResponse.error).forEach(([key, value]) => {
-        CLI.subsection(`${key}: ${value}`);
-      });
+      if (typeof cleanedResponse.error == "object")
+        Object.entries(cleanedResponse.error).forEach(([key, value]) => {
+          CLI.subsection(`${key}: ${value}`);
+        });
+      else CLI.print(cleanedResponse.error, "red");
       // when response is not OK
       if (/^(?!2\d{2}$).*/.test(cleanedResponse.error.status.toString()))
         return res.json(cleanedResponse);
@@ -43,9 +45,11 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
   } catch (err) {
     const generativeAiError = err as unknown as GoogleGenerativeAIError;
     CLI.section("Error Details");
-    Object.entries(generativeAiError).forEach(([key, value]) => {
-      CLI.subsection(`${key}: ${value}`);
-    });
+    if (typeof err == "object")
+      Object.entries(generativeAiError).forEach(([key, value]) => {
+        CLI.subsection(`${key}: ${value}`);
+      });
+    else CLI.print(generativeAiError.message, "red");
     res.status(500).json({ message: generativeAiError.message });
   }
 };

@@ -7,7 +7,6 @@
 // };
 
 function stringToFunctionDefination(fnStr: undefined | string) {
-  console.log("Main: ", fnStr);
   if (!fnStr) return false;
   // Remove leading/trailing whitespace
   fnStr = fnStr.trim();

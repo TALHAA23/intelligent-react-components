@@ -9,6 +9,8 @@ The model will receive a JSON object as input. This JSON object _must_ contain t
 
 ELEMENT_SPECIFIC_REQUIRED_KEYS
 
+_FORM_FORMDEFINATION_TYPE_PROPERTY_
+
 _OPTIONAL_KEYS_
 
 _FEEDBACK_FIELD_USEAGE_

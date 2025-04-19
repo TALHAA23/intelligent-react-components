@@ -542,7 +542,31 @@ const models: Models = {
         role: "user",
         parts: [
           {
-            text: '**Few standards to follow to create an effective form**\n\n- When adding classes, Id, name, htmlFor, etc., always prefix with "filename-" to avoid collision with other forms.\n- When creating fields for a multistep form define createFormField helperfunction with paramters id (prefix with filename), label and type.\n- Use fieldDefination to extract label from, always split the string by "," and use whatever is at the first index as label.\n- For a multisteps for htmlFor, name of input and id must be prefix with filename.\n- Always save a reference of submit, next, and prev buttons in globals to avoid querying them later.\n- In main function always use formData constructor to get form data.\n- In main correctly use field name (with filename prefix) to avoid undefined. \n- Always change the navigation as the sections change in multistep form\n- Accessing: When using formData.get(), always include the filename/prefix.\n- Processing: When creating an object to insert for storage/output, remove the filename/prefix from each key before using the data.\n- When adding classes to any element which might me falsy always add "~#$%&&" class using or gate .i.e element.classList.add(variable || "~#$%&&").\n- Never ever use classList always use className to assign classes. like className:"cls1 cls2 ..."\n- FormBuilder is response is really important. if the prompt asks to create fields explicitly or implicitly, you have to create a proper form whos logic get inside formBuilder.\n- If any mutation ID starts with \'set\' or the mutationType is either \'callback\' or omit, it must be a React useState hook so if you need to update this mutation and the prompt is of a nature where it need prevValues use the prev state provide in the useState hook to combine it with any new data.\n\nIn one short paragraph, summarize what you have learned.\n',
+            text: `**Few standards to follow to create an effective form**
+
+- When adding classes, Id, name, htmlFor, etc., always prefix with "filename-" to avoid collision with other forms.
+- When creating fields for a multistep form define createFormField helperfunction with paramters id (prefix with filename), label and type.
+- Use fieldDefination to extract label from, always split the string by "," and use whatever is at the first index as label.
+- For a multisteps for htmlFor, name of input and id must be prefix with filename.
+- Always save a reference of submit, next, and prev buttons in globals to avoid querying them later.
+- In main function always use formData constructor to get form data.
+- In main correctly use field name (with filename prefix) to avoid undefined. 
+- Always change the navigation as the sections change in multistep form
+- Accessing: When using formData.get(), always include the filename/prefix.
+- Processing: When creating an object to insert for storage/output, remove the filename/prefix from each key before using the data.
+- When adding classes to any element which might me falsy always add "~#$%&&" class using or gate .i.e element.classList.add(variable || "~#$%&&").
+- Never ever use classList always use className to assign classes. like className:"cls1 cls2 ..."
+- FormBuilder is response is really important. if the prompt asks to create fields explicitly or implicitly, you have to create a proper form whos logic get inside formBuilder.
+- If any mutation ID starts with 'set' or the mutationType is either 'callback' or omit, it must be a React useState hook so if you need to update this mutation and the prompt is of a nature where it need prevValues use the prev state provide in the useState hook to combine it with any new data.
+- When writing thoughts and expect, make sure to use single quotes when emphasizing a word, not double quotes .i.e "this is an 'expect' "
+- When creating event listener for elements (navigation buttons, dependent fields etc) never use addEventListener always pass the event within createElement helperFunction to immedietly create the listener .i.e createElement("button",{ onclick:()=>{} }).
+- For controler buttons such as next, prev, submit, etc., always wrap them in a wrapper and display them flex (direction column for smaller screen and row for bigger). Then, on each button, add flex-grow: 1 for the buttons to take all space. (This is only when styleHint does not have specific instructions for these buttons.). for exampe
+   - .FILENAME-buttons-wrapper { display: flex; gap: 3px; }
+   - .FILENAME-button { flex-grow: 1; }
+- onSubmit event is added to the form externally never try to create event on submit button just make sure button type is set to "submit".
+
+In one short paragraph, summarize what you have learned.
+`,
           },
         ],
       },
@@ -550,7 +574,8 @@ const models: Models = {
         role: "model",
         parts: [
           {
-            text: "I have updated my form creation process to adhere to strict standardization for improved robustness and consistency. This includes prefixing all classes, IDs, and names with the filename to avoid collisions, using a dedicated `createFormField` function for multi-step forms, and extracting labels from field definitions. It's crucial to save references to key buttons in globals for efficient access and handle form data using `FormData`. Also, I need to manage navigation as sections change and correctly use field names with prefixes when accessing form data. Before inserting make sure to reomve form prefix. For class assignment I need to conditionally assign a class using a placeholder like `\"~#$%&&\"` and use `className` over `classList`. Finally, when dealing with state mutations indicated by a 'set' prefix or an omitted/callback mutationType, use the `useState` hook with functional updates to correctly incorporate previous state values. `FormBuilder` respons is critical now more then ever,\n",
+            text: `I have learned to create standardized, robust, and user-friendly forms with consistent styling, prefixing all classes/IDs with the filename to avoid collisions, and using \`createFormField\` for efficient field generation. It's essential to manage navigation in multi-step forms, save references to key elements in globals, correctly handle form data using prefixes and extraction for database operations, and apply conditional classes using a placeholder. Avoid \`classList\`, always make use of className. Generate FormBuilder only when the prompt requires, ensure 'set' mutations use useState hooks with previous state and use createElement to add onclick listener and for navigation use wrapper and flex. I must make sure to use all this rules into practice so i create a great and attractive form.
+`,
           },
         ],
       },

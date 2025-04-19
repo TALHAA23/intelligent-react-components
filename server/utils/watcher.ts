@@ -18,7 +18,18 @@ function debounce<T extends (eventName: string, currentPath: string) => void>(
   } as T;
 }
 
+let initialRender = true;
 export default function watcher(eventName: string, currentPath: string) {
+  if (initialRender) {
+    CLI.print(
+      CLI.format(
+        "Server is setted to listen for File creation, Change and Delete to keep your space up-to-date",
+        "dim"
+      )
+    );
+    initialRender = false;
+    return;
+  }
   debounce(
     (eventName, currentPath) => {
       CLI.print(

@@ -50,6 +50,10 @@ export default async function instructionHandler(props: Common) {
         target == "input"
           ? '- `"type"`: A string representing the input type (e.g., `"text"`, `"password"`, `"email"`, etc.). This key helps the model generate code tailored to the specific input type'
           : "",
+      _FORM_FORMDEFINATION_TYPE_PROPERTY_:
+        target == "form"
+          ? dynamicInstructions.formFieldDefinationTypePropertyInstruction
+          : "",
       _OPTIONAL_KEYS_: dynamicInstructions.expectedInputInstruction(keys),
       _FEEDBACK_FIELD_USEAGE_: keysIncludes(InputKeys.feedback)
         ? dynamicInstructions.feedbackInstruction
@@ -365,10 +369,18 @@ export default async function instructionHandler(props: Common) {
   }
 
   // ** Additionals ** //
-  const additionalInstructions = importMarkdown(
+  let additionalInstructions = importMarkdown(
     `${root}/additionals/${target}.md`
   );
   if (additionalInstructions) {
+    const replacement = {
+      _DYNAMIC_ADDITIONALS_:
+        dynamicInstructions[`${target}AdditionalInstructions`](keys) || "",
+    };
+    additionalInstructions = replacePlaceholders(
+      additionalInstructions,
+      replacement
+    );
     context.push(additionalInstructions);
   }
 

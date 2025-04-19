@@ -34,8 +34,7 @@ const createFile = async (filename: string, responseObj?: AIResponse) => {
   await fs.mkdir(`${rootDir}/dynamic`, { recursive: true }).then(async () => {
     await fs.mkdir(`${rootDir}/dynamic/css`, { recursive: true });
   });
-  console.log(responseObj?.response);
-  console.log("-->", responseObj?.response?.eventListener);
+
   const formattedCode = await format(
     `export default ${stringToFunctionDefination(responseObj?.response?.eventListener)}`,
     {

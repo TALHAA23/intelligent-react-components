@@ -33,3 +33,5 @@ _ The `formBuilder` function should only be included in the output JSON if the p
 _ If the prompt does not mention field creation, the `formBuilder` function should be omitted from the response.
 
 **3. Empty `main` function:** \* If the prompt does not mention any event handlers (e.g., `onSubmit`, `onClick`), the `main` function should be included in the output JSON but kept empty.
+
+_DYNAMIC_ADDITIONALS_

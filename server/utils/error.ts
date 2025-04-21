@@ -1,12 +1,4 @@
-import { NextFunction } from "express";
-
-export default function Error(
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  console.log("ERROR HANDLING_____________");
+export default function Error(err: Error) {
   console.log(err.message);
   // return new Response({}, { status: 500, statusText: "internal server error" });
 }

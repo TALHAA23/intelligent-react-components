@@ -24,7 +24,7 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
         Object.entries(cleanedResponse.error).forEach(([key, value]) => {
           CLI.subsection(`${key}: ${value}`);
         });
-      else CLI.print(cleanedResponse.error, "red");
+      else console.log(cleanedResponse.error);
       // when response is not OK
       if (/^(?!2\d{2}$).*/.test(cleanedResponse.error.status.toString()))
         return res.json(cleanedResponse);
@@ -49,7 +49,7 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
       Object.entries(generativeAiError).forEach(([key, value]) => {
         CLI.subsection(`${key}: ${value}`);
       });
-    else CLI.print(generativeAiError.message, "red");
+    else console.log(err);
     res.status(500).json({ message: generativeAiError.message });
   }
 };

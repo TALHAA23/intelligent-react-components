@@ -429,18 +429,9 @@ export default async function instructionHandler(props: Common) {
       parser: "markdown",
     }
   );
-  fs.writeFile(
-    `${process.cwd()}/instructions.md`,
-    formatInstruction,
-    { encoding: "utf-8" },
-    (err) => {
-      if (err) {
-        console.error("Error writing file:", err);
-      } else {
-        console.log("File written successfully.");
-      }
-    }
-  );
+  fs.writeFile(`${process.cwd()}/instructions.md`, formatInstruction, {
+    encoding: "utf-8",
+  });
   return formatInstruction;
 }
 

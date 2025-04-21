@@ -1,23 +1,17 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import cors from "cors";
-import chokidar from "chokidar";
 import catchAll from "./routesHandler/catchall.js";
 import processPromptAndCreateFile from "./routesHandler/processPromptCreateFile.js";
-import watcher from "./utils/watcher.js";
-import path from "path";
 import loadConfig from "./utils/loadConfig.js";
 import CLI from "./utils/chalk.js";
-
-const setCookies = (req: Request, res: Response, next: NextFunction) => {
-  res.cookie("port", "3000", { httpOnly: true });
-  next();
-};
+// import chokidar from "chokidar";
+// import path from "path";
+// import watcher from "./utils/watcher.js";
 
 const app = express();
-app.use(setCookies);
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.post("/prompt-to-code", setCookies, processPromptAndCreateFile);
+app.post("/prompt-to-code", processPromptAndCreateFile);
 app.get("*", catchAll);
 
 app.listen(async () => {
@@ -33,17 +27,17 @@ app.listen(async () => {
     // return;
     app.listen(port, () => {
       // Listen on the determined port
-      CLI.print(CLI.bold(`Running on: http://localhost:${port}/`, "green"));
-      const rootDir = process.cwd();
-      chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
+      CLI.print(CLI.bold(`Listening on: http://localhost:${port}/`, "green"));
+      // const rootDir = process.cwd();
+      // chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
     });
   } catch (error) {
     console.error("Error loading configuration:", error);
     const port = 5173; //use default port
     app.listen(port, () => {
-      CLI.print(CLI.bold(`Running on: http://localhost:${port}/`, "green"));
-      const rootDir = process.cwd();
-      chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
+      CLI.print(CLI.bold(`Listening on: http://localhost:${port}/`, "green"));
+      // const rootDir = process.cwd();
+      // chokidar.watch(path.resolve(rootDir, "dynamic")).on("all", watcher);
     });
   }
 });

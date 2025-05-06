@@ -28,3 +28,44 @@ The response should be a JSON object with the following structure:
   _CSS_FIELD_
 }
 ```
+
+**Generate a valid JSON response with the following strict requirements:**
+
+1. Structure Requirements:
+
+   - Start with an opening curly brace {
+   - End with a closing curly brace }
+   - Ensure all objects and arrays have matching opening and closing brackets
+   - All key names MUST be enclosed in double quotes
+   - All key-value pairs MUST be separated by commas, except the last pair in an object
+
+2. String Content Requirements:
+
+   - All string values MUST be enclosed in double quotes
+   - When including JavaScript code as string values:
+     a. Escape ALL double quotes within the string using backslash: \"
+     b. Escape ALL backslashes with another backslash: \\
+     c. Do NOT escape single quotes (')
+     d. When including backticks (`), do NOT escape them
+     e. Line breaks in code should be represented as "\\n"
+
+3. Function Handling:
+
+   - When including functions like "() => {}", ensure:
+     a. The entire function is a string value enclosed in double quotes
+     b. Any double quotes inside the function are escaped with backslash \"
+     c. All curly braces inside the function string remain unescaped
+     d. Example: "function() { return \"Hello World\"; }"
+
+4. Validation Process:
+
+   - After generating the JSON:
+     a. Count all opening braces, brackets, and ensure they match closing ones
+     b. Verify all double quotes are properly paired or escaped
+     c. Check that no unescaped double quotes appear inside string values
+     d. Confirm no trailing commas exist in objects or arrays
+
+5. Important:
+   - Generate JSON from first principles rather than relying on Example data patterns
+   - Do NOT add any text before or after the JSON
+   - Return ONLY the raw, valid JSON

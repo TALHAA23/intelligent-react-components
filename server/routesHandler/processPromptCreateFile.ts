@@ -4,8 +4,19 @@ import clearResponse from "../utils/responseCleaner.js";
 import createFile from "../utils/createFile.js";
 import { GoogleGenerativeAIError } from "@google/generative-ai";
 import CLI from "../utils/chalk.js";
+
+const retryContext = {
+  retry: true,
+  haveError: false,
+  feedback: "",
+};
 const processPromptAndCreateFile: RouteHandler = async (req, res) => {
   const body = req.body as Common;
+  if (retryContext.feedback) {
+    CLI.subsection("Constructing new Body");
+    body.feedback = body.feedback?.concat(retryContext.feedback);
+    console.log(body);
+  }
   CLI.section(`Request Initiated for "${body.filename}"`);
 
   CLI.subsection("1. Extracting the request body");
@@ -17,15 +28,14 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
     CLI.subsection("3. Processing response received from Google AI");
     const cleanedResponse = clearResponse(generatedResponse);
 
+    CLI.subsection("Generated Code");
+    console.log(cleanedResponse);
+
     CLI.subsection("4. Sanitizing and validating the response");
     if (cleanedResponse?.error && Object.keys(cleanedResponse?.error).length) {
+      retryContext.haveError = true;
       CLI.section("Error Details");
-      if (typeof cleanedResponse.error == "object")
-        Object.entries(cleanedResponse.error).forEach(([key, value]) => {
-          CLI.subsection(`${key}: ${value}`);
-        });
-      else console.log(cleanedResponse.error);
-      // when response is not OK
+      console.log(cleanedResponse.error);
       if (/^(?!2\d{2}$).*/.test(cleanedResponse.error.status.toString()))
         return res.json(cleanedResponse);
     }
@@ -45,11 +55,15 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
   } catch (err) {
     const generativeAiError = err as unknown as GoogleGenerativeAIError;
     CLI.section("Error Details");
-    if (typeof err == "object")
-      Object.entries(generativeAiError).forEach(([key, value]) => {
-        CLI.subsection(`${key}: ${value}`);
-      });
-    else console.log(err);
+    console.log(err);
+
+    if (retryContext.retry || !retryContext.haveError) {
+      retryContext.retry = false;
+      retryContext.feedback = "Prev Response Error: " + JSON.stringify(err);
+      CLI.subsection("Retrying...");
+      processPromptAndCreateFile(req, res);
+    }
+
     res.status(500).json({ message: generativeAiError.message });
   }
 };

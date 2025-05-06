@@ -26,3 +26,36 @@ function formBuilder(target, args) {
   nextStep(1);
 }
 ```
+
+**`createElement` helperFunction**
+
+`createElement` helper function must follow the below format to avoid any error.
+
+```js
+function createElement(tag, options) {
+  // Extract properties that need special handling
+  const { onClick, type, ...restOptions } = options || {};
+
+  // For elements where type must be set during creation (like input)
+  const element =
+    type && tag === "input"
+      ? document.createElement(tag, { type })
+      : document.createElement(tag);
+
+  // Handle event listeners
+  if (onClick) {
+    element.onclick = onClick;
+  }
+
+  // Safely assign remaining properties
+  for (const [key, value] of Object.entries(restOptions)) {
+    try {
+      element[key] = value;
+    } catch (error) {
+      console.warn(`Could not set property '${key}' on ${tag} element:`, error);
+    }
+  }
+
+  return element;
+}
+```

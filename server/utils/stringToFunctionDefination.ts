@@ -1,49 +1,48 @@
-// const stringToFunctionDefination = (funcAsString: undefined | string) => {
-//   if (!funcAsString) return false;
-//   console.log(funcAsString);
-//   const wrapperAnonyousFunction = new Function(`return ${funcAsString}`);
-//   const generatedFunction = wrapperAnonyousFunction();
-//   return generatedFunction;
-// };
+const stringToFunctionDefination = (funcAsString: undefined | string) => {
+  if (!funcAsString) return false;
+  const wrapperAnonyousFunction = new Function(`return ${funcAsString}`);
+  const generatedFunction = wrapperAnonyousFunction();
+  return generatedFunction;
+};
 
-function stringToFunctionDefination(fnStr: undefined | string) {
-  if (!fnStr) return false;
-  // Remove leading/trailing whitespace
-  fnStr = fnStr.trim();
+// function stringToFunctionDefination(fnStr: undefined | string) {
+//   if (!fnStr) return false;
+//   // Remove leading/trailing whitespace
+//   fnStr = fnStr.trim();
 
-  // Detect if it's an async function
-  // const isAsync = fnStr.startsWith("async function");
+//   // Detect if it's an async function
+//   // const isAsync = fnStr.startsWith("async function");
 
-  // Regex to capture function details
-  const functionRegex = /(?:(async)\s*)?function\s*(\w*)\s*\((.*?)\)\s*{/;
-  const match = fnStr.match(functionRegex);
+//   // Regex to capture function details
+//   const functionRegex = /(?:(async)\s*)?function\s*(\w*)\s*\((.*?)\)\s*{/;
+//   const match = fnStr.match(functionRegex);
 
-  if (!match) {
-    throw new Error("Invalid function string");
-  }
+//   if (!match) {
+//     throw new Error("Invalid function string");
+//   }
 
-  // Destructure match results
-  const [, asyncKeyword, functionName, functionParams] = match;
+//   // Destructure match results
+//   const [, asyncKeyword, functionName, functionParams] = match;
 
-  // Find the function body
-  const bodyStart = fnStr.indexOf("{");
-  const bodyEnd = fnStr.lastIndexOf("}");
-  const functionBody = fnStr.slice(bodyStart + 1, bodyEnd).trim();
+//   // Find the function body
+//   const bodyStart = fnStr.indexOf("{");
+//   const bodyEnd = fnStr.lastIndexOf("}");
+//   const functionBody = fnStr.slice(bodyStart + 1, bodyEnd).trim();
 
-  // Construct the function based on whether it's async or not
-  if (asyncKeyword) {
-    return new Function(
-      functionParams,
-      `return async function ${functionName}(${functionParams}) { ${functionBody} }`
-    )();
-  }
+//   // Construct the function based on whether it's async or not
+//   if (asyncKeyword) {
+//     return new Function(
+//       functionParams,
+//       `return async function ${functionName}(${functionParams}) { ${functionBody} }`
+//     )();
+//   }
 
-  // For regular functions
-  return new Function(
-    functionParams,
-    `return function ${functionName}(${functionParams}) { ${functionBody} }`
-  )();
-}
+//   // For regular functions
+//   return new Function(
+//     functionParams,
+//     `return function ${functionName}(${functionParams}) { ${functionBody} }`
+//   )();
+// }
 
 export default stringToFunctionDefination;
 

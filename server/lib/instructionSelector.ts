@@ -429,9 +429,14 @@ export default async function instructionHandler(props: Common) {
       parser: "markdown",
     }
   );
-  fs.writeFile(`${process.cwd()}/instructions.md`, formatInstruction, {
-    encoding: "utf-8",
-  });
+  fs.writeFile(
+    `${process.cwd()}/instructions.md`,
+    formatInstruction,
+    "utf-8",
+    (err) => {
+      if (err) throw err;
+    }
+  );
   return formatInstruction;
 }
 

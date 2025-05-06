@@ -21,54 +21,66 @@ const AIInputBase = (props: AIInputProps) => {
     attributes,
   } = props as EnhancedComponentProps<AIInputProps, HTMLInputElement>;
 
-  const storeInputValue = () => {
-    if (!targetRef.current || !props.filename) return;
+  // const storeInputValue = () => {
+  //   if (!targetRef.current || !props.filename) return;
 
-    const prevInputValues = JSON.parse(
-      localStorage.getItem("AIInputValuesRecord") || "{}"
-    );
+  //   const prevInputValues = JSON.parse(
+  //     localStorage.getItem("AIInputValuesRecord") || "{}"
+  //   );
 
-    if (props.type === "radio") {
-      const [value, name] = [attributes?.value, attributes?.name];
-      if (!value || !name) return;
-      localStorage.setItem(
-        "AIInputValuesRecord",
-        JSON.stringify({ ...prevInputValues, [`radio_${name}`]: value })
-      );
-      return;
-    }
+  //   if (props.type === "radio") {
+  //     const [value, name] = [attributes?.value, attributes?.name];
+  //     if (!value || !name) return;
+  //     localStorage.setItem(
+  //       "AIInputValuesRecord",
+  //       JSON.stringify({ ...prevInputValues, [`radio_${name}`]: value })
+  //     );
+  //     return;
+  //   }
 
-    if (props.type === "password" || props.type === "file") return;
+  //   if (props.type === "password" || props.type === "file") return;
 
-    if (props.type === "checkbox") {
-      const [name, value, checked] = [
-        attributes?.name,
-        attributes?.value,
-        targetRef.current.checked,
-      ];
-      if (!name || value === undefined) return;
-      let checkedValues = prevInputValues[name] || [];
-      checked
-        ? !checkedValues.includes(value) && checkedValues.push(value)
-        : (checkedValues = checkedValues.filter((v: string) => v !== value));
+  //   if (props.type === "checkbox") {
+  //     const [name, value, checked] = [
+  //       attributes?.name,
+  //       attributes?.value,
+  //       targetRef.current.checked,
+  //     ];
+  //     if (!name || value === undefined) return;
+  //     let checkedValues = prevInputValues[name] || [];
+  //     checked
+  //       ? !checkedValues.includes(value) && checkedValues.push(value)
+  //       : (checkedValues = checkedValues.filter((v: string) => v !== value));
 
-      localStorage.setItem(
-        "AIInputValuesRecord",
-        JSON.stringify({
-          ...prevInputValues,
-          [name]: checkedValues,
-        })
-      );
-      return;
-    }
+  //     localStorage.setItem(
+  //       "AIInputValuesRecord",
+  //       JSON.stringify({
+  //         ...prevInputValues,
+  //         [name]: checkedValues,
+  //       })
+  //     );
+  //     return;
+  //   }
 
-    const newInputValues = JSON.stringify({
-      ...prevInputValues,
-      [`${props.filename}_${props.type}`]: targetRef.current.value,
-    });
+  //   const newInputValues = JSON.stringify({
+  //     ...prevInputValues,
+  //     [`${props.filename}_${props.type}`]: targetRef.current.value,
+  //   });
 
-    localStorage.setItem("AIInputValuesRecord", newInputValues);
-  };
+  //   localStorage.setItem("AIInputValuesRecord", newInputValues);
+  // };
+  // ? props.listener === "onChange" && /radio|checkbox/.test(props.type)
+  //   ? (e: any) => {
+  //       storeInputValue();
+  //       handleEvent(e);
+  //     }
+  //   : props.listener === "onBlur"
+  //     ? (e: any) => {
+  //         storeInputValue();
+  //         handleEvent(e);
+  //       }
+  //     : handleEvent
+  // : undefined,
 
   const eventListener: Partial<
     Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "onBlur">
@@ -80,26 +92,14 @@ const AIInputBase = (props: AIInputProps) => {
       defaultValue: !/radio|checkbox/.test(props.type)
         ? localStorage.getItem(`${props.filename}_${props.type}`) || undefined
         : undefined,
-      [props.listener || "onChange"]: event
-        ? props.listener === "onChange" && /radio|checkbox/.test(props.type)
-          ? (e: any) => {
-              storeInputValue();
-              handleEvent(e);
-            }
-          : props.listener === "onBlur"
-            ? (e: any) => {
-                storeInputValue();
-                handleEvent(e);
-              }
-            : handleEvent
-        : undefined,
+      [props.listener || "onChange"]: event ? handleEvent : undefined,
     };
   }, [props.listener, event]);
 
   return (
     <>
       <input
-        onBlur={storeInputValue}
+        // onBlur={storeInputValue}
         ref={targetRef}
         type={props.type || "text"}
         {...on}

@@ -612,10 +612,8 @@ async function run(prompt: Common) {
   );
   const result = await chatSession.sendMessage(JSON.stringify(prompt));
   const lastConvo = (await chatSession.getHistory()).pop();
-  if (lastConvo) {
-    console.log(lastConvo);
-    models[prompt.element]?.history?.push(lastConvo);
-  }
+  if (lastConvo) models[prompt.element]?.history?.push(lastConvo);
+
   const resultText = result.response.text();
 
   return resultText;

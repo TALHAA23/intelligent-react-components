@@ -61,8 +61,8 @@ ${formattedCode}
 ${isThereFormBuilder ? formBuilder : "\n"}
 ${isThereInitialRender ? onInitialRender : "\n"}
 export const meta = {
- thoughts: "${responseObj?.thoughts}",
- expect: "${responseObj?.expect}"
+  thoughts: ${JSON.stringify(responseObj?.thoughts)},
+  expect: ${JSON.stringify(responseObj?.expect)}
 }
 `
   );

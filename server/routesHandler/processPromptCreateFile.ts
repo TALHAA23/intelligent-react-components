@@ -7,15 +7,15 @@ import CLI from "../utils/chalk.js";
 
 const retryContext = {
   retry: true,
-  haveError: false,
   feedback: "",
+  retryCount: 0,
 };
 const processPromptAndCreateFile: RouteHandler = async (req, res) => {
   const body = req.body as Common;
   if (retryContext.feedback) {
     CLI.subsection("Constructing new Body");
+    if (!body.feedback) body.feedback = "";
     body.feedback = body.feedback?.concat(retryContext.feedback);
-    console.log(body);
   }
   CLI.section(`Request Initiated for "${body.filename}"`);
 
@@ -33,7 +33,6 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
 
     CLI.subsection("4. Sanitizing and validating the response");
     if (cleanedResponse?.error && Object.keys(cleanedResponse?.error).length) {
-      retryContext.haveError = true;
       CLI.section("Error Details");
       console.log(cleanedResponse.error);
       if (/^(?!2\d{2}$).*/.test(cleanedResponse.error.status.toString()))
@@ -57,10 +56,13 @@ const processPromptAndCreateFile: RouteHandler = async (req, res) => {
     CLI.section("Error Details");
     console.log(err);
 
-    if (retryContext.retry || !retryContext.haveError) {
+    if (retryContext.retry && retryContext.retryCount <= 3) {
       retryContext.retry = false;
-      retryContext.feedback = "Prev Response Error: " + JSON.stringify(err);
-      CLI.subsection("Retrying...");
+      retryContext.retryCount = retryContext.retryCount + 1;
+      retryContext.feedback =
+        "Please resolve the errors: " +
+        (err as unknown as { message: string })?.message;
+      CLI.subsection(`Retry ${retryContext.retryCount}`);
       processPromptAndCreateFile(req, res);
     }
 
